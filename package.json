@@ -38,5 +38,9 @@
     "globals": "^15.12.0",
     "typescript": "^5.6.3",
     "typescript-eslint": "^8.13.0"
+  },
+  "dependencies": {
+    "@types/fluent-ffmpeg": "^2.1.27",
+    "fluent-ffmpeg": "^2.1.3"
   }
 }
