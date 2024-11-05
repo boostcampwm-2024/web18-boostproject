@@ -8,7 +8,12 @@
   "scripts": {
     "client": "yarn workspace client",
     "server": "yarn workspace server",
-    "dev": "yarn workspaces run dev",
+    "dev:client": "cd client && yarn dev",
+    "dev:server": "cd server && cross-env nest start --watch",
+    "dev": "concurrently \"yarn dev:client\" \"yarn dev:server\"",
+    "build:client": "cd client && yarn build",
+    "build:server": "cd server && yarn build",
+    "build": "yarn build:client && yarn build:server",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "lint:server": "eslint server/",
@@ -41,6 +46,7 @@
   },
   "dependencies": {
     "@types/fluent-ffmpeg": "^2.1.27",
+    "concurrently": "^9.1.0",
     "fluent-ffmpeg": "^2.1.3"
   }
 }

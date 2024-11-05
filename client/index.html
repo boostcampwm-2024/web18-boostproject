@@ -1,30 +1,9 @@
 <!doctype html>
 <html>
   <head>
-    <title>HLS Audio Player</title>
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    <style>
-      .player-container {
-        max-width: 300px;
-        margin: 20px auto;
-      }
-    </style>
+    <title>inEar</title>
   </head>
   <body>
-    <div class="player-container">
-      <audio id="audio" controls></audio>
-    </div>
-
-    <script>
-      const audio = document.getElementById('audio');
-      // Update URL to match your server endpoint
-      const audioSrc = 'http://localhost:3000/music/convert/output.m3u8';
-
-      if (Hls.isSupported()) {
-        const hls = new Hls();
-        hls.loadSource(audioSrc);
-        hls.attachMedia(audio);
-      }
-    </script>
+    <h1>HELLO WORLD</h1>
   </body>
 </html>
