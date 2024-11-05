@@ -1,13 +1,30 @@
 <!doctype html>
-<html lang="en">
+<html>
   <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React + TS</title>
+    <title>HLS Audio Player</title>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <style>
+      .player-container {
+        max-width: 300px;
+        margin: 20px auto;
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <div class="player-container">
+      <audio id="audio" controls></audio>
+    </div>
+
+    <script>
+      const audio = document.getElementById('audio');
+      // Update URL to match your server endpoint
+      const audioSrc = 'http://localhost:3000/music/convert/output.m3u8';
+
+      if (Hls.isSupported()) {
+        const hls = new Hls();
+        hls.loadSource(audioSrc);
+        hls.attachMedia(audio);
+      }
+    </script>
   </body>
 </html>
