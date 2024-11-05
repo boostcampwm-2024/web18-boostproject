@@ -1,4 +1,13 @@
 {
-  "name": "web18",
+  "private": true,
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "client": "yarn workspace client",
+    "server": "yarn workspace server",
+    "dev": "yarn workspaces run dev"
+  },
   "packageManager": "yarn@4.5.1"
 }
