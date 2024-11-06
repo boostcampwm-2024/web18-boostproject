@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { Redis } from 'ioredis';
 
-interface RoomInfo {
+export interface RoomInfo {
   currentUsers: number;
   maxCapacity: number;
   isActive: boolean;
   currentSong: string;
-  songs: string[]; //URL of songs stored
+  songs: string[];
 }
 
 @Injectable()
