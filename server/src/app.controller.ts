@@ -1,5 +1,5 @@
 import { Controller, Get, Inject, Logger, LoggerService } from '@nestjs/common';
-import { AppService } from './app.service';
+import { AppService } from '@/app.service';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('기본')
