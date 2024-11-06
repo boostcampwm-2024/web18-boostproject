@@ -1,3 +1,3 @@
 export function MainPage() {
-  return <div>MainPages</div>;
+  return <div className="text-red-600">MainPageasdfasdfs</div>;
 }
