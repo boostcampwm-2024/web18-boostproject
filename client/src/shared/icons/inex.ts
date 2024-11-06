@@ -1,0 +1,1 @@
+export { InearLogo } from './InearLogo';

@@ -1,9 +1,34 @@
 <!doctype html>
-<html>
+<html lang="ko">
   <head>
-    <title>inEar</title>
+    <meta charset="utf-8" />
+    <title>HLS Audio Player</title>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- <style>
+      .player-container {
+        max-width: 300px;
+        margin: 20px auto;
+      }
+    </style> -->
   </head>
   <body>
-    <h1>HELLO WORLD</h1>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    <!-- <div class="player-container">
+      <audio id="audio" controls></audio>
+    </div>
+
+    <script>
+      const audio = document.getElementById('audio');
+      // Update URL to match your server endpoint
+      const audioSrc = 'http://localhost:3000/music/convert/output.m3u8';
+
+      if (Hls.isSupported()) {
+        const hls = new Hls();
+        hls.loadSource(audioSrc);
+        hls.attachMedia(audio);
+      }
+    </script> -->
   </body>
 </html>
