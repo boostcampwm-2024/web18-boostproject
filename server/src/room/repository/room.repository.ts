@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Redis } from 'ioredis';
+import { RedisClientType } from 'redis';
 
 export interface RoomInfo {
   currentUsers: number;
@@ -11,16 +11,7 @@ export interface RoomInfo {
 
 @Injectable()
 export class RoomRepository {
-  private readonly redis: Redis;
-
-  constructor() {
-    this.redis = new Redis({
-      port: Number(process.env.redisPort || 6379),
-      host: process.env.redisEndpoint,
-      username: process.env.redisUsername,
-      password: process.env.redisPW,
-    });
-  }
+  constructor(private readonly redisClient: RedisClientType) {}
 
   private roomKey(roomId: string): string {
     return `rooms:${roomId}`;
@@ -35,7 +26,7 @@ export class RoomRepository {
   }
 
   async createRoom(roomId: string, room: RoomInfo): Promise<void> {
-    await this.redis.hset(this.roomKey(roomId), {
+    await this.redisClient.hSet(this.roomKey(roomId), {
       isActive: String(room.isActive),
       currentUsers: room.currentUsers,
       maxCapacity: room.maxCapacity,
@@ -44,13 +35,13 @@ export class RoomRepository {
   }
 
   async validateRoom(roomKey: string): Promise<void> {
-    const exists = await this.redis.exists(roomKey);
+    const exists = await this.redisClient.exists(roomKey);
     if (!exists) throw new Error('Room not found');
 
     const [isActive, currentUsers, maxCapacity] = await Promise.all([
-      this.redis.hget(roomKey, 'isActive'),
-      this.redis.hget(roomKey, 'currentUsers'),
-      this.redis.hget(roomKey, 'maxCapacity'),
+      this.redisClient.hGet(roomKey, 'isActive'),
+      this.redisClient.hGet(roomKey, 'currentUsers'),
+      this.redisClient.hGet(roomKey, 'maxCapacity'),
     ]);
 
     if (!isActive || isActive !== 'true') {
@@ -65,9 +56,9 @@ export class RoomRepository {
     const roomKey = this.roomKey(roomId);
     await this.validateRoom(roomKey);
 
-    const multi = this.redis.multi();
-    multi.sadd(this.roomUsersKey(roomId), userId);
-    multi.hincrby(roomKey, 'currentUsers', 1);
+    const multi = this.redisClient.multi();
+    multi.sAdd(this.roomUsersKey(roomId), userId);
+    multi.hIncrBy(roomKey, 'currentUsers', 1);
 
     await multi.exec();
   }
