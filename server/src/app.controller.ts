@@ -1,7 +1,7 @@
 import { Controller, Get, Inject, Logger, LoggerService } from '@nestjs/common';
 import { AppService } from '@/app.service';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { RedisClientType } from 'redis';
+import { RedisClientType } from 'ioredis';
 import { REDIS_CLIENT } from '@/common/redis/redis.module';
 
 @ApiTags('기본')
