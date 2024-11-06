@@ -8,8 +8,8 @@ import {
 import { WinstonModule } from 'nest-winston';
 import { ClsModule, ClsService } from 'nestjs-cls';
 import { v4 as uuidv4 } from 'uuid';
-import { winstonLoggerTransport } from './logger/logger.config';
-import { LoggerContextMiddleware } from './logger/logger-context.middleware';
+import { winstonLoggerTransport } from '@/common/logger/logger.config';
+import { LoggerContextMiddleware } from '@/common/logger/logger-context.middleware';
 const services = [Logger];
 
 @Global()
