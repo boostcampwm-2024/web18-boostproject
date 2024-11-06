@@ -11,7 +11,7 @@ import {
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RedisClientType } from 'redis';
 import { REDIS_CLIENT } from '@/common/redis/redis.module';
-import { RoomInfo, RoomRepository } from './room/repository/room.repository';
+import { RoomInfo, RoomRepository } from './room/room.repository';
 
 @ApiTags('기본')
 @Controller()

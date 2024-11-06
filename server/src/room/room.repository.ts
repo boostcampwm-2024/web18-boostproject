@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { REDIS_CLIENT } from '@/common/redis/redis.module';
+import { Inject, Injectable } from '@nestjs/common';
 import { RedisClientType } from 'redis';
 
 export interface RoomInfo {
@@ -11,7 +12,9 @@ export interface RoomInfo {
 
 @Injectable()
 export class RoomRepository {
-  constructor(private readonly redisClient: RedisClientType) {}
+  constructor(
+    @Inject(REDIS_CLIENT) private readonly redisClient: RedisClientType,
+  ) {}
 
   private roomKey(roomId: string): string {
     return `rooms:${roomId}`;
