@@ -18,5 +18,15 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false
-  }
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+    "music/**/*.ts",
+    "**/output*.ts",
+    "music/convert/**"
+  ],
+  "include": [
+    "src/**/*"
+  ]
 }
