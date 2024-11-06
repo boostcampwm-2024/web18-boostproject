@@ -1,17 +1,23 @@
 <!doctype html>
-<html>
+<html lang="ko">
   <head>
+    <meta charset="utf-8" />
     <title>HLS Audio Player</title>
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    <style>
+    <script type="module" src="/src/main.tsx"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- <style>
       .player-container {
         max-width: 300px;
         margin: 20px auto;
       }
-    </style>
+    </style> -->
   </head>
   <body>
-    <div class="player-container">
+    <div id="root"></div>
+
+    <!-- <div class="player-container">
       <audio id="audio" controls></audio>
     </div>
 
@@ -25,6 +31,6 @@
         hls.loadSource(audioSrc);
         hls.attachMedia(audio);
       }
-    </script>
+    </script> -->
   </body>
 </html>
