@@ -12,7 +12,7 @@ export function StreamingListItem({ room }: StreamingListItemProps) {
   // 최적화 필요
   const tagString = `#${room.tags.join(' #')}`;
   const enterRoomHandler = () => {
-    fetch('http://localhost:3000/rooms', {
+    fetch('http://localhost:3000/room', {
       method: 'POST',
       body: JSON.stringify({ roomId: room.roomId }),
     }).then((response) => {
