@@ -3,13 +3,13 @@ import { AppController } from '@/app.controller';
 import { AppService } from '@/app.service';
 import { CommonModule } from '@/common/common.module';
 import { ConfigModule } from '@nestjs/config';
-import { REDIS_CLIENT, RedisModule } from '@/common/redis/redis.module';
+import { RedisModule } from '@/common/redis/redis.module';
 import { RoomRepository } from './room/room.repository';
-import { RedisClientType } from 'redis';
+import { RoomController } from '@/room/room.controller';
 
 @Module({
   imports: [CommonModule, ConfigModule.forRoot(), RedisModule],
-  controllers: [AppController],
+  controllers: [AppController, RoomController],
   providers: [Logger, AppService, RoomRepository],
 })
 export class AppModule {}

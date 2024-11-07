@@ -29,12 +29,16 @@ export class RoomRepository {
   }
 
   async createRoom(roomId: string, room: RoomInfo): Promise<void> {
-    await this.redisClient.hSet(this.roomKey(roomId), {
-      isActive: String(room.isActive),
-      currentUsers: room.currentUsers,
-      maxCapacity: room.maxCapacity,
-      songs: JSON.stringify(room.songs),
-    });
+    const roomKey = this.roomKey(roomId);
+
+    await this.redisClient
+      .multi()
+      .hSet(roomKey, 'isActive', String(room.isActive))
+      .hSet(roomKey, 'currentUsers', String(room.currentUsers))
+      .hSet(roomKey, 'maxCapacity', String(room.maxCapacity))
+      .hSet(roomKey, 'songs', JSON.stringify(room.songs))
+      .hSet(roomKey, 'currentSong', room.currentSong)
+      .exec();
   }
 
   async validateRoom(roomKey: string): Promise<void> {
