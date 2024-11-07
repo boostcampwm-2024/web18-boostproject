@@ -1,0 +1,37 @@
+[
+  {
+    "roomId": "TEMP_RANDOM_ROOM_ID",
+    "album": "로제의 APT.",
+    "singer": "로제",
+    "tags": ["힙합"],
+    "streamingStatus": true
+  },
+  {
+    "roomId": "2",
+    "album": "에스파의 정규 9999999집",
+    "singer": "에스파",
+    "tags": ["댄스", "쇠맛"],
+    "streamingStatus": false
+  },
+  {
+    "roomId": "3",
+    "album": "침착맨의 외힙",
+    "singer": "침착맨",
+    "tags": ["힙합", "외국힙합"],
+    "streamingStatus": true
+  },
+  {
+    "roomId": "4",
+    "album": "아이유의 노래",
+    "singer": "아이유",
+    "tags": ["발라드"],
+    "streamingStatus": true
+  },
+  {
+    "roomId": "5",
+    "album": "너드커넥션의 노래",
+    "singer": "너드커넥션",
+    "tags": ["밴드"],
+    "streamingStatus": false
+  }
+]
