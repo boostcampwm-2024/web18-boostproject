@@ -1,8 +1,19 @@
-import { Body, Controller, Get, Inject, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  Param,
+  Post,
+  Req,
+} from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { RoomInfo, RoomRepository } from '@/room/room.repository';
 import { REDIS_CLIENT } from '@/common/redis/redis.module';
 import { RedisClientType } from 'redis';
+import * as crypto from 'node:crypto';
+import { RandomNameUtil } from '@/common/randomname/random-name.util';
+import { Request } from 'express';
 
 @ApiTags('기본')
 @Controller('room')
@@ -50,14 +61,19 @@ export class RoomController {
   @ApiResponse({ status: 201, description: 'Joined room successfully' })
   @Post('/join')
   async joinRoom(
+    @Req() req: Request,
     @Body() joinRoomDto: { userId: string; roomId: string },
   ): Promise<object> {
+    const identifier = crypto
+      .createHmac('sha256', req.ip + process.env.SECRET_KEY)
+      .digest('hex');
+    const randomName = RandomNameUtil.generate();
     try {
       await this.roomRepository.joinRoom(
         joinRoomDto.userId,
         joinRoomDto.roomId,
       );
-      return { success: true, message: 'Joined room' };
+      return { success: true, message: 'Joined room', identifier, randomName };
     } catch (e) {
       return { success: false, error: e.message };
     }
