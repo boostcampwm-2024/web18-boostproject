@@ -26,7 +26,5 @@
     "**/output*.ts",
     "music/convert/**"
   ],
-  "include": [
-    "src/**/*"
-  ]
+  "include": ["src/**/*"]
 }
