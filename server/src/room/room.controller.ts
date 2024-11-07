@@ -66,7 +66,8 @@ export class RoomController {
   ): Promise<object> {
     const identifier = crypto
       .createHmac('sha256', req.ip + process.env.SECRET_KEY)
-      .digest('hex');
+      .digest('hex')
+      .slice(0, 4);
     const randomName = RandomNameUtil.generate();
     try {
       await this.roomRepository.joinRoom(
