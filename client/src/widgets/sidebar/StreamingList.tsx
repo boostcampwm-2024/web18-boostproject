@@ -1,4 +1,4 @@
-import { StreamingListItem } from '@/entities/streamingListItem';
+import { StreamingListItem } from './StreamingListItem';
 import './StreamingList.css';
 import { useEffect, useState } from 'react';
 
