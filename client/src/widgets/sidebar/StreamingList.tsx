@@ -22,10 +22,14 @@ export default function StreamingList() {
   }, []);
 
   return (
-    <ul className="flex flex-col gap-2 max-h-48 overflow-y-auto pr-3">
-      {roomList.map((room) => (
-        <StreamingListItem key={room.roomId} room={room} />
-      ))}
-    </ul>
+    <div className="p-8 pt-6 w-full">
+      <hr className="border-0 h-[1px] bg-grayscale-600 mb-6" />
+      <p className="text-grayscale-300 text-sm mb-4">스트리밍</p>
+      <ul className="flex flex-col gap-2 max-h-48 overflow-y-auto pr-3">
+        {roomList.map((room) => (
+          <StreamingListItem key={room.roomId} room={room} />
+        ))}
+      </ul>
+    </div>
   );
 }
