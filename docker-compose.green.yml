@@ -1,11 +1,25 @@
-version: '3.8'
 services:
+  nginx:
+    image: nginx
+    volumes:
+      - ./nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - '80:80'
+    depends_on:
+      - server-green
+      - client
+
   server-green:
     build:
       context: .
       dockerfile: server/Dockerfile
-    ports:
-      - '3002:3000'
+      args:
+        - NODE_ENV=development
+    expose:
+      - '3000'
     volumes:
       - ./server:/app/server
       - ./package.json:/app/package.json
@@ -13,26 +27,21 @@ services:
       - ./.yarnrc.yml:/app/.yarnrc.yml
       - ./.yarn:/app/.yarn
     environment:
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - REDIS_PASSWORD=
-    depends_on:
-      - redis
+      - NODE_ENV=development
 
   client:
     build:
       context: .
       dockerfile: client/Dockerfile
-    ports:
-      - '5173:5173'
+      args:
+        - NODE_ENV=development
+    expose:
+      - '5173'
     volumes:
       - ./client:/app/client
       - ./package.json:/app/package.json
       - ./yarn.lock:/app/yarn.lock
       - ./.yarnrc.yml:/app/.yarnrc.yml
       - ./.yarn:/app/.yarn
-
-  redis:
-    image: redis:latest
-    ports:
-      - '6379:6379'
+    environment:
+      - NODE_ENV=development
