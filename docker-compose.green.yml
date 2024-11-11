@@ -1,0 +1,38 @@
+version: '3.8'
+services:
+  server-green:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    ports:
+      - '3002:3000'
+    volumes:
+      - ./server:/app/server
+      - ./package.json:/app/package.json
+      - ./yarn.lock:/app/yarn.lock
+      - ./.yarnrc.yml:/app/.yarnrc.yml
+      - ./.yarn:/app/.yarn
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=
+    depends_on:
+      - redis
+
+  client:
+    build:
+      context: .
+      dockerfile: client/Dockerfile
+    ports:
+      - '5173:5173'
+    volumes:
+      - ./client:/app/client
+      - ./package.json:/app/package.json
+      - ./yarn.lock:/app/yarn.lock
+      - ./.yarnrc.yml:/app/.yarnrc.yml
+      - ./.yarn:/app/.yarn
+
+  redis:
+    image: redis:latest
+    ports:
+      - '6379:6379'
