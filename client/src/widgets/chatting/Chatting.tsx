@@ -8,7 +8,7 @@ export function Chatting() {
         {Array.from({ length: 100 }).map((_, index) => (
           <div key={index} className="text-sm pb-4">
             <span className="text-brand mr-4">코난못난코</span>
-            <span>안녕하세요</span>
+            <span>{`안녕하세요${index}`}</span>
           </div>
         ))}
       </div>
