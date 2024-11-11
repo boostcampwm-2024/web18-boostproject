@@ -1,13 +1,14 @@
 import { ChevronDown } from '@/shared/icons/ChevronDown';
 import { useState } from 'react';
-//TODO: 투표 폴딩 기능 추가
 
 export function Vote() {
   const [isOpen, setIsOpen] = useState(false);
   return (
-    <div className="bg-gray-700 mb-8">
+    <div
+      className={`absolute top-[5.5rem] left-0 right-0 bg-gray-700 transition-all duration-300 z-10 mx-8 rounded-lg`}
+    >
       <div
-        className="flex flex-row items-center justify-between px-5 py-3 rounded-lg"
+        className="flex flex-row items-center justify-between px-5 py-3 rounded-lg cursor-pointer"
         onClick={() => setIsOpen(!isOpen)}
       >
         <div className="mr-2">
@@ -20,13 +21,18 @@ export function Vote() {
           <ChevronDown />
         </div>
       </div>
-      {isOpen && (
-        <div>
-          <p>슈크림 붕어빵</p>
-          <p>팥 붕어빵</p>
-          <p>피자 붕어빵</p>
-        </div>
-      )}
+      <div
+        className={`overflow-hidden transition-all duration-200 ${isOpen ? 'max-h-40' : 'max-h-0'} px-4`}
+      >
+        {['슈크림 붕어빵', '팥 붕어빵', '피자 붕어빵'].map((item, index) => (
+          <p
+            key={index}
+            className="mb-1 cursor-pointer px-3 py-3 rounded-md hover:bg-gray-400"
+          >
+            {item}
+          </p>
+        ))}
+      </div>
     </div>
   );
 }
