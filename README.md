@@ -1,4 +1,6 @@
-# web18-boostproject
+# inear
+
+![github-banner](https://github.com/user-attachments/assets/f227663a-8c5c-46d6-8ca7-92d4b16862c5)  
 
 ## 💪 팀원 소개
 <markdown-accessiblity-table data-catalyst=""><table>
@@ -15,7 +17,7 @@
     </td>
     <td align="center" width="160px">
       <a href="https://github.com/Kontae"><img src="https://avatars.githubusercontent.com/u/91358761?v=4" style="max-width: 100%;"></a>
-    </td>
+    </td> 
     <td align="center" width="160px">
       <a href="https://github.com/rdyjun"><img src="https://avatars.githubusercontent.com/u/45596014?v=4" style="max-width: 100%;"></a>
     </td>
@@ -39,53 +41,42 @@
   </tr>
 </tbody></table></markdown-accessiblity-table>
 
-## 🙏 그라운드 룰
+## 🎵 inear 프로젝트 개요
 
-- 지각 관리
-  - 지각하면 기술 공유하기 (5-10분)
-  - 모이기로 하는 시간 기준 +3분 초과 시 지각처리 (3분 1초 금지)
-  - 불참하게 된다면 전날에 말해주기
 
-- 빠른 소통을 위한 룰
-  - 슬랙 알람 24시간 ON
-  - 코어타임 내에는 허들 ON
 
-- 욕설 금지  
+iNear는 팬들끼리 좋아하는 아티스트의 신규 앨범을 함께 공감하는 공간입니다
+사용자는 앨범 발매 당일날 좋아하는 아티스트의 노래를 실시간으로 듣고, 같은 팬들과 함께 서로의 감상평을 실시간 채팅으로 함께 공유하며 즐거운 추억을 보낼 수 있습니다.
 
-- 코어타임 지키기
-  - 10 ~ 19 사이 연락이 안되면 ㅎㅎ;;
-  - 가능한 19시 이후까지도
+## 🔔 유저 페르소나
 
-- 공식적인 미팅(일정)은 줌으로
-  - 팀빌딩
-  - 데일리 스크럼
+iNear는 기존의 소통의 창구가 적었던 장르의 아티스트를 팔로우하고 있던 팬들을 위한 소통의 장입니다.
+같은 취향을 공유하는 사람들과 함께 좋아하는 아티스트의 앨범 발매 당일날을 더 풍성하게 만들어보세요.
 
-- 비공식적인 미팅은 허들
-  - 모각코 포함
+## 🚀 핵심 기능
 
-- 사랑의 매 피하지 않기 피하면 다시 때리기 
-  - 피드백 받고 모르쇠 금지
+### 실시간 앨범 스트리밍 
+| inear는 아티스트의 신규 앨범을 실시간으로 청취할 수 있습니다
+- 앨범 발매 라이브 세션이 진행되기 1시간 전에 홈페이지에 배너가 등록이 됩니다
+- 유저는 미리 들어와서 가수의 이전 앨범을 함께 들을 수 있습니다
+- 앨범 발매 시간에 맞추어 세션 안에서 라이브로 신곡을 들을 수 있습니다  
 
-##  🎨 기획 / 디자인 링크
+![image](https://github.com/user-attachments/assets/c8eafbda-c1e7-4411-8257-45c622ddaeb2)
+### 실시간 채팅방에서 소통
+| inear는 앨범 청취를 하면서 다른 사용자들과 소통할 수 있습니다
+- 같은 팬들끼리 서로 실시간 채팅으로 다같이 소통할 수 있습니다
+- 채팅방에서 본인이 직접 이미지 기반의 커스텀 이모지를 등록하고 사용할 수 있습니다
+- 앨범 스트리밍을 하면서 가장 좋은 노래에 유저들이 실시간으로 투표를 진행할 수 있습니다  
 
-### [피그마 링크](https://www.figma.com/design/67VbghdrhjZ3PbdBkBW3wK/inear?node-id=0-1&t=5PMMpDubdDK8MVXj-1)
+![image](https://github.com/user-attachments/assets/e499f94f-8250-4add-a3f0-76abfdf178f5)
 
-### [기획서 링크]()
+## ✨ 부가 기능
 
-## 🌳협업 전략
+### 커스텀 이모지 사용
+- 자신이 가진 파일을 이모지로 등록하여 사용할 수 있습니다
+- 채팅방에서 다른 사람이 올린 이모지도 사용할 수 있습니다
 
-### branch
-```
-main
-├── develop
-│   ├── feature/fe/~ (프론트엔드 기능)
-│   └── feature/be/~ (백엔드 기능)
-└── hotfix/*
-
-예: feature/fe/login-page
-    feature/be/auth-service
-    feature/fe/user-profile
-    feature/be/user-api
-    
-// 소문자로 작성
-```
+### 앨범 AI 요약
+- 세션이 종료된 앨범의 요약을 볼 수 있습니다
+- 요약은 세션에 참여한 사용자의 채팅 기반으로 자동 생성됩니다
+- 사용자는 요약을 보고 앨범에 대한 반응을 파악할 수 있습니다
