@@ -1,0 +1,39 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "feature/github-actions-test" ]
+  pull_request:
+    types: [ "closed" ]
+    branches: [ "feature/github-actions-test" ]
+
+env:
+  DOCKER_IMAGE: ghcr.io/boostcampwm-2024/web18-inear
+  VERSION: ${{ github.sha }}
+
+jobs:
+  build:
+    name: Build
+    if: github.event.pull_request.merged == true || github.ref == 'refs/heads/feature/github-actions-test'
+    runs-on: ubuntu-latest
+    steps:
+      # SSH 접속을 위한 SSH 키 설정
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      # 서버의 SSH 공개 키를 가져오는 동작
+      - name: Add known hosts
+        run: ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+
+      # 서버에서 Docker Compose를 사용해 컨테이너를 빌드하고 배포합니다.
+      - name: Deploy with Docker Compose on server
+        run: |
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+          cd /${{ secrets.SSH_USER }}/web18-inear
+          git pull origin dev
+          cd ${{ secrets.SCRIPT_PATH }}
+          ./deploy.sh
+          EOF
+        
