@@ -17,7 +17,7 @@ import { RandomNameUtil } from '@/common/randomname/random-name.util';
   namespace: 'rooms',
   cors: {
     origin: '*',
-    credentials: true,
+    methods: ['GET', 'POST'],
   },
 })
 export class RoomGateway
@@ -39,7 +39,6 @@ export class RoomGateway
   handleDisconnect(client: Socket) {
     console.log(`Client disconnected: ${client.id}`);
   }
-
   @SubscribeMessage('createRoom')
   async handleCreateRoom(
     @ConnectedSocket() client: Socket,
@@ -60,9 +59,11 @@ export class RoomGateway
         createdAt: new Date(),
       });
 
+      await client.join(roomId);
+
       await this.roomRepository.createRoom(roomId, room);
 
-      client.emit('roomCreated', {
+      this.server.emit('roomCreated', {
         roomId: room.id,
         name: room.name,
         hostId: room.hostId,
@@ -112,6 +113,33 @@ export class RoomGateway
       return {
         success: false,
         error: error.message,
+      };
+    }
+  }
+
+  @SubscribeMessage('leaveRoom')
+  async handleLeaveRoom(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: { roomId: string; userId: string },
+  ): Promise<{ success: boolean; message?: string; error?: string }> {
+    try {
+      const room = await this.roomRepository.findRoom(data.roomId);
+
+      if (!room) {
+        throw new Error('Room not found');
+      }
+
+      await this.roomRepository.leaveRoom(data.userId, data.roomId);
+      await client.leave(data.roomId);
+
+      return {
+        success: true,
+        message: `Successfully left room ${data.roomId}`,
+      };
+    } catch (e) {
+      return {
+        success: false,
+        message: e.message,
       };
     }
   }

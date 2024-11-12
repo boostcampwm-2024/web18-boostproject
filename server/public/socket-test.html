@@ -1,129 +1,166 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
+  <head>
     <title>Socket.IO Room Test</title>
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <style>
-        #status {
-            padding: 5px 10px;
-            margin: 10px 0;
-            display: inline-block;
-        }
-        #status.connected {
-            background-color: #4CAF50;
-            color: white;
-        }
-        #status.disconnected {
-            background-color: #f44336;
-            color: white;
-        }
-        .container { margin: 20px; }
-        #events {
-            background-color: #f5f5f5;
-            padding: 10px;
-            margin: 10px 0;
-            height: 300px;
-            overflow-y: auto;
-            font-family: monospace;
-        }
-        button { margin: 5px; padding: 5px 10px; }
-        input { margin: 5px; padding: 5px; }
+      #status {
+        padding: 5px 10px;
+        margin: 10px 0;
+        display: inline-block;
+      }
+      #status.connected {
+        background-color: #4caf50;
+        color: white;
+      }
+      #status.disconnected {
+        background-color: #f44336;
+        color: white;
+      }
+      .container {
+        margin: 20px;
+      }
+      #events {
+        background-color: #f5f5f5;
+        padding: 10px;
+        margin: 10px 0;
+        height: 300px;
+        overflow-y: auto;
+        font-family: monospace;
+      }
+      button {
+        margin: 5px;
+        padding: 5px 10px;
+      }
+      input {
+        margin: 5px;
+        padding: 5px;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Socket.IO Room Test</h1>
-    
+
     <div id="status" class="disconnected">Disconnected</div>
 
     <div class="container">
-        <div>
-            <input type="text" id="createUserId" placeholder="User ID">
-            <button onclick="createRoom()">Create Room</button>
-        </div>
+      <div>
+        <input type="text" id="createUserId" placeholder="User ID" />
+        <button onclick="createRoom()">Create Room</button>
+      </div>
 
-        <div>
-            <input type="text" id="joinRoomId" placeholder="Room ID">
-            <input type="text" id="joinUserId" placeholder="User ID">
-            <button onclick="joinRoom()">Join Room</button>
-        </div>
+      <div>
+        <input type="text" id="joinRoomId" placeholder="Room ID" />
+        <input type="text" id="joinUserId" placeholder="User ID" />
+        <button onclick="joinRoom()">Join Room</button>
+      </div>
 
-        <button onclick="clearEvents()">Clear Events</button>
+      <div>
+        <input type="text" id="leaveRoomId" placeholder="Room ID" />
+        <input type="text" id="leaveUserId" placeholder="User ID" />
+        <button onclick="leaveRoom()">Leave Room</button>
+      </div>
 
-        <pre id="events"></pre>
+      <button onclick="clearEvents()">Clear Events</button>
+
+      <pre id="events"></pre>
     </div>
 
     <script>
-        const socket = io('http://localhost:3000/rooms', {
-            transports: ['websocket'],
-            autoConnect: true
-        });
+      const socket = io('http://localhost:3000/rooms', {
+        transports: ['websocket'],
+        autoConnect: true,
+      });
 
-        const statusDiv = document.getElementById('status');
-        const eventsDiv = document.getElementById('events');
+      const statusDiv = document.getElementById('status');
+      const eventsDiv = document.getElementById('events');
 
-        // 연결 이벤트
-        socket.on('connect', () => {
-            statusDiv.textContent = 'Connected';
-            statusDiv.className = 'connected';
-            addEvent('Connected to server');
-        });
+      // 연결 이벤트
+      socket.on('connect', () => {
+        statusDiv.textContent = 'Connected';
+        statusDiv.className = 'connected';
+        addEvent('Connected to server');
+      });
 
-        // 연결 해제 이벤트
-        socket.on('disconnect', () => {
-            statusDiv.textContent = 'Disconnected';
-            statusDiv.className = 'disconnected';
-            addEvent('Disconnected from server');
-        });
+      // 연결 해제 이벤트
+      socket.on('disconnect', () => {
+        statusDiv.textContent = 'Disconnected';
+        statusDiv.className = 'disconnected';
+        addEvent('Disconnected from server');
+      });
 
-        // 방 생성 이벤트 리스너
-        socket.on('roomCreated', (data) => {
-            addEvent(`Room Created: ${JSON.stringify(data, null, 2)}`);
-        });
+      // 방 생성 이벤트 리스너
+      socket.on('roomCreated', (data) => {
+        addEvent(`Room Created: ${JSON.stringify(data, null, 2)}`);
+      });
 
-        // 방 입장 이벤트 리스너
-        socket.on('joinedRoom', (data) => {
-            addEvent(`Joined Room: ${JSON.stringify(data, null, 2)}`);
-        });
+      // 방 입장 이벤트 리스너
+      socket.on('joinedRoom', (data) => {
+        addEvent(`Joined Room: ${JSON.stringify(data, null, 2)}`);
+      });
 
-        // 방 생성 함수
-        function createRoom() {
-            const userId = document.getElementById('createUserId').value;
-            if (!userId) {
-                addEvent('Error: Please enter a User ID');
-                return;
-            }
-            
-            socket.emit('createRoom', { userId }, (response) => {
-                addEvent(`Create Room Response: ${JSON.stringify(response, null, 2)}`);
-            });
+      // 유저 퇴장 이벤트 리스너
+      socket.on('userLeft', (data) => {
+        addEvent(`User Left: ${JSON.stringify(data, null, 2)}`);
+      });
+
+      // 방 생성 함수
+      function createRoom() {
+        const userId = document.getElementById('createUserId').value;
+        if (!userId) {
+          addEvent('Error: Please enter a User ID');
+          return;
         }
 
-        // 방 입장 함수
-        function joinRoom() {
-            const roomId = document.getElementById('joinRoomId').value;
-            const userId = document.getElementById('joinUserId').value;
-            
-            if (!roomId || !userId) {
-                addEvent('Error: Please enter both Room ID and User ID');
-                return;
-            }
+        socket.emit('createRoom', { userId }, (response) => {
+          addEvent(
+            `Create Room Response: ${JSON.stringify(response, null, 2)}`,
+          );
+        });
+      }
 
-            socket.emit('joinRoom', { roomId, userId }, (response) => {
-                addEvent(`Join Room Response: ${JSON.stringify(response, null, 2)}`);
-            });
+      // 방 입장 함수
+      function joinRoom() {
+        const roomId = document.getElementById('joinRoomId').value;
+        const userId = document.getElementById('joinUserId').value;
+
+        if (!roomId || !userId) {
+          addEvent('Error: Please enter both Room ID and User ID');
+          return;
         }
 
-        // 이벤트 로그 추가 함수
-        function addEvent(message) {
-            const timestamp = new Date().toLocaleTimeString();
-            eventsDiv.textContent = `${eventsDiv.textContent}[${timestamp}] ${message}\n`;
-            eventsDiv.scrollTop = eventsDiv.scrollHeight;
+        socket.emit('joinRoom', { roomId, userId }, (response) => {
+          addEvent(`Join Room Response: ${JSON.stringify(response, null, 2)}`);
+        });
+      }
+
+      // 방 퇴장 함수
+      function leaveRoom() {
+        const roomId = document.getElementById('leaveRoomId').value;
+        const userId = document.getElementById('leaveUserId').value;
+
+        if (!roomId || !userId) {
+          addEvent('Error: Please enter both Room ID and User ID');
+          return;
         }
 
-        // 이벤트 로그 클리어 함수
-        function clearEvents() {
-            eventsDiv.textContent = '';
-        }
+        socket.emit('leaveRoom', { roomId, userId }, (response) => {
+          addEvent(`Leave Room Response: ${JSON.stringify(response, null, 2)}`);
+        });
+      }
+
+      // 이벤트 로그 추가 함수
+      function addEvent(message) {
+        const timestamp = new Date().toLocaleTimeString();
+        eventsDiv.textContent = `${eventsDiv.textContent}[${timestamp}] ${message}\n`;
+        eventsDiv.textContent += `===============`;
+        eventsDiv.scrollTop = eventsDiv.scrollHeight;
+      }
+
+      // 이벤트 로그 클리어 함수
+      function clearEvents() {
+        eventsDiv.textContent = '';
+      }
     </script>
-</body>
+  </body>
 </html>
