@@ -153,6 +153,7 @@
       function addEvent(message) {
         const timestamp = new Date().toLocaleTimeString();
         eventsDiv.textContent = `${eventsDiv.textContent}[${timestamp}] ${message}\n`;
+        eventsDiv.textContent += `===============`;
         eventsDiv.scrollTop = eventsDiv.scrollHeight;
       }
 
