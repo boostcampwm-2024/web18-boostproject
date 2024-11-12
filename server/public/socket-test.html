@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Socket.IO Room Test</title>
+    <script src="https://cdn.socket.io/4.3.2/socket.io.min.js"></script>
+    <style>
+        body { padding: 20px; font-family: Arial, sans-serif; }
+        #status { 
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        .connected { background-color: #dff0d8; color: #3c763d; }
+        .disconnected { background-color: #f2dede; color: #a94442; }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        #events {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Socket.IO Room Test</h1>
+    <div id="status" class="disconnected">Disconnected</div>
+    <button onclick="createRoom()">Create Room</button>
+    <button onclick="clearEvents()">Clear Events</button>
+    <pre id="events"></pre>
+
+    <script>
+        const socket = io('http://localhost:3000/rooms', {
+            transports: ['websocket']
+        });
+
+        const events = document.getElementById('events');
+        const status = document.getElementById('status');
+
+        function log(message) {
+            const time = new Date().toLocaleTimeString();
+            events.textContent = `[${time}] ${message}\n` + events.textContent;
+        }
+
+        function clearEvents() {
+            events.textContent = '';
+        }
+
+        socket.on('connect', () => {
+            status.textContent = 'Connected';
+            status.className = 'connected';
+            log('Connected to server');
+        });
+
+        socket.on('disconnect', () => {
+            status.textContent = 'Disconnected';
+            status.className = 'disconnected';
+            log('Disconnected from server');
+        });
+
+        socket.on('connect_error', (error) => {
+            status.textContent = 'Connection Error';
+            status.className = 'disconnected';
+            log('Connection Error: ' + error);
+        });
+
+        function createRoom() {
+            const data = {
+                userId: 'user-' + Date.now()
+            };
+            log('Creating room with data: ' + JSON.stringify(data));
+            socket.emit('createRoom', data, (response) => {
+                log('Server Response: ' + JSON.stringify(response, null, 2));
+            });
+        }
+
+        socket.on('roomCreated', (data) => {
+            log('Room Created Event: ' + JSON.stringify(data, null, 2));
+        });
+    </script>
+</body>
+</html>
