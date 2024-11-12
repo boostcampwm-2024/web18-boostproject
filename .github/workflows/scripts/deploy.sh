@@ -57,6 +57,7 @@ switch_to_green() {
         docker compose -f docker-compose-blue.yml stop server-blue
         docker compose -f docker-compose-blue.yml rm -f server-blue
     fi
+}
 # Green에서 Blue로 전환
 switch_to_blue() {
     echo "Deploying Blue environment..."
