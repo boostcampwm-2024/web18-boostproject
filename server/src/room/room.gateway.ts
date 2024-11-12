@@ -46,7 +46,7 @@ export class RoomGateway
     data: {
       userId: string;
     },
-  ) {
+  ): Promise<{ success: boolean; room?: Room; error?: string }> {
     console.log('createRoom event received', data);
     try {
       const roomId = await this.roomRepository.generateRoomId();
@@ -90,7 +90,7 @@ export class RoomGateway
       roomId: string;
       userId: string;
     },
-  ) {
+  ): Promise<{ success: boolean; message?: string; error?: string }> {
     console.log('joinRoom event received', data);
     try {
       await this.roomRepository.joinRoom(data.userId, data.roomId);
@@ -131,12 +131,6 @@ export class RoomGateway
 
       await this.roomRepository.leaveRoom(data.userId, data.roomId);
       await client.leave(data.roomId);
-
-      // Client 쪽에 다른 유저가 나갔다는 것을 브로드캐스팅
-      client.to(data.roomId).emit('userLeft', {
-        userId: data.userId,
-        roomId: data.roomId,
-      });
 
       return {
         status: 'success',
