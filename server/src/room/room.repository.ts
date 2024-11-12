@@ -38,6 +38,9 @@ export class RoomRepository {
       .hSet(roomKey, 'name', room.name)
       .hSet(roomKey, 'hostId', room.hostId)
       .hSet(roomKey, 'createdAt', room.createdAt.toISOString())
+      .hSet(roomKey, 'isActive', 'true')
+      .hSet(roomKey, 'currentUsers', '0')
+      .hSet(roomKey, 'maxCapacity', '10')
       .exec();
     return;
   }
