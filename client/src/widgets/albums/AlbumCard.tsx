@@ -21,7 +21,7 @@ export function AlbumCard({ album }: AlbumCardProps) {
       />
       <p className="text-xl font-semibold mb-1">{album.title}</p>
       <p className="mb-2">{album.artist}</p>
-      <p className="text-gray-400 mb-1">#{album.tags.join(' #')}</p>
+      <p className="text-grayscale-400 mb-1">#{album.tags.join(' #')}</p>
     </li>
   );
 }

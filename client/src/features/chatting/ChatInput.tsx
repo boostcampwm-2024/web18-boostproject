@@ -7,7 +7,7 @@ export default function ChatInput() {
         <input
           type="text"
           placeholder="채팅을 입력하세요"
-          className="bg-gray-700 rounded-lg w-full p-3 mr-2 focus:outline-none"
+          className="bg-grayscale-700 rounded-lg w-full p-3 mr-2 focus:outline-none"
         />
         <button>
           <SendIcon />
