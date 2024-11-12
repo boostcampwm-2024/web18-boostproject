@@ -47,7 +47,7 @@ export class RoomGateway
     data: {
       userId: string;
     },
-  ) {
+  ): Promise<{ success: boolean; room?: Room; error?: string }> {
     console.log('createRoom event received', data);
     try {
       const roomId = await this.roomRepository.generateRoomId();
@@ -89,7 +89,7 @@ export class RoomGateway
       roomId: string;
       userId: string;
     },
-  ) {
+  ): Promise<{ success: boolean; message?: string; error?: string }> {
     console.log('joinRoom event received', data);
     try {
       await this.roomRepository.joinRoom(data.userId, data.roomId);
