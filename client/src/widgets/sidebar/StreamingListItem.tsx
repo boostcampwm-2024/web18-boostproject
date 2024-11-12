@@ -22,7 +22,7 @@ export function StreamingListItem({ room }: StreamingListItemProps) {
     });
   };
   return (
-    <li>
+    <li className="cursor-pointer">
       <div onClick={enterRoomHandler}>
         <p className="text-grayscale-50 truncate">{room.album}</p>
         <p className="text-grayscale-400 text-xs truncate">{tagString}</p>
