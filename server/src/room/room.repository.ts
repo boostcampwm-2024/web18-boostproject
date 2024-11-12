@@ -1,6 +1,7 @@
 import { REDIS_CLIENT } from '@/common/redis/redis.module';
 import { Inject, Injectable } from '@nestjs/common';
 import { RedisClientType } from 'redis';
+import { Room } from './room.entity';
 
 export interface RoomInfo {
   currentUsers: number;
@@ -28,17 +29,25 @@ export class RoomRepository {
     return `rooms:${roomId}:queue`;
   }
 
-  async createRoom(roomId: string, room: RoomInfo): Promise<void> {
+  async createRoom(roomId: string, room: Room): Promise<void> {
     const roomKey = this.roomKey(roomId);
 
     await this.redisClient
       .multi()
-      .hSet(roomKey, 'isActive', String(room.isActive))
-      .hSet(roomKey, 'currentUsers', String(room.currentUsers))
-      .hSet(roomKey, 'maxCapacity', String(room.maxCapacity))
-      .hSet(roomKey, 'songs', JSON.stringify(room.songs))
-      .hSet(roomKey, 'currentSong', room.currentSong)
+      .hSet(roomKey, 'id', room.id)
+      .hSet(roomKey, 'name', room.name)
+      .hSet(roomKey, 'hostId', room.hostId)
+      .hSet(roomKey, 'createdAt', room.createdAt.toISOString())
+      .hSet(roomKey, 'isActive', 'true')
+      .hSet(roomKey, 'currentUsers', '0')
+      .hSet(roomKey, 'maxCapacity', '10')
       .exec();
+    return;
+  }
+
+  async generateRoomId(): Promise<string> {
+    const roomCount = await this.redisClient.incr('room_counter');
+    return `room_${roomCount}`;
   }
 
   async validateRoom(roomKey: string): Promise<void> {
