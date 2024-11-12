@@ -59,6 +59,8 @@ export class RoomGateway
         createdAt: new Date(),
       });
 
+      await client.join(roomId);
+
       await this.roomRepository.createRoom(roomId, room);
 
       this.server.emit('roomCreated', {
@@ -85,32 +87,33 @@ export class RoomGateway
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { roomId: string; userId: string },
   ) {
-    //Get room by id
-    const room = await this.roomRepository.findRoom(data.roomId);
+    try {
+      //Get room by id
+      const room = await this.roomRepository.findRoom(data.roomId);
 
-    if (!room) {
-      throw new Error('Room not found');
+      if (!room) {
+        throw new Error('Room not found');
+      }
+
+      await this.roomRepository.leaveRoom(data.userId, data.roomId);
+
+      //Leave socket.io room
+      await client.leave(data.roomId);
+
+      client.to(data.roomId).emit('userLeft', {
+        userId: data.userId,
+        roomId: data.roomId,
+      });
+
+      return {
+        status: 'success',
+        message: 'Left room successfully',
+      };
+    } catch (e) {
+      return {
+        status: 'error',
+        message: e.message,
+      };
     }
-
-    await this.roomRepository.leaveRoom(data.userId, data.roomId);
-
-    //Leave socket.io room
-    await client.leave(data.roomId);
-
-    client.to(data.roomId).emit('userLeft', {
-      userId: data.userId,
-      roomId: data.roomId,
-    });
-
-    return {
-      status: 'success',
-      message: 'Left room successfully',
-    };
-  }
-  catch(e) {
-    return {
-      status: 'error',
-      message: e.message,
-    };
   }
 }
