@@ -82,13 +82,47 @@ export class RoomGateway
     }
   }
 
+  @SubscribeMessage('joinRoom')
+  async handleJoinRoom(
+    @ConnectedSocket() client: Socket,
+    @MessageBody()
+    data: {
+      roomId: string;
+      userId: string;
+    },
+  ) {
+    console.log('joinRoom event received', data);
+    try {
+      await this.roomRepository.joinRoom(data.userId, data.roomId);
+
+      await client.join(data.roomId);
+
+      const name = RandomNameUtil.generate();
+
+      client.emit('joinedRoom', {
+        roomId: data.roomId,
+        userId: data.userId,
+        name,
+        timestamp: new Date(),
+      });
+      return {
+        success: true,
+        message: `Successfully joined room ${data.roomId}`,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
+  }
+
   @SubscribeMessage('leaveRoom')
   async handleLeaveRoom(
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { roomId: string; userId: string },
   ) {
     try {
-      //Get room by id
       const room = await this.roomRepository.findRoom(data.roomId);
 
       if (!room) {
@@ -96,10 +130,9 @@ export class RoomGateway
       }
 
       await this.roomRepository.leaveRoom(data.userId, data.roomId);
-
-      //Leave socket.io room
       await client.leave(data.roomId);
 
+      // Client 쪽에 다른 유저가 나갔다는 것을 브로드캐스팅
       client.to(data.roomId).emit('userLeft', {
         userId: data.userId,
         roomId: data.roomId,
@@ -107,7 +140,7 @@ export class RoomGateway
 
       return {
         status: 'success',
-        message: 'Left room successfully',
+        message: `Successfully left room ${data.roomId}`,
       };
     } catch (e) {
       return {
