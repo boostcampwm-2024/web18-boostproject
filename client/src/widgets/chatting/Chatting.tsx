@@ -3,8 +3,8 @@ import './Chatting.css';
 
 export function Chatting() {
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex-grow overflow-y-auto mb-5 pt-24">
+    <div className="flex flex-col flex-grow overflow-hidden">
+      <div className="overflow-y-auto mb-5 mt-24">
         {Array.from({ length: 100 }).map((_, index) => (
           <div key={index} className="text-sm pb-4">
             <span className="text-brand mr-4">코난못난코</span>
