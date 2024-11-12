@@ -3,9 +3,6 @@ name: Docker Image CI
 on:
   push:
     branches: [ "dev" ]
-  pull_request:
-    types: [ "closed" ]
-    branches: [ "dev" ]
 
 env:
   DOCKER_IMAGE: ghcr.io/boostcampwm-2024/web18-inear
@@ -14,7 +11,6 @@ env:
 jobs:
   build:
     name: Build
-    if: github.event.pull_request.merged == true || github.ref == 'refs/heads/dev'
     runs-on: ubuntu-latest
     steps:
       # SSH 접속을 위한 SSH 키 설정
@@ -36,4 +32,3 @@ jobs:
           cd ${{ secrets.SCRIPT_PATH }}
           ./deploy.sh
           EOF
-        
