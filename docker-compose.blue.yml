@@ -1,23 +1,15 @@
-services:
-  nginx:
-    image: nginx
-    volumes:
-      - ./nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf
-    build:
-      context: ./nginx
-      dockerfile: Dockerfile
-    ports:
-      - '80:80'
-    depends_on:
-      - server-blue
-      - client
+version: '3.8'
 
+networks:
+  webapp:
+    name: webapp
+
+services:
   server-blue:
     build:
       context: .
       dockerfile: server/Dockerfile
-      args:
-        - NODE_ENV=development
+    container_name: server-blue
     expose:
       - '3000'
     volumes:
@@ -28,13 +20,16 @@ services:
       - ./.yarn:/app/.yarn
     environment:
       - NODE_ENV=development
+    networks:
+      - webapp
+    # healthcheck 임시 제거
+    restart: unless-stopped
 
   client:
     build:
       context: .
       dockerfile: client/Dockerfile
-      args:
-        - NODE_ENV=development
+    container_name: client
     expose:
       - '5173'
     volumes:
@@ -45,3 +40,20 @@ services:
       - ./.yarn:/app/.yarn
     environment:
       - NODE_ENV=development
+    networks:
+      - webapp
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+    ports:
+      - '80:80'
+    depends_on:
+      - server-blue
+      - client
+    networks:
+      - webapp
+    restart: unless-stopped
