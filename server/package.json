@@ -28,8 +28,10 @@
     "@nestjs/core": "^10.4.6",
     "@nestjs/passport": "^10.0.3",
     "@nestjs/platform-express": "^10.4.6",
+    "@nestjs/platform-socket.io": "^10.4.7",
     "@nestjs/swagger": "^8.0.2",
     "@nestjs/typeorm": "^10.0.2",
+    "@nestjs/websockets": "^10.4.7",
     "@types/fluent-ffmpeg": "^2.1.27",
     "@types/jest": "^29.5.14",
     "express": "^4.21.1",
@@ -40,6 +42,7 @@
     "redis": "^4.7.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
+    "socket.io": "^4.8.1",
     "swagger-ui-express": "^5.0.1",
     "uuid": "^11.0.2",
     "winston": "^3.16.0"
