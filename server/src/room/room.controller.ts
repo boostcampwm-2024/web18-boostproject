@@ -36,7 +36,7 @@ export class RoomController {
         currentSong: '',
         songs: ['LOVE SONG', 'POWER'],
       };
-      await this.roomRepository.createRoom(roomId, roomInfo);
+      // await this.roomRepository.createRoom(roomId, roomInfo);
       return { success: true, message: 'Room created' };
     } catch (e) {
       return { success: false, error: e.message };
