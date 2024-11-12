@@ -46,6 +46,9 @@ EOF
 switch_to_green() {
     echo "Deploying Green environment..."
 
+    cd
+    cd web18-inear
+
     # Green 환경 시작
     docker compose -f docker-compose-green.yml up -d
 
@@ -61,6 +64,9 @@ switch_to_green() {
 # Green에서 Blue로 전환
 switch_to_blue() {
     echo "Deploying Blue environment..."
+
+    cd
+    cd web18-inear
 
     # Blue 환경 시작
     docker compose -f docker-compose-blue.yml up -d
