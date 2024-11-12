@@ -52,14 +52,14 @@ export class RoomGateway
     try {
       const roomId = await this.roomRepository.generateRoomId();
       const name = RandomNameUtil.generate();
-  
+
       const room = new Room({
         id: roomId,
         name,
         hostId: data.userId,
         createdAt: new Date(),
       });
-  
+
       await this.roomRepository.createRoom(roomId, room);
 
       this.server.emit('roomCreated', {
@@ -74,6 +74,41 @@ export class RoomGateway
       };
     } catch (error) {
       console.error('Error in createRoom:', error);
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
+  }
+
+  @SubscribeMessage('joinRoom')
+  async handleJoinRoom(
+    @ConnectedSocket() client: Socket,
+    @MessageBody()
+    data: {
+      roomId: string;
+      userId: string;
+    },
+  ) {
+    console.log('joinRoom event received', data);
+    try {
+      await this.roomRepository.joinRoom(data.userId, data.roomId);
+
+      await client.join(data.roomId);
+
+      const name = RandomNameUtil.generate();
+
+      client.emit('joinedRoom', {
+        roomId: data.roomId,
+        userId: data.userId,
+        name,
+        timestamp: new Date(),
+      });
+      return {
+        success: true,
+        message: `Successfully joined room ${data.roomId}`,
+      };
+    } catch (error) {
       return {
         success: false,
         error: error.message,
