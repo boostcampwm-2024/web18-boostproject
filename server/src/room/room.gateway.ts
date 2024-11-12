@@ -121,7 +121,7 @@ export class RoomGateway
   async handleLeaveRoom(
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { roomId: string; userId: string },
-  ) {
+  ): Promise<{ success: boolean; message?: string; error?: string }> {
     try {
       const room = await this.roomRepository.findRoom(data.roomId);
 
@@ -133,12 +133,12 @@ export class RoomGateway
       await client.leave(data.roomId);
 
       return {
-        status: 'success',
+        success: true,
         message: `Successfully left room ${data.roomId}`,
       };
     } catch (e) {
       return {
-        status: 'error',
+        success: false,
         message: e.message,
       };
     }
