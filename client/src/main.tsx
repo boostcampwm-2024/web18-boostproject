@@ -1,7 +1,8 @@
-// import { StrictMode } from 'react'
+import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import App from './App.tsx';
 import './index.css';
+import { Router } from '@/pages';
+import { Sidebar } from './widgets/sidebar/Sidebar.tsx';
 
 async function enableMocking() {
   if (process.env.NODE_ENV !== 'development') {
@@ -13,8 +14,11 @@ async function enableMocking() {
 
 enableMocking().then(() => {
   createRoot(document.getElementById('root')!).render(
-    <>
-      <App />
-    </>,
+    <StrictMode>
+      <div className="flex flex-row">
+        <Sidebar />
+        <Router />
+      </div>
+    </StrictMode>,
   );
 });
