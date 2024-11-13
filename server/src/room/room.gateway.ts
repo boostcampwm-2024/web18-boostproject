@@ -119,6 +119,12 @@ export class RoomGateway
   ): Promise<{ success: boolean; message?: string; error?: string }> {
     console.log('joinRoom event received', data);
     try {
+      const room = await this.roomRepository.findRoom(data.roomId);
+
+      if (!room) {
+        throw new Error('Room not found');
+      }
+
       await this.roomRepository.joinRoom(data.userId, data.roomId);
 
       const currentUserCount = await this.roomRepository.getCurrentUsers(
