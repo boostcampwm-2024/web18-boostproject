@@ -45,19 +45,16 @@
 
     <div class="container">
       <div>
-        <input type="text" id="createUserId" placeholder="User ID" />
         <button onclick="createRoom()">Create Room</button>
       </div>
 
       <div>
         <input type="text" id="joinRoomId" placeholder="Room ID" />
-        <input type="text" id="joinUserId" placeholder="User ID" />
         <button onclick="joinRoom()">Join Room</button>
       </div>
 
       <div>
         <input type="text" id="leaveRoomId" placeholder="Room ID" />
-        <input type="text" id="leaveUserId" placeholder="User ID" />
         <button onclick="leaveRoom()">Leave Room</button>
       </div>
 
@@ -87,6 +84,7 @@
         socket.emit('message', { message: input.value, roomId: roomIdDom.innerHTML }, (response) => {
           addEvent(`response: ${JSON.stringify(response)}`);
         });
+        input.value = ''; // 메시지 전송 후 입력창 비우기
       });
 
       function socketInit(socket) {
@@ -114,13 +112,18 @@
           addEvent(`Joined Room: ${JSON.stringify(data, null, 2)}`);
         });
 
-        // 유저 퇴장 이벤트 리스너
-        socket.on('userLeft', (data) => {
-          addEvent(`User Left: ${JSON.stringify(data, null, 2)}`);
+        // 방 나가기 이벤트 리스너
+        socket.on('leavedRoom', (data) => {
+          addEvent(`Left Room: ${JSON.stringify(data, null, 2)}`);
         });
 
+        // 사용자 수 업데이트 이벤트 리스너
+        socket.on('roomUsersUpdated', (data) => {
+          addEvent(`Room Users Updated: ${JSON.stringify(data, null, 2)}`);
+        });
+
+        // 채팅 메시지 수신 리스너
         socket.on('broadcast', (data) => {
-          console.log(data);
           const { userName, userId, message } = data;
           addEvent(`${userName}(${userId}): ${message}`);
         });
@@ -128,31 +131,24 @@
 
       // 방 생성 함수
       function createRoom() {
-        const userId = document.getElementById('createUserId').value;
-        if (!userId) {
-          addEvent('Error: Please enter a User ID');
-          return;
-        }
-
-        socket.emit('createRoom', { userId }, (response) => {
-          addEvent(
-            `Create Room Response: ${JSON.stringify(response, null, 2)}`,
-          );
+        socket.emit('createRoom', null, (response) => {
+          addEvent(`Create Room Response: ${JSON.stringify(response, null, 2)}`);
+          if (response.success && response.room) {
+            roomIdDom.innerHTML = response.room.id; // 생성된 방 ID를 화면에 표시
+          }
         });
       }
 
       // 방 입장 함수
       function joinRoom() {
         const roomId = document.getElementById('joinRoomId').value;
-        const userId = document.getElementById('joinUserId').value;
-
-        if (!roomId || !userId) {
-          addEvent('Error: Please enter both Room ID and User ID');
+        if (!roomId) {
+          addEvent('Error: Please enter Room ID');
           return;
         }
 
         roomIdDom.innerHTML = roomId; // 브라우저에 보여지는 방 번호 업데이트
-        socket.emit('joinRoom', { roomId, userId }, (response) => {
+        socket.emit('joinRoom', { roomId }, (response) => {
           addEvent(`Join Room Response: ${JSON.stringify(response, null, 2)}`);
         });
       }
@@ -160,15 +156,16 @@
       // 방 퇴장 함수
       function leaveRoom() {
         const roomId = document.getElementById('leaveRoomId').value;
-        const userId = document.getElementById('leaveUserId').value;
-
-        if (!roomId || !userId) {
-          addEvent('Error: Please enter both Room ID and User ID');
+        if (!roomId) {
+          addEvent('Error: Please enter Room ID');
           return;
         }
 
-        socket.emit('leaveRoom', { roomId, userId }, (response) => {
+        socket.emit('leaveRoom', { roomId }, (response) => {
           addEvent(`Leave Room Response: ${JSON.stringify(response, null, 2)}`);
+          if (response.success) {
+            roomIdDom.innerHTML = 'room_1'; // 기본 방 번호로 초기화
+          }
         });
       }
 
@@ -176,7 +173,7 @@
       function addEvent(message) {
         const timestamp = new Date().toLocaleTimeString();
         eventsDiv.textContent = `${eventsDiv.textContent}[${timestamp}]\n ${message}\n`;
-        eventsDiv.textContent += `===============`;
+        eventsDiv.textContent += `===============\n`;
         eventsDiv.scrollTop = eventsDiv.scrollHeight;
       }
 

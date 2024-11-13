@@ -35,7 +35,6 @@ export class RoomRepository {
     await this.redisClient
       .multi()
       .hSet(roomKey, 'id', room.id)
-      .hSet(roomKey, 'name', room.name)
       .hSet(roomKey, 'hostId', room.hostId)
       .hSet(roomKey, 'createdAt', room.createdAt.toISOString())
       .hSet(roomKey, 'isActive', 'true')
@@ -88,7 +87,6 @@ export class RoomRepository {
 
     return new Room({
       id,
-      name,
       hostId,
       createdAt: new Date(createdAt),
     });
@@ -121,5 +119,11 @@ export class RoomRepository {
     multi.hIncrBy(roomKey, 'currentUsers', 1);
 
     await multi.exec();
+  }
+
+  async getCurrentUsers(roomId: string): Promise<number> {
+    const roomKey = this.roomKey(roomId);
+    const currentUsers = await this.redisClient.hGet(roomKey, 'currentUsers');
+    return parseInt(currentUsers || '0', 10);
   }
 }
