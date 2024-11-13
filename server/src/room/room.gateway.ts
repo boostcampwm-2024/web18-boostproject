@@ -26,9 +26,7 @@ export class RoomGateway
   @WebSocketServer()
   server: Server;
 
-  constructor(
-    private readonly roomRepository: RoomRepository,
-  ) {}
+  constructor(private readonly roomRepository: RoomRepository) {}
 
   afterInit(server: Server) {
     console.log('WebSocket Gateway Initialized');
@@ -91,7 +89,13 @@ export class RoomGateway
   ): Promise<object> {
     try {
       const clientIdForDisplay = client.id.substring(0, 4);
-      this.server.to(data.roomId).emit('broadcast', { message: data.message, userName: client.data.name, userId: clientIdForDisplay });
+      this.server
+        .to(data.roomId)
+        .emit('broadcast', {
+          message: data.message,
+          userName: client.data.name,
+          userId: clientIdForDisplay,
+        });
       return {
         success: true,
         message: `Successfully send message: ${data.message}`,
@@ -117,6 +121,9 @@ export class RoomGateway
     try {
       await this.roomRepository.joinRoom(data.userId, data.roomId);
 
+      const currentUserCount = await this.roomRepository.getCurrentUsers(
+        data.roomId,
+      );
       await client.join(data.roomId);
       if (client.data.name === undefined) {
         client.data.name = RandomNameUtil.generate();
@@ -126,6 +133,11 @@ export class RoomGateway
         userId: data.userId,
         timestamp: new Date(),
       });
+      this.server.to(data.roomId).emit('roomUsersUpdated', {
+        roomId: data.roomId,
+        userCount: currentUserCount,
+      });
+
       return {
         success: true,
         message: `Successfully joined room ${data.roomId}`,
@@ -151,7 +163,21 @@ export class RoomGateway
       }
 
       await this.roomRepository.leaveRoom(data.userId, data.roomId);
+
+      const currentUserCount = await this.roomRepository.getCurrentUsers(
+        data.roomId,
+      );
       await client.leave(data.roomId);
+
+      client.emit('leavedRoom', {
+        roomId: data.roomId,
+        userId: data.userId,
+        timestamp: new Date(),
+      });
+      this.server.to(data.roomId).emit('roomUsersUpdated', {
+        roomId: data.roomId,
+        userCount: currentUserCount,
+      });
 
       return {
         success: true,

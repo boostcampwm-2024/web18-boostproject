@@ -122,4 +122,10 @@ export class RoomRepository {
 
     await multi.exec();
   }
+
+  async getCurrentUsers(roomId: string): Promise<number> {
+    const roomKey = this.roomKey(roomId);
+    const currentUsers = await this.redisClient.hGet(roomKey, 'currentUsers');
+    return parseInt(currentUsers || '0', 10);
+  }
 }
