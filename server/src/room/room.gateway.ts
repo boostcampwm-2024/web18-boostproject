@@ -56,13 +56,21 @@ export class RoomGateway
         createdAt: new Date(),
       });
 
-      await client.join(roomId);
-
       await this.roomRepository.createRoom(roomId, room);
+      await this.roomRepository.joinRoom(clientId, roomId);
+      await client.join(roomId);
 
       client.emit('roomCreated', {
         roomId: room.id,
         hostId: room.hostId,
+      });
+
+      const currentUserCount =
+        await this.roomRepository.getCurrentUsers(roomId);
+
+      this.server.to(roomId).emit('roomUsersUpdated', {
+        roomId: roomId,
+        userCount: currentUserCount,
       });
 
       return {
@@ -160,28 +168,30 @@ export class RoomGateway
       if (!room) {
         throw new Error('Room not found');
       }
+      const roomId = data.roomId;
 
       const clientId = client.id;
-      await this.roomRepository.leaveRoom(client.id, data.roomId);
+      await this.roomRepository.leaveRoom(client.id, roomId);
 
       const currentUserCount = await this.roomRepository.getCurrentUsers(
-        data.roomId,
+        roomId,
       );
       await client.leave(data.roomId);
 
       client.emit('leavedRoom', {
-        roomId: data.roomId,
+        roomId,
         userId: clientId,
         timestamp: new Date(),
       });
       this.server.to(data.roomId).emit('roomUsersUpdated', {
-        roomId: data.roomId,
+        roomId,
         userCount: currentUserCount,
       });
+      data.roomId = undefined;
 
       return {
         success: true,
-        message: `Successfully left room ${data.roomId}`,
+        message: `Successfully left room ${roomId}`,
       };
     } catch (e) {
       return {
