@@ -59,13 +59,13 @@ export class RandomNameUtil {
     '토끼',
   ];
 
-  static generate() {
+  public static generate() {
     const adjectvieLength = RandomNameUtil.adjective.length;
     const animalLength = RandomNameUtil.animal.length;
 
-    const adjectvieIndex = Math.random() * (adjectvieLength + 1);
-    const animalIndex = Math.random() * (animalLength + 1);
+    const adjectvieIndex = Math.floor(Math.random() * adjectvieLength);
+    const animalIndex = Math.floor(Math.random() * animalLength);
 
-    return `${RandomNameUtil.adjective[Math.floor(adjectvieIndex)]} ${RandomNameUtil.animal[Math.floor(animalIndex)]}`;
+    return `${RandomNameUtil.adjective[adjectvieIndex]} ${RandomNameUtil.animal[animalIndex]}`;
   }
 }
