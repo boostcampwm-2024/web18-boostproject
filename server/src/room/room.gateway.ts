@@ -29,7 +29,7 @@ export class RoomGateway
 
   constructor(
     private readonly roomRepository: RoomRepository,
-    private readonly  userRepository: UserRepository,
+    private readonly userRepository: UserRepository,
   ) {}
 
   afterInit(server: Server) {
