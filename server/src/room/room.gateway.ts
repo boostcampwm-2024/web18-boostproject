@@ -26,7 +26,9 @@ export class RoomGateway
   @WebSocketServer()
   server: Server;
 
-  constructor(private readonly roomRepository: RoomRepository) {}
+  constructor(
+    private readonly roomRepository: RoomRepository,
+  ) {}
 
   afterInit(server: Server) {
     console.log('WebSocket Gateway Initialized');
@@ -82,6 +84,26 @@ export class RoomGateway
     }
   }
 
+  @SubscribeMessage('message')
+  async handleMessage(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: { roomId: string; message: string },
+  ): Promise<object> {
+    try {
+      const clientIdForDisplay = client.id.substring(0, 4);
+      this.server.to(data.roomId).emit('broadcast', { message: data.message, userName: client.data.name, userId: clientIdForDisplay });
+      return {
+        success: true,
+        message: `Successfully send message: ${data.message}`,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
+  }
+
   @SubscribeMessage('joinRoom')
   async handleJoinRoom(
     @ConnectedSocket() client: Socket,
@@ -96,13 +118,12 @@ export class RoomGateway
       await this.roomRepository.joinRoom(data.userId, data.roomId);
 
       await client.join(data.roomId);
-
-      const name = RandomNameUtil.generate();
-
+      if (client.data.name === undefined) {
+        client.data.name = RandomNameUtil.generate();
+      }
       client.emit('joinedRoom', {
         roomId: data.roomId,
         userId: data.userId,
-        name,
         timestamp: new Date(),
       });
       return {

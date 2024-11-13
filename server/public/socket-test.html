@@ -61,6 +61,10 @@
         <button onclick="leaveRoom()">Leave Room</button>
       </div>
 
+      <input id="input" type="text" placeholder="채팅 내용을 입력해주세요">
+      <button id="sbmt">전송</button>
+      <p id="roomId">room_1</p>
+
       <button onclick="clearEvents()">Clear Events</button>
 
       <pre id="events"></pre>
@@ -71,38 +75,56 @@
         transports: ['websocket'],
         autoConnect: true,
       });
+      socketInit(socket);
 
       const statusDiv = document.getElementById('status');
       const eventsDiv = document.getElementById('events');
 
-      // 연결 이벤트
-      socket.on('connect', () => {
-        statusDiv.textContent = 'Connected';
-        statusDiv.className = 'connected';
-        addEvent('Connected to server');
+      const input = document.getElementById("input");
+      const submitButton = document.getElementById("sbmt");
+      const roomIdDom = document.getElementById("roomId");
+      submitButton.addEventListener('click', () => {
+        socket.emit('message', { message: input.value, roomId: roomIdDom.innerHTML }, (response) => {
+          addEvent(`response: ${JSON.stringify(response)}`);
+        });
       });
 
-      // 연결 해제 이벤트
-      socket.on('disconnect', () => {
-        statusDiv.textContent = 'Disconnected';
-        statusDiv.className = 'disconnected';
-        addEvent('Disconnected from server');
-      });
+      function socketInit(socket) {
+        // 연결 이벤트
+        socket.on('connect', () => {
+          statusDiv.textContent = 'Connected';
+          statusDiv.className = 'connected';
+          addEvent('Connected to server');
+        });
 
-      // 방 생성 이벤트 리스너
-      socket.on('roomCreated', (data) => {
-        addEvent(`Room Created: ${JSON.stringify(data, null, 2)}`);
-      });
+        // 연결 해제 이벤트
+        socket.on('disconnect', () => {
+          statusDiv.textContent = 'Disconnected';
+          statusDiv.className = 'disconnected';
+          addEvent('Disconnected from server');
+        });
 
-      // 방 입장 이벤트 리스너
-      socket.on('joinedRoom', (data) => {
-        addEvent(`Joined Room: ${JSON.stringify(data, null, 2)}`);
-      });
+        // 방 생성 이벤트 리스너
+        socket.on('roomCreated', (data) => {
+          addEvent(`Room Created: ${JSON.stringify(data, null, 2)}`);
+        });
 
-      // 유저 퇴장 이벤트 리스너
-      socket.on('userLeft', (data) => {
-        addEvent(`User Left: ${JSON.stringify(data, null, 2)}`);
-      });
+        // 방 입장 이벤트 리스너
+        socket.on('joinedRoom', (data) => {
+          addEvent(`Joined Room: ${JSON.stringify(data, null, 2)}`);
+        });
+
+        // 유저 퇴장 이벤트 리스너
+        socket.on('userLeft', (data) => {
+          addEvent(`User Left: ${JSON.stringify(data, null, 2)}`);
+        });
+
+        socket.on('broadcast', (data) => {
+          console.log(data);
+          const { userName, userId, message } = data;
+          addEvent(`${userName}(${userId}): ${message}`);
+        });
+      }
 
       // 방 생성 함수
       function createRoom() {
@@ -129,6 +151,7 @@
           return;
         }
 
+        roomIdDom.innerHTML = roomId; // 브라우저에 보여지는 방 번호 업데이트
         socket.emit('joinRoom', { roomId, userId }, (response) => {
           addEvent(`Join Room Response: ${JSON.stringify(response, null, 2)}`);
         });
@@ -152,7 +175,7 @@
       // 이벤트 로그 추가 함수
       function addEvent(message) {
         const timestamp = new Date().toLocaleTimeString();
-        eventsDiv.textContent = `${eventsDiv.textContent}[${timestamp}] ${message}\n`;
+        eventsDiv.textContent = `${eventsDiv.textContent}[${timestamp}]\n ${message}\n`;
         eventsDiv.textContent += `===============`;
         eventsDiv.scrollTop = eventsDiv.scrollHeight;
       }
