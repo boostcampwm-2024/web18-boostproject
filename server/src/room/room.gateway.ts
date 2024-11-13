@@ -46,11 +46,12 @@ export class RoomGateway
     try {
       const clientId = client.id;
       const roomId = await this.roomRepository.generateRoomId();
-      const name = RandomNameUtil.generate();
 
+      if (client.data.name === undefined) {
+        client.data.name = RandomNameUtil.generate();
+      }
       const room = new Room({
         id: roomId,
-        name,
         hostId: clientId,
         createdAt: new Date(),
       });
@@ -61,7 +62,6 @@ export class RoomGateway
 
       client.emit('roomCreated', {
         roomId: room.id,
-        name: room.name,
         hostId: room.hostId,
       });
 
