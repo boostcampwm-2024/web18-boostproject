@@ -5,7 +5,7 @@ import { Message } from '.';
 export function Chatting() {
   return (
     <div className="flex flex-col flex-grow overflow-hidden">
-      <div className="overflow-y-auto mb-5 mt-24">
+      <div className="overflow-y-auto mb-3 mt-24">
         {Array.from({ length: 100 }).map((_, index) => (
           <Message key={index} />
         ))}

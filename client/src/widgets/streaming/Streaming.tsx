@@ -16,7 +16,7 @@ export function Streaming() {
   return (
     <div className="bg-grayscale-400 w-3/4 relative overflow-hidden">
       <AlbumBackground coverImage={SAMPLE_ALBUM.coverImage} />
-      <div className="absolute inset-0 flex justify-center pt-36 text-grayscale-100 z-10">
+      <div className="absolute inset-0 flex justify-center pt-28 text-grayscale-100 z-10">
         <AlbumInfo album={SAMPLE_ALBUM} />
       </div>
     </div>
