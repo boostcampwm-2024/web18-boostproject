@@ -42,20 +42,16 @@ export class RoomGateway
   @SubscribeMessage('createRoom')
   async handleCreateRoom(
     @ConnectedSocket() client: Socket,
-    @MessageBody()
-    data: {
-      userId: string;
-    },
   ): Promise<{ success: boolean; room?: Room; error?: string }> {
-    console.log('createRoom event received', data);
     try {
+      const clientId = client.id;
       const roomId = await this.roomRepository.generateRoomId();
       const name = RandomNameUtil.generate();
 
       const room = new Room({
         id: roomId,
         name,
-        hostId: data.userId,
+        hostId: clientId,
         createdAt: new Date(),
       });
 
@@ -89,13 +85,11 @@ export class RoomGateway
   ): Promise<object> {
     try {
       const clientIdForDisplay = client.id.substring(0, 4);
-      this.server
-        .to(data.roomId)
-        .emit('broadcast', {
-          message: data.message,
-          userName: client.data.name,
-          userId: clientIdForDisplay,
-        });
+      this.server.to(data.roomId).emit('broadcast', {
+        message: data.message,
+        userName: client.data.name,
+        userId: clientIdForDisplay,
+      });
       return {
         success: true,
         message: `Successfully send message: ${data.message}`,
@@ -114,18 +108,17 @@ export class RoomGateway
     @MessageBody()
     data: {
       roomId: string;
-      userId: string;
     },
   ): Promise<{ success: boolean; message?: string; error?: string }> {
     console.log('joinRoom event received', data);
     try {
       const room = await this.roomRepository.findRoom(data.roomId);
-
       if (!room) {
         throw new Error('Room not found');
       }
 
-      await this.roomRepository.joinRoom(data.userId, data.roomId);
+      const clientId = client.id;
+      await this.roomRepository.joinRoom(clientId, data.roomId);
 
       const currentUserCount = await this.roomRepository.getCurrentUsers(
         data.roomId,
@@ -136,7 +129,7 @@ export class RoomGateway
       }
       client.emit('joinedRoom', {
         roomId: data.roomId,
-        userId: data.userId,
+        userId: clientId,
         timestamp: new Date(),
       });
       this.server.to(data.roomId).emit('roomUsersUpdated', {
@@ -159,7 +152,7 @@ export class RoomGateway
   @SubscribeMessage('leaveRoom')
   async handleLeaveRoom(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: { roomId: string; userId: string },
+    @MessageBody() data: { roomId: string },
   ): Promise<{ success: boolean; message?: string; error?: string }> {
     try {
       const room = await this.roomRepository.findRoom(data.roomId);
@@ -168,7 +161,8 @@ export class RoomGateway
         throw new Error('Room not found');
       }
 
-      await this.roomRepository.leaveRoom(data.userId, data.roomId);
+      const clientId = client.id;
+      await this.roomRepository.leaveRoom(client.id, data.roomId);
 
       const currentUserCount = await this.roomRepository.getCurrentUsers(
         data.roomId,
@@ -177,7 +171,7 @@ export class RoomGateway
 
       client.emit('leavedRoom', {
         roomId: data.roomId,
-        userId: data.userId,
+        userId: clientId,
         timestamp: new Date(),
       });
       this.server.to(data.roomId).emit('roomUsersUpdated', {
