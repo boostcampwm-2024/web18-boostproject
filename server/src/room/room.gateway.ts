@@ -59,7 +59,7 @@ export class RoomGateway
 
       await this.roomRepository.createRoom(roomId, room);
 
-      this.server.emit('roomCreated', {
+      client.emit('roomCreated', {
         roomId: room.id,
         name: room.name,
         hostId: room.hostId,
