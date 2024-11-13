@@ -12,7 +12,6 @@ import { Server, Socket } from 'socket.io';
 import { RoomRepository } from './room.repository';
 import { Room } from './room.entity';
 import { RandomNameUtil } from '@/common/randomname/random-name.util';
-import { UserRepository } from '@/user/user.repository';
 
 @WebSocketGateway({
   namespace: 'rooms',
@@ -29,7 +28,6 @@ export class RoomGateway
 
   constructor(
     private readonly roomRepository: RoomRepository,
-    private readonly userRepository: UserRepository,
   ) {}
 
   afterInit(server: Server) {
@@ -92,9 +90,8 @@ export class RoomGateway
     @MessageBody() data: { roomId: string; message: string },
   ): Promise<object> {
     try {
-      const userName = await this.userRepository.findById(client.id);
       const clientIdForDisplay = client.id.substring(0, 4);
-      this.server.to(data.roomId).emit('broadcast', { message: data.message, userName: userName, userId: clientIdForDisplay });
+      this.server.to(data.roomId).emit('broadcast', { message: data.message, userName: client.data.name, userId: clientIdForDisplay });
       return {
         success: true,
         message: `Successfully send message: ${data.message}`,
@@ -121,8 +118,9 @@ export class RoomGateway
       await this.roomRepository.joinRoom(data.userId, data.roomId);
 
       await client.join(data.roomId);
-      await this.userRepository.create(client.id);
-
+      if (client.data.name === undefined) {
+        client.data.name = RandomNameUtil.generate();
+      }
       client.emit('joinedRoom', {
         roomId: data.roomId,
         userId: data.userId,
