@@ -7,10 +7,11 @@ import { RedisModule } from '@/common/redis/redis.module';
 import { RoomRepository } from './room/room.repository';
 import { RoomController } from '@/room/room.controller';
 import { RoomGateway } from './room/room.gateway';
+import { UserRepository } from '@/user/user.repository';
 
 @Module({
   imports: [CommonModule, ConfigModule.forRoot(), RedisModule],
   controllers: [AppController, RoomController],
-  providers: [Logger, AppService, RoomRepository, RoomGateway],
+  providers: [Logger, AppService, RoomRepository, RoomGateway, UserRepository],
 })
 export class AppModule {}
