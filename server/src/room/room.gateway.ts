@@ -94,7 +94,7 @@ export class RoomGateway
     try {
       const userName = await this.userRepository.findById(client.id);
       const clientIdForDisplay = client.id.substring(0, 4);
-      this.server.to(data.roomId).emit('message', { message: data.message, userName: userName, userId: clientIdForDisplay });
+      this.server.to(data.roomId).emit('broadcast', { message: data.message, userName: userName, userId: clientIdForDisplay });
       return {
         success: true,
         message: `Successfully send message: ${data.message}`,

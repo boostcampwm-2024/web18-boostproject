@@ -119,7 +119,7 @@
           addEvent(`User Left: ${JSON.stringify(data, null, 2)}`);
         });
 
-        socket.on('message', (data) => {
+        socket.on('broadcast', (data) => {
           console.log(data);
           const { userName, userId, message } = data;
           addEvent(`${userName}(${userId}): ${message}`);
