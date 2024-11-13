@@ -187,7 +187,6 @@ export class RoomGateway
         roomId,
         userCount: currentUserCount,
       });
-      data.roomId = undefined;
 
       return {
         success: true,
