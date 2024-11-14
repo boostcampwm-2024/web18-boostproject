@@ -43,7 +43,7 @@ export function AlbumInfo({ album }: AlbumInfoProps) {
           <button
             onClick={() => setIsOpen(!isOpen)}
             className={`transform transition-transform duration-100 ease-in-out
-              ${isOpen ? 'rotate-180' : 'rotate-0'}`}
+              ${isOpen ? 'rotate-0' : 'rotate-180'}`}
           >
             <ChevronDown />
           </button>
