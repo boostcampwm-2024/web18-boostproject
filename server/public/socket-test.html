@@ -61,7 +61,7 @@
         <button onclick="leaveRoom()">Leave Room</button>
       </div>
 
-      <input id="input" type="text" placeholder="채팅 내용을 입력해주세요">
+      <input id="input" type="text" placeholder="채팅 내용을 입력해주세요" />
       <button id="sbmt">전송</button>
       <p id="roomId">room_1</p>
 
@@ -80,13 +80,17 @@
       const statusDiv = document.getElementById('status');
       const eventsDiv = document.getElementById('events');
 
-      const input = document.getElementById("input");
-      const submitButton = document.getElementById("sbmt");
-      const roomIdDom = document.getElementById("roomId");
+      const input = document.getElementById('input');
+      const submitButton = document.getElementById('sbmt');
+      const roomIdDom = document.getElementById('roomId');
       submitButton.addEventListener('click', () => {
-        socket.emit('message', { message: input.value, roomId: roomIdDom.innerHTML }, (response) => {
-          addEvent(`response: ${JSON.stringify(response)}`);
-        });
+        socket.emit(
+          'message',
+          { message: input.value, roomId: roomIdDom.innerHTML },
+          (response) => {
+            addEvent(`response: ${JSON.stringify(response)}`);
+          },
+        );
       });
 
       function socketInit(socket) {

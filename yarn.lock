@@ -10222,7 +10222,6 @@ __metadata:
     eslint-plugin-react-hooks: "npm:^4.6.0"
     fluent-ffmpeg: "npm:^2.1.3"
     globals: "npm:^15.12.0"
-    react-router-dom: "npm:^6.28.0"
     typescript: "npm:^5.6.3"
     typescript-eslint: "npm:^8.13.0"
   languageName: unknown
@@ -10428,6 +10427,7 @@ __metadata:
     nest-winston: "npm:1.9.7"
     nestjs-cls: "npm:^4.4.1"
     prettier: "npm:^3.0.0"
+    react-router-dom: "npm:^6.28.0"
     redis: "npm:^4.7.0"
     reflect-metadata: "npm:^0.2.2"
     rxjs: "npm:^7.8.1"

@@ -1,3 +1,6 @@
+import { socket } from '@/socket';
+import { useNavigate } from 'react-router-dom';
+
 interface StreamingListItemProps {
   room: {
     roomId: string;
@@ -9,24 +12,17 @@ interface StreamingListItemProps {
 }
 
 export function StreamingListItem({ room }: StreamingListItemProps) {
-  // 최적화 필요
+  const navigate = useNavigate();
   const tagString = `#${room.tags.join(' #')}`;
-  const enterRoomHandler = () => {
-    fetch('http://localhost:3000/room', {
-      method: 'POST',
-      body: JSON.stringify({ roomId: room.roomId }),
-    }).then((response) => {
-      if (response.ok) {
-        console.log(`Entered room ${room.roomId}`);
-      }
-    });
+
+  const handleClick = () => {
+    navigate(`/streaming/${room.roomId}`);
   };
+
   return (
-    <li className="cursor-pointer">
-      <div onClick={enterRoomHandler}>
-        <p className="text-grayscale-50 truncate">{room.album}</p>
-        <p className="text-grayscale-400 text-xs truncate">{tagString}</p>
-      </div>
+    <li className="cursor-pointer" onClick={handleClick}>
+      <p className="text-grayscale-50 truncate">{room.album}</p>
+      <p className="text-grayscale-400 text-xs truncate">{tagString}</p>
     </li>
   );
 }

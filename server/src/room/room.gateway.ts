@@ -26,9 +26,7 @@ export class RoomGateway
   @WebSocketServer()
   server: Server;
 
-  constructor(
-    private readonly roomRepository: RoomRepository,
-  ) {}
+  constructor(private readonly roomRepository: RoomRepository) {}
 
   afterInit(server: Server) {
     console.log('WebSocket Gateway Initialized');
@@ -91,7 +89,11 @@ export class RoomGateway
   ): Promise<object> {
     try {
       const clientIdForDisplay = client.id.substring(0, 4);
-      this.server.to(data.roomId).emit('broadcast', { message: data.message, userName: client.data.name, userId: clientIdForDisplay });
+      this.server.to(data.roomId).emit('broadcast', {
+        message: data.message,
+        userName: client.data.name,
+        userId: clientIdForDisplay,
+      });
       return {
         success: true,
         message: `Successfully send message: ${data.message}`,
