@@ -1,13 +1,16 @@
 import { SendIcon } from '@/shared/icons/SendIcon';
 import { socket } from '@/socket';
-import { useState } from 'react';
+import { useState, FormEvent } from 'react';
 import { useParams } from 'react-router-dom';
+
 export default function ChatInput() {
   const [message, setMessage] = useState('');
   const { roomId } = useParams();
 
-  //TODO: 최적화 필요
-  const sendMessage = () => {
+  // TODOS: 최적화 필요
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!message.trim()) return;
     socket.emit(
       'message',
       { message: message, roomId: roomId },
@@ -18,16 +21,8 @@ export default function ChatInput() {
     setMessage('');
   };
 
-  const handleOnKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.nativeEvent.isComposing) {
-      return;
-    }
-    if (e.key === 'Enter') {
-      sendMessage();
-    }
-  };
   return (
-    <div>
+    <form onSubmit={handleSubmit}>
       <div className="flex flex-row">
         <input
           type="text"
@@ -35,12 +30,11 @@ export default function ChatInput() {
           className="bg-grayscale-700 rounded-lg w-full p-3 mr-2 focus:outline-none"
           onChange={(e) => setMessage(e.target.value)}
           value={message}
-          onKeyDown={handleOnKeyDown}
         />
-        <button onClick={sendMessage}>
+        <button type="submit">
           <SendIcon />
         </button>
       </div>
-    </div>
+    </form>
   );
 }
