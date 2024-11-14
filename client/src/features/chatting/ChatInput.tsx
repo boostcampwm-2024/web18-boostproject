@@ -4,7 +4,26 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 export default function ChatInput() {
   const [message, setMessage] = useState('');
-  const pathname = useParams().roomId;
+  const { roomId } = useParams();
+
+  const sendMessage = () => {
+    socket.emit(
+      'message',
+      { message: message, roomId: roomId },
+      (response: any) => {
+        console.log(response);
+      },
+    );
+    console.log('sendMessage');
+    setMessage('');
+  };
+
+  const handleOnKeyDown = (e: any) => {
+    if (e.key === 'Enter') {
+      console.log('Enter');
+      sendMessage();
+    }
+  };
   return (
     <div>
       <div className="flex flex-row">
@@ -14,19 +33,9 @@ export default function ChatInput() {
           className="bg-grayscale-700 rounded-lg w-full p-3 mr-2 focus:outline-none"
           onChange={(e) => setMessage(e.target.value)}
           value={message}
+          onKeyDown={handleOnKeyDown}
         />
-        <button
-          onClick={() => {
-            socket.emit(
-              'message',
-              { message: message, roomId: pathname },
-              (response: any) => {
-                console.log(response);
-              },
-            );
-            setMessage('');
-          }}
-        >
+        <button onClick={sendMessage}>
           <SendIcon />
         </button>
       </div>
