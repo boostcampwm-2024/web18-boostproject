@@ -1,4 +1,4 @@
-import { Album } from '@/entities/album/type';
+import { Album } from '@/entities/album/types';
 import { ChevronDown } from '@/shared/icons/ChevronDown';
 import { useState } from 'react';
 interface AlbumInfoProps {

@@ -1,6 +1,5 @@
 import { StreamingListItem } from './StreamingListItem';
 import './StreamingList.css';
-import { useState } from 'react';
 
 interface RoomData {
   roomId: string;
@@ -12,7 +11,7 @@ interface RoomData {
 
 const dummyRoomList: RoomData[] = [
   {
-    roomId: 'room_14',
+    roomId: 'room_16',
     album: '로제의 APT.',
     singer: '로제',
     tags: ['힙합'],
@@ -21,8 +20,6 @@ const dummyRoomList: RoomData[] = [
 ];
 
 export default function StreamingList() {
-  const [roomList, setRoomList] = useState<RoomData[]>([]);
-
   return (
     <div className="p-8 pt-6 w-full">
       <hr className="border-0 h-[1px] bg-grayscale-600 mb-6" />

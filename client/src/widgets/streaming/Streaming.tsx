@@ -1,6 +1,6 @@
 import { AlbumBackground } from './AlbumBackground';
 import { AlbumInfo } from './AlbumInfo';
-import { Album } from '@/entities/album/type';
+import { Album } from '@/entities/album/types';
 import SampleAlbumCover from '@/assets/sample-album-cover-1.png';
 
 const SAMPLE_ALBUM: Album = {

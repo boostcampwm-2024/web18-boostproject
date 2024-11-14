@@ -1,4 +1,3 @@
-import { socket } from '@/socket';
 import { useNavigate } from 'react-router-dom';
 
 interface StreamingListItemProps {
