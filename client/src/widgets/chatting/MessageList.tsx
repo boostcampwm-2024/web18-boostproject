@@ -1,6 +1,7 @@
 import { MessageData } from '@/entities/message/types';
 import { Message } from './Message';
 import React from 'react';
+import './Chatting.css';
 
 interface MessageListProps {
   messages: MessageData[];

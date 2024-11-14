@@ -1,5 +1,4 @@
 import ChatInput from '@/features/chatting/ChatInput';
-import './Chatting.css';
 import { useChatMessage } from './useChatMessage';
 import MessageList from './MessageList';
 
