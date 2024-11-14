@@ -1,12 +1,8 @@
-name: Docker Image CI
+name: Docker Image CD
 
 on:
   push:
     branches: [ "dev" ]
-
-env:
-  DOCKER_IMAGE: ghcr.io/boostcampwm-2024/web18-inear
-  VERSION: ${{ github.sha }}
 
 jobs:
   build:
