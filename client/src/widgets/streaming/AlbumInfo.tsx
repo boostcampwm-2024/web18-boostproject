@@ -1,12 +1,10 @@
 import { Album } from '@/entities/album/types';
 import { ChevronDown } from '@/shared/icons/ChevronDown';
 import { useState } from 'react';
+
 interface AlbumInfoProps {
   album: Album;
 }
-
-// 가사 : lyrics
-// 플레이리스트 : playlist
 
 export function AlbumInfo({ album }: AlbumInfoProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -28,9 +26,13 @@ export function AlbumInfo({ album }: AlbumInfoProps) {
         />
         <p className="text-2xl font-bold">{album.trackName}</p>
       </div>
-      <div className="absolute bottom-0  w-full h-64 bg-grayscale-800 text-gray-100 rounded-t-lg">
+      <div
+        className={`absolute bottom-0 w-full bg-grayscale-800 text-gray-100 rounded-t-lg 
+          transform transition-transform duration-300 ease-in-out
+          ${isOpen ? 'translate-y-0' : 'translate-y-[calc(100%-56px)]'}`}
+      >
         <div className="flex flex-row justify-between px-6 py-4 items-center bg-grayscale-900 rounded-t-lg">
-          <div className="flex flex-row">
+          <div className="flex flex-row space-x-4">
             <button className="mr-4" onClick={() => setCategory('lyrics')}>
               가사
             </button>
@@ -38,11 +40,20 @@ export function AlbumInfo({ album }: AlbumInfoProps) {
               플레이리스트
             </button>
           </div>
-          <button onClick={() => setIsOpen(!isOpen)}>
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className={`transform transition-transform duration-100 ease-in-out
+              ${isOpen ? 'rotate-180' : 'rotate-0'}`}
+          >
             <ChevronDown />
           </button>
         </div>
-        {category === 'lyrics' ? <p>가사</p> : <p>플레이리스트</p>}
+        <div
+          className={`px-6 py-4 h-64 transition-opacity duration-200 ease-in-out
+            ${isOpen ? 'opacity-100' : 'opacity-0'}`}
+        >
+          {category === 'lyrics' ? <p>가사</p> : <p>플레이리스트</p>}
+        </div>
       </div>
     </div>
   );
