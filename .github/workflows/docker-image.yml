@@ -15,11 +15,11 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      # 원격 서버의 SSH 키를 파일에 추가하는 프로세스
+      # 원격 서버의 SSH 호스트 키를 저장하여 SSH 연결 시 신뢰성을 확인하는 과정
       - name: Add known hosts
         run: ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
 
-      # 서버에서 Docker Compose를 사용해 컨테이너를 빌드하고 배포합니다.
+      # 서버에서 파일을 최신화 하고, 배포 스크립트를 통해 실제 배포 진행
       - name: Deploy with Docker Compose on server
         run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
