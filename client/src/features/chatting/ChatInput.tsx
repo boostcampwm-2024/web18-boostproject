@@ -6,6 +6,7 @@ export default function ChatInput() {
   const [message, setMessage] = useState('');
   const { roomId } = useParams();
 
+  //TODO: 최적화 필요
   const sendMessage = () => {
     socket.emit(
       'message',
@@ -14,13 +15,14 @@ export default function ChatInput() {
         console.log(response);
       },
     );
-    console.log('sendMessage');
     setMessage('');
   };
 
-  const handleOnKeyDown = (e: any) => {
+  const handleOnKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.nativeEvent.isComposing) {
+      return;
+    }
     if (e.key === 'Enter') {
-      console.log('Enter');
       sendMessage();
     }
   };
