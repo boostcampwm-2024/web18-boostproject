@@ -1,15 +1,15 @@
 import { AlbumBackground } from './AlbumBackground';
 import { AlbumInfo } from './AlbumInfo';
-import { Album } from '@/entities/album/type';
+import { Album } from '@/entities/album/types';
 import SampleAlbumCover from '@/assets/sample-album-cover-1.png';
 
 const SAMPLE_ALBUM: Album = {
   coverImage: SampleAlbumCover,
   tags: ['밴드', '국내'],
-  title: '코난못난코코난못난코코난못난코코난못난코',
-  artist: 'TOUCHED',
+  title: '버그사냥단의 노동요',
+  artist: '버그사냥단',
   currentTime: '00:00',
-  trackName: '불시',
+  trackName: '버그 없는 세상',
 };
 
 export function Streaming() {
