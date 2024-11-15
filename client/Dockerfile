@@ -8,9 +8,7 @@ COPY client/ client/
 
 RUN corepack enable
 RUN yarn install
-RUN cd client && \
-    yarn add react-router-dom && \
-    cd ../
+RUN yarn workspace client install
 
 WORKDIR /app/client
 
