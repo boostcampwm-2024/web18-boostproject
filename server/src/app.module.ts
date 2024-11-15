@@ -7,9 +7,11 @@ import { RedisModule } from '@/common/redis/redis.module';
 import { RoomRepository } from './room/room.repository';
 import { RoomController } from '@/room/room.controller';
 import { RoomGateway } from './room/room.gateway';
+import { MusicProcessingSevice } from './music/music.processor';
+import { MusicModule } from './music/music.module';
 
 @Module({
-  imports: [CommonModule, ConfigModule.forRoot(), RedisModule],
+  imports: [CommonModule, ConfigModule.forRoot(), RedisModule, MusicModule],
   controllers: [AppController, RoomController],
   providers: [Logger, AppService, RoomRepository, RoomGateway],
 })
