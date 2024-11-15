@@ -1,6 +1,6 @@
 import { io } from 'socket.io-client';
 
-const URL = 'http://inear.live/rooms';
+const URL = 'https://inear.live/rooms';
 
 export const socket = io(URL, {
   autoConnect: false
