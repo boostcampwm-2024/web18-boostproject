@@ -8,10 +8,7 @@ COPY tsconfig.json ./
 COPY server/ server/
 
 RUN corepack enable && \
-    yarn install && \
-    cd server && \
-    yarn add @nestjs/platform-socket.io @nestjs/websockets socket.io @types/socket.io && \
-    cd ../
+    yarn install
 
 WORKDIR /app/server
 

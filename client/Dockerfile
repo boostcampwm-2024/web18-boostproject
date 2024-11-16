@@ -6,9 +6,8 @@ COPY package.json yarn.lock .yarnrc.yml ./
 COPY .yarn .yarn
 COPY client/ client/
 
-RUN corepack enable
-RUN yarn install
-RUN yarn workspace client install
+RUN corepack enable && \
+    yarn install
 
 WORKDIR /app/client
 
