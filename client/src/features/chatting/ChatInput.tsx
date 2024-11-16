@@ -1,4 +1,4 @@
-import { SendIcon } from '@/shared/icons/SendIcon';
+import { SendIcon } from '@/shared/icon/SendIcon';
 import { socket } from '@/socket';
 import { useState, FormEvent } from 'react';
 import { useParams } from 'react-router-dom';
