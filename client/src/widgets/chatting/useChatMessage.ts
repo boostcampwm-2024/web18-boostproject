@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { socket } from '@/socket';
+import { socket } from '@/shared/api/socket';
 import { MessageData } from '@/entities/message/types';
 
 export function useChatMessage() {
