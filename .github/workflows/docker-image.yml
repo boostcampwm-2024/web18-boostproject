@@ -35,7 +35,7 @@ jobs:
       # Docker Compose로 전체 애플리케이션 빌드 및 실행 (테스트용)
       - name: Run Docker Compose for testing (optional)
         run: |
-          docker-compose up --build -d
+          docker compose up --build -d
 
       # 서버 이미지 푸시 (Docker Hub 또는 다른 레지스트리)
       - name: Push server image to Docker Hub (optional)
