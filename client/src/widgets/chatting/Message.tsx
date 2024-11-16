@@ -1,8 +1,13 @@
-export function Message() {
+interface MessageData {
+  userName: string;
+  message: string;
+}
+
+export function Message({ userName, message }: MessageData) {
   return (
     <div className="text-sm pb-4">
-      <span className="text-brand mr-4">코난못난코</span>
-      <span className="text-grayscale-100">안녕하세요</span>
+      <span className="text-brand mr-4">{userName}</span>
+      <span className="text-grayscale-100">{message}</span>
     </div>
   );
 }

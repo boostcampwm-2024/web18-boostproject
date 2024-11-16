@@ -1,2 +1,1 @@
-export { Message } from './Message';
-export { Chatting } from './Chatting';
+export { ChattingContainer } from './ChattingContainer';
