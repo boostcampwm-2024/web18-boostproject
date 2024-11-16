@@ -63,6 +63,7 @@ jobs:
       - name: Deploy with Docker Compose on server
         run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} " \
+            mkdir -p /${{ secrets.SSH_USER }}/web18-inear-test && \
             cd /${{ secrets.SSH_USER }}/web18-inear-test && \
             docker pull ${{ secrets.DOCKER_USERNAME }}/inear-server:latest && \
             docker pull ${{ secrets.DOCKER_USERNAME }}/inear-client:latest && \
