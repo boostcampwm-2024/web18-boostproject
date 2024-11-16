@@ -1,10 +1,9 @@
-/* Scrollbar */
-::-webkit-scrollbar {
+.streaming-list::-webkit-scrollbar {
   background-color: #121212;
   width: 6px;
 }
 
-::-webkit-scrollbar-thumb {
+.streaming-list::-webkit-scrollbar-thumb {
   background-color: #414141;
   /* border-radius: 4px; */
 }
