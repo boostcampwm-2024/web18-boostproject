@@ -1,8 +1,7 @@
 import { io } from 'socket.io-client';
 
-const URL = 'http://localhost:3000/rooms';
+const URL = 'https://inear.live/rooms';
 
 export const socket = io(URL, {
-  autoConnect: false,
-  transports: ['websocket'],
+  autoConnect: false
 });
