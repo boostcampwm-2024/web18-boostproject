@@ -5,7 +5,7 @@ WORKDIR /app
 COPY package.json yarn.lock .yarnrc.yml ./
 COPY .yarn .yarn
 COPY tsconfig.json ./
-COPY server/ server/
+COPY ./ ./
 
 RUN corepack enable && \
     yarn install && \
