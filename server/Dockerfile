@@ -6,7 +6,6 @@ COPY ./ ./
 
 RUN corepack enable && \
     yarn install && \
-    cd server && \
     yarn add @nestjs/platform-socket.io @nestjs/websockets socket.io @types/socket.io && \
     cd ../
 

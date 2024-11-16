@@ -4,9 +4,8 @@ WORKDIR /app
 
 COPY ./ ./
 
-RUN corepack enable
-RUN yarn install
-RUN cd client && \
+RUN corepack enable && \
+    yarn install && \
     yarn add react-router-dom && \
     cd ../
 
