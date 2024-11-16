@@ -23,19 +23,20 @@ jobs:
       # 서버 이미지 빌드 및 태그 지정
       - name: Build and tag Docker image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/inear-server:${{ github.sha }} ./server
+          docker build -f server/Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/inear-server:${{ github.sha }} ./
           docker tag ${{ secrets.DOCKER_USERNAME }}/inear-server:${{ github.sha }} ${{ secrets.DOCKER_USERNAME }}/inear-server:latest
 
       # 클라이언트 이미지 빌드 및 태그 지정
       - name: Build and tag client image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/inear-client:${{ github.sha }} ./client
+          docker build -f client/Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/inear-client:${{ github.sha }} ./
           docker tag ${{ secrets.DOCKER_USERNAME }}/inear-client:${{ github.sha }} ${{ secrets.DOCKER_USERNAME }}/inear-client:latest
 
       # Docker Compose로 전체 애플리케이션 빌드 및 실행 (테스트용)
-#      - name: Run Docker Compose for testing (optional)
-#        run: |
-#          docker compose up --build -d
+      - name: Run Docker Compose for testing (optional)
+        run: |
+          docker compose up --build -d
+        continue-on-error: false
 
       # 서버 이미지 푸시 (Docker Hub 또는 다른 레지스트리)
       - name: Push server image to Docker Hub (optional)

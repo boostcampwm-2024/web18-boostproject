@@ -2,12 +2,13 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-COPY ./ ./
+COPY package.json yarn.lock .yarnrc.yml ./
+COPY .yarn .yarn
+COPY tsconfig.json ./
+COPY server/ ./
 
 RUN corepack enable && \
-    yarn install && \
-    yarn add @nestjs/platform-socket.io @nestjs/websockets socket.io @types/socket.io && \
-    cd ../
+    yarn install
 
 WORKDIR /app/server
 
