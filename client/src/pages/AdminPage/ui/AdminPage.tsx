@@ -1,7 +1,7 @@
 import { socket } from '@/shared/api/socket';
 import { useStreamingRoom } from '@/shared/hook/useStreamingRoom';
 
-export function ManagePage() {
+export function AdminPage() {
   const { isConnected } = useStreamingRoom();
 
   return (
