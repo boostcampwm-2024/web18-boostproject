@@ -23,7 +23,7 @@ export class AppController {
   }
 
   @ApiOperation({ summary: 'health check' })
-  @Get('/api/health')
+  @Get('/health')
   healthCheck() {
     return { success: true, health: 'healthy' };
   }
