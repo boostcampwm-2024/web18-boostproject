@@ -6,7 +6,9 @@ networks:
 
 services:
   server:
-    image: rdyjun/inear-server
+    build:
+      context: .
+      dockerfile: server/Dockerfile
     container_name: server
     expose:
       - '3000'
@@ -20,11 +22,12 @@ services:
       - NODE_ENV=development
     networks:
       - webapp
-    # healthcheck 임시 제거
     restart: unless-stopped
 
   client:
-    image: rdyjun/inear-client
+    build:
+      context: .
+      dockerfile: client/Dockerfile
     container_name: client
     expose:
       - '5173'
@@ -41,7 +44,9 @@ services:
     restart: unless-stopped
 
   nginx:
-    image: rdyjun/inear-nginx
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile
     container_name: nginx
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d:ro
@@ -49,7 +54,6 @@ services:
       - '80:80'
     depends_on:
       - server
-      - client
     networks:
       - webapp
     restart: unless-stopped
