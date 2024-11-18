@@ -22,20 +22,25 @@ export class MusicProcessingSevice {
     this.bucketName = this.configService.get<string>('S3_BUCKET_NAME');
   }
 
-  async processUpload(file: Express.Multer.File, tempDir: string) {
-    // 임시 디렉토리를 하나 만들어준다 -> 파싱한 파일 저장용
-
-    // s3에서 저장한 mp3를 받아온다
-    const mp3Path = join(__dirname, '..', '..', 'music', 'Balance.mp3');
-    const outputDir = join(__dirname, '..', '..', 'music', 'convert');
+  async processUpload(
+    file: Express.Multer.File,
+    tempDir: string,
+    songMetaData: { albumId: string; trackNumber: number; title: string },
+  ) {
+    // 만든 임시 디렉토레이 파일 저장한다
+    const inputPath = path.join(tempDir, file.originalname);
+    const outputDir = path.join(tempDir, `song-${songMetaData.trackNumber}`);
+    //mp3파일 우선 설정
+    await fs.writeFile(inputPath, file.buffer);
+    //mp3파일을 파싱한 파일들 저장할 디렉토리 설정
+    await fs.mkdir(outputDir, { recursive: true });
 
     // HLS 변환 -> 내부 함수:
-    await this.convertToHLS(mp3Path, outputDir);
+    await this.convertToHLS(inputPath, outputDir);
 
     // 변환된 파일들 S3에 업로드
-    await this.uploadConvertedFiles(outputDir);
-
-    // 임시 디렉토리 정리
+    const s3DirectoryName = `converted/${songMetaData.albumId}/${songMetaData.title}`;
+    await this.uploadConvertedFiles(s3DirectoryName, outputDir);
   }
 
   private async convertToHLS(mp3Path: string, outputDir: string) {
@@ -67,7 +72,10 @@ export class MusicProcessingSevice {
     });
   }
 
-  private async uploadConvertedFiles(outputDir: string) {
+  private async uploadConvertedFiles(
+    s3DirectoryName: string,
+    outputDir: string,
+  ) {
     // workDir에 있는 파일들을 object storage에 전송
     const files = await fs.readdir(outputDir);
     const uploadPromises = files.map(async (fileName) => {
@@ -80,7 +88,7 @@ export class MusicProcessingSevice {
       await this.objectStorage
         .putObject({
           Bucket: this.bucketName,
-          Key: `converted/${fileName}`,
+          Key: `${s3DirectoryName}/${fileName}`,
           Body: fileStream,
           ACL: 'public-read',
           ContentType: contentType,

@@ -24,10 +24,11 @@ export class AdminController {
     @Inject() private readonly musicProcessingService: MusicProcessingSevice,
   ) {}
 
-  @Post('albums')
+  @Post('album')
   async createAlbum(@Body() albumDto: AlbumDto): Promise<any> {
     //return this.albumService.create(albumDto);
     //원래는 DB에 저장을 진행해야하지만 일단 테스트를 위해서 정보를 저장 레디스에 때려박음
+    //TODO: MySQL에 저장 할 수 있도록 수정
     const albumId = crypto.randomUUID();
     await this.redisClient.hSet(`album:${albumId}`, {
       title: albumDto.title,
@@ -38,13 +39,14 @@ export class AdminController {
     return { albumId, message: 'Album information stored successfully' };
   }
 
-  @Post('albums/:albumId/songs')
-  @UseInterceptors(FilesInterceptor('files')) //files 이라는 필드 이름으로 전송
+  @Post('album/:albumId/songs')
+  @UseInterceptors(FilesInterceptor('files'))
   async uploadSongs(
     @Param('albumId') albumId: string,
     @UploadedFiles() files: Array<Express.Multer.File>,
   ): Promise<any> {
-    // 앨범 정보와 수록곡 정보를 Redis에서 조회
+    // 앨범 정보와 수록곡 정보를 DB에서 조회: 현재는 레디스로
+    // TODO: MySQL로 앨범 정보 받을 수 있도록 바꿈
     const albumInfo = await this.redisClient.hGetAll(`album:${albumId}`);
     if (!albumInfo) {
       //Error 처리: try-catch 문?
@@ -57,19 +59,20 @@ export class AdminController {
     const tempDir = await this.createTempDirectory(albumId);
 
     //Use music processor to parse mp3 to meu8 and upload to object storage
-
     for (const [index, file] of files.entries()) {
       const songInfo = songs[index];
-      // await this.musicProcessingService.processUpload(file, tempDir, {
-      //   albumId,
-      //   ...songInfo,
-      // });
-      console.log(file);
-      console.log(songInfo);
+      await this.musicProcessingService.processUpload(file, tempDir, {
+        albumId,
+        ...songInfo,
+      });
     }
 
     // 임시 디렉토리 제거
     await fs.rm(tempDir, { recursive: true, force: true });
+    return {
+      albumId,
+      message: 'Album songs updated to object storage successfully',
+    };
   }
 
   private async createTempDirectory(albumId: string): Promise<string> {
