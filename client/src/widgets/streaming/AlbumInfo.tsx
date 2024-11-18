@@ -1,5 +1,5 @@
 import { Album } from '@/entities/album/types';
-import { ChevronDown } from '@/shared/icons/ChevronDown';
+import { ChevronDown } from '@/shared/icon/ChevronDown';
 import { useState } from 'react';
 import './LyricsPanel.css';
 
