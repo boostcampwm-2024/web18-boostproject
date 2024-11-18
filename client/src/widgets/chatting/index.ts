@@ -1,1 +1,1 @@
-export { ChattingContainer } from './ChattingContainer';
+export { ChattingContainer } from './ui/ChattingContainer';
