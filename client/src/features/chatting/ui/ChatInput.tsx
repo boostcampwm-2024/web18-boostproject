@@ -10,8 +10,7 @@ export function ChatInput() {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setMessage('');
-    if (!message.trim()) return;
-    if (!roomId) return;
+    if (!message.trim() || !roomId) return;
     sendMessage(message.trim(), roomId);
   };
 
