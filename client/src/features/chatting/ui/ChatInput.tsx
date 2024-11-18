@@ -1,24 +1,18 @@
 import { SendIcon } from '@/shared/icon/SendIcon';
-import { socket } from '@/shared/api/socket';
+import { sendMessage } from '../model/sendMessage';
 import { useState, FormEvent } from 'react';
 import { useParams } from 'react-router-dom';
 
-export default function ChatInput() {
+export function ChatInput() {
   const [message, setMessage] = useState('');
-  const { roomId } = useParams();
+  const { roomId } = useParams<{ roomId: string }>();
 
-  // TODOS: 최적화 필요
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!message.trim()) return;
-    socket.emit(
-      'message',
-      { message: message, roomId: roomId },
-      (response: any) => {
-        console.log(response);
-      },
-    );
     setMessage('');
+    if (!message.trim()) return;
+    if (!roomId) return;
+    sendMessage(message.trim(), roomId);
   };
 
   return (
