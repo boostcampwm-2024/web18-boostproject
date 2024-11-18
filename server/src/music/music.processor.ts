@@ -22,7 +22,7 @@ export class MusicProcessingSevice {
     this.bucketName = this.configService.get<string>('S3_BUCKET_NAME');
   }
 
-  async processUpload() {
+  async processUpload(file: Express.Multer.File, tempDir: string) {
     // 임시 디렉토리를 하나 만들어준다 -> 파싱한 파일 저장용
 
     // s3에서 저장한 mp3를 받아온다
