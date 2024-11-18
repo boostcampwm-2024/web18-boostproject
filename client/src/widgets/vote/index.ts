@@ -1,1 +1,1 @@
-export { Vote } from './Vote';
+export { Vote } from './ui/Vote';

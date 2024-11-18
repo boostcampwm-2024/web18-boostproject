@@ -2,12 +2,13 @@ import { InearLogo } from '@/shared/icon/InearLogo';
 import EventImage from '@/assets/sidebar-event.png';
 import StreamingList from './StreamingList';
 import { Credit } from './Credit';
+import { Link } from 'react-router-dom';
 export function Sidebar() {
   return (
     <nav className="bg-grayscale-900 w-[250px] h-screen">
-      <div className="m-8">
+      <Link to="/" className="block m-8 w-fit">
         <InearLogo />
-      </div>
+      </Link>
       <div className="flex flex-col items-center">
         <img
           src={EventImage}
