@@ -2,7 +2,7 @@ name: Docker Image CD
 
 on:
   push:
-    branches: [ "modified/cd-flow" ]
+    branches: [ "dev" ]
 
 jobs:
   build:
