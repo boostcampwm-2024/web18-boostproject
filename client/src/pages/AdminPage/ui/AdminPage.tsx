@@ -94,7 +94,7 @@ export function AdminPage() {
           <Button message="등록하기" onClick={handleCreateRoom} type="button" />
         </div>
         <div className="w-1/4 flex flex-col gap-4">
-          <Input labelName="노래 제목" />
+          <Input labelName="파일 등록" />
 
           {/* <Button message="방 만들기" clickHandler={handleCreateRoom} /> */}
         </div>
