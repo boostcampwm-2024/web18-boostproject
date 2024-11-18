@@ -5,11 +5,11 @@ networks:
     name: webapp
 
 services:
-  server-blue:
+  server:
     build:
       context: .
       dockerfile: server/Dockerfile
-    container_name: server-blue
+    container_name: server
     expose:
       - '3000'
     volumes:
@@ -52,7 +52,7 @@ services:
     ports:
       - '80:80'
     depends_on:
-      - server-blue
+      - server
       - client
     networks:
       - webapp
