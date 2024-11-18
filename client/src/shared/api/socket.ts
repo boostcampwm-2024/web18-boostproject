@@ -1,5 +1,7 @@
 import { io } from 'socket.io-client';
 
-export const socket = io('/rooms', {
+const URL = '/rooms';
+
+export const socket = io(URL, {
   autoConnect: false,
 });

@@ -1,4 +1,4 @@
-import { InearLogo } from '@/shared/icons/InearLogo';
+import { InearLogo } from '@/shared/icon/InearLogo';
 import EventImage from '@/assets/sidebar-event.png';
 import StreamingList from './StreamingList';
 import { Credit } from './Credit';

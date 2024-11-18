@@ -9,7 +9,7 @@ interface MessageListProps {
 
 function MessageList({ messages }: MessageListProps) {
   return (
-    <div className="overflow-y-auto mb-3 mt-24">
+    <div className="chatting overflow-y-auto mb-3 mt-24">
       {messages.map((msg, index) => (
         <Message key={index} userName={msg.userName} message={msg.message} />
       ))}

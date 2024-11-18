@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { socket } from '@/socket';
+import { socket } from '@/shared/api/socket';
 import { useSocketEvents } from './useSocketEvents';
 
 export function useStreamingRoom() {
