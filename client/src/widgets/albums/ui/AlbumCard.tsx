@@ -1,17 +1,6 @@
-export interface Album {
-  id: number;
-  title: string;
-  artist: string;
-  tags: string[];
-  coverImage: string;
-}
+import { Album } from '@/entities/album/types';
 
-interface AlbumCardProps {
-  album: Album;
-}
-
-// 태그 문장으로 만드는 코드 util로 만들어서 사용하기
-export function AlbumCard({ album }: AlbumCardProps) {
+export function AlbumCard({ album }: { album: Album }) {
   return (
     <li>
       <img
