@@ -22,9 +22,9 @@ services:
       - webapp
     healthcheck:
       test: ["CMD-SHELL", "wget -q --spider http://server:3000/api/health || exit 1"]
-      interval: 1m30s
+      interval: 7s
       timeout: 10s
-      retries: 3
+      retries: 5
     restart: unless-stopped
 
   nginx:
