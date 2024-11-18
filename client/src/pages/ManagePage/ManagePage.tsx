@@ -1,4 +1,4 @@
-import { socket } from '@/socket';
+import { socket } from '@/shared/api/socket';
 import { useStreamingRoom } from '../StreamingPage/useStreamingRoom';
 
 export function ManagePage() {

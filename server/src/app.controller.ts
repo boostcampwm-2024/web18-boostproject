@@ -1,4 +1,4 @@
-import { Controller, Get, Inject } from '@nestjs/common';
+import { Controller, Get, Inject, Post } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { RedisClientType } from 'redis';
 import { REDIS_CLIENT } from '@/common/redis/redis.module';
@@ -20,5 +20,11 @@ export class AppController {
     } catch (e) {
       return { success: false, error: e.message };
     }
+  }
+
+  @ApiOperation({ summary: 'health check' })
+  @Get('/health')
+  healthCheck() {
+    return { success: true, health: 'healthy' };
   }
 }

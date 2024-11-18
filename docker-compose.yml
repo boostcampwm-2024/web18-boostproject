@@ -1,15 +1,13 @@
-version: '3.8'
-
 networks:
   webapp:
     name: webapp
 
 services:
-  server-blue:
+  server:
     build:
       context: .
       dockerfile: server/Dockerfile
-    container_name: server-blue
+    container_name: server
     expose:
       - '3000'
     volumes:
@@ -22,38 +20,24 @@ services:
       - NODE_ENV=development
     networks:
       - webapp
-    # healthcheck 임시 제거
-    restart: unless-stopped
-
-  client:
-    build:
-      context: .
-      dockerfile: client/Dockerfile
-    container_name: client
-    expose:
-      - '5173'
-    volumes:
-      - ./client:/app/client
-      - ./package.json:/app/package.json
-      - ./yarn.lock:/app/yarn.lock
-      - ./.yarnrc.yml:/app/.yarnrc.yml
-      - ./.yarn:/app/.yarn
-    environment:
-      - NODE_ENV=development
-    networks:
-      - webapp
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://server:3000/api/health || exit 1"]
+      interval: 7s
+      timeout: 10s
+      retries: 5
     restart: unless-stopped
 
   nginx:
-    image: nginx:alpine
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile
     container_name: nginx
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d:ro
     ports:
       - '80:80'
     depends_on:
-      - server-blue
-      - client
+      - server
     networks:
       - webapp
     restart: unless-stopped
