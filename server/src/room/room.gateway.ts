@@ -16,7 +16,7 @@ import { RandomNameUtil } from '@/common/randomname/random-name.util';
 @WebSocketGateway({
   namespace: 'rooms',
   cors: {
-    origin: '*',
+    origin: true,
     methods: ['GET', 'POST'],
   },
 })
@@ -173,9 +173,8 @@ export class RoomGateway
       const clientId = client.id;
       await this.roomRepository.leaveRoom(client.id, roomId);
 
-      const currentUserCount = await this.roomRepository.getCurrentUsers(
-        roomId,
-      );
+      const currentUserCount =
+        await this.roomRepository.getCurrentUsers(roomId);
       await client.leave(data.roomId);
 
       client.emit('leavedRoom', {
