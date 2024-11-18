@@ -2,7 +2,7 @@ name: Docker Image CD
 
 on:
   push:
-    branches: [ "dev" ]
+    branches: [ "modified/cd-flow" ]
 
 jobs:
   build:
@@ -20,6 +20,16 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      # SSH 접속을 위한 SSH 키 설정
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      # 원격 서버의 SSH 호스트 키를 저장하여 SSH 연결 시 신뢰성을 확인하는 과정
+      - name: Add known hosts
+        run: ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+
       # 서버 이미지 빌드 및 태그 지정
       - name: Build and tag Docker image
         run: |
@@ -31,8 +41,7 @@ jobs:
         run: |
           yarn --cwd ./client install
           yarn --cwd ./client build
-          docker build -f ./nginx/Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/inear-nginx:${{ github.sha }} ./
-          docker tag ${{ secrets.DOCKER_USERNAME }}/inear-nginx:${{ github.sha }} ${{ secrets.DOCKER_USERNAME }}/inear-nginx:latest
+          scp -r ./client/dist/ ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:/${{ secrets.SSH_USER }}/web18-inear-test/nginx/html/
 
       # Docker Compose로 전체 애플리케이션 빌드 및 실행 (테스트용)
       - name: Run Docker Compose for testing (optional)
@@ -46,22 +55,6 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/inear-server:${{ github.sha }}
           docker push ${{ secrets.DOCKER_USERNAME }}/inear-server:latest
 
-      # 클라이언트 이미지 푸시 (Docker Hub 또는 다른 레지스트리)
-      - name: Push client image to Docker Hub (optional)
-        run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/inear-nginx:${{ github.sha }}
-          docker push ${{ secrets.DOCKER_USERNAME }}/inear-nginx:latest
-
-      # SSH 접속을 위한 SSH 키 설정
-      - name: Set up SSH
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-      # 원격 서버의 SSH 호스트 키를 저장하여 SSH 연결 시 신뢰성을 확인하는 과정
-      - name: Add known hosts
-        run: ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
-
       # 서버에서 파일을 최신화 하고, 배포 스크립트를 통해 실제 배포 진행
       - name: Deploy with Docker Compose on server
         run: |
@@ -69,6 +62,5 @@ jobs:
             mkdir -p /${{ secrets.SSH_USER }}/web18-inear-test && \
             cd /${{ secrets.SSH_USER }}/web18-inear-test && \
             docker pull ${{ secrets.DOCKER_USERNAME }}/inear-server:latest && \
-            docker pull ${{ secrets.DOCKER_USERNAME }}/inear-nginx:latest && \
             ./deploy.sh
           "
