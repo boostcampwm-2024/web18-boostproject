@@ -27,27 +27,10 @@ services:
       retries: 3
     restart: unless-stopped
 
-  client:
+  nginx:
     build:
       context: .
-      dockerfile: client/Dockerfile
-    container_name: client
-    expose:
-      - '5173'
-    volumes:
-      - ./client:/app/client
-      - ./package.json:/app/package.json
-      - ./yarn.lock:/app/yarn.lock
-      - ./.yarnrc.yml:/app/.yarnrc.yml
-      - ./.yarn:/app/.yarn
-    environment:
-      - NODE_ENV=development
-    networks:
-      - webapp
-    restart: unless-stopped
-
-  nginx:
-    image: nginx:alpine
+      dockerfile: nginx/Dockerfile
     container_name: nginx
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d:ro
@@ -55,7 +38,6 @@ services:
       - '80:80'
     depends_on:
       - server
-      - client
     networks:
       - webapp
     restart: unless-stopped
