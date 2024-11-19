@@ -15,8 +15,8 @@ import * as fs from 'fs/promises';
 import { MusicProcessingSevice } from '@/music/music.processor';
 
 export interface UploadedFiles {
-  albumCover: Express.Multer.File[];
-  bannerCover: Express.Multer.File[];
+  albumCover: Express.Multer.File;
+  bannerCover: Express.Multer.File;
   songs: Express.Multer.File[];
 }
 
