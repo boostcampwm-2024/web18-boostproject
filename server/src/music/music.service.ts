@@ -10,6 +10,7 @@ import { ConfigService } from '@nestjs/config';
 import { S3 } from 'aws-sdk';
 import { Cache } from 'cache-manager';
 import { MusicRepository } from './music.repository';
+import { M3U8Parser } from './parser/m3u8-parser';
 
 @Injectable()
 export class MusicService {
@@ -19,6 +20,7 @@ export class MusicService {
   constructor(
     private readonly configService: ConfigService,
     private readonly musicRepository: MusicRepository,
+    private readonly m3u8Parser: M3U8Parser,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {
     this.s3 = new S3({
@@ -29,38 +31,6 @@ export class MusicService {
         secretAccessKey: this.configService.get('S3_SECRET_KEY'),
       },
     });
-  }
-
-  // m3u8 파일 파싱 => 남은 부분만 리턴
-  private parseMusicFile(m3u8Content: string, skipSegments: number): string {
-    const lines = m3u8Content.split('\n');
-    let modifiedM3u8 = '';
-    let isSegment = false;
-    let segmentCount = 0;
-    for (const line of lines) {
-      if (line.startsWith('#EXTINF:')) {
-        isSegment = true;
-        if (segmentCount >= skipSegments) {
-          modifiedM3u8 += line + '\n';
-        }
-      } else if (isSegment) {
-        isSegment = false;
-        if (segmentCount >= skipSegments) {
-          modifiedM3u8 += line + '\n';
-        }
-        segmentCount++;
-      } else if (
-        line.startsWith('#EXT-X-TARGETDURATION') ||
-        line.startsWith('#EXT-X-VERSION')
-      ) {
-        modifiedM3u8 += line + '\n';
-      } else if (line.startsWith('#EXT-X-MEDIA-SEQUENCE')) {
-        modifiedM3u8 += `#EXT-X-MEDIA-SEQUENCE:${skipSegments}\n`;
-      } else if (line.trim() !== '') {
-        modifiedM3u8 += line + '\n';
-      }
-    }
-    return modifiedM3u8;
   }
 
   private validatePlayingTime(elapsedTime: number, duration: number): void {
@@ -113,7 +83,7 @@ export class MusicService {
       elapsedTime / (this.SEGMENT_DURATION * 1000),
     );
 
-    return this.parseMusicFile(cachedM3u8, skipSegments);
+    return this.m3u8Parser.parse(cachedM3u8, skipSegments);
   }
 
   async getSegment(musicId: string, segmentId: string): Promise<Buffer> {

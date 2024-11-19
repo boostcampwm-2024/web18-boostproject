@@ -5,6 +5,7 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { MusicService } from './music.service';
 import { MusicController } from './music.controller';
 import { MusicRepository } from './music.repository';
+import { M3U8Parser } from './parser/m3u8-parser';
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { MusicRepository } from './music.repository';
     }),
   ],
   controllers: [MusicController],
-  providers: [MusicProcessingSevice, MusicService, MusicRepository],
+  providers: [MusicProcessingSevice, MusicService, MusicRepository, M3U8Parser],
   exports: [MusicProcessingSevice],
 })
 export class MusicModule {}
