@@ -13,10 +13,11 @@ import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import path from 'path';
 import * as fs from 'fs/promises';
 import { MusicProcessingSevice } from '@/music/music.processor';
+import { AdminService } from './admin.service';
 
 export interface UploadedFiles {
-  albumCover: Express.Multer.File;
-  bannerCover: Express.Multer.File;
+  albumCover?: Express.Multer.File;
+  bannerCover?: Express.Multer.File;
   songs: Express.Multer.File[];
 }
 
@@ -25,6 +26,7 @@ export class AdminController {
   constructor(
     @Inject(REDIS_CLIENT) private readonly redisClient: RedisClientType,
     @Inject() private readonly musicProcessingService: MusicProcessingSevice,
+    private readonly adminService: AdminService,
   ) {}
 
   @Post('album')
@@ -40,23 +42,33 @@ export class AdminController {
     @Body('albumData') albumDataString: string,
   ): Promise<any> {
     const albumData = JSON.parse(albumDataString) as AlbumDto;
-    // 1. MySQL DB에 앨범 정보 저장 하고 앨범 Id를 반환 받음
+    // TODO 성준님 1. MySQL DB에 앨범 정보 저장 하고 앨범 Id를 반환 받음
     //const albumId = this.adminRepository.createAlbum();
-    const albumId = 'RANDOM_AHH_ALBUM_ID';
 
-    // 2. 앨범 커버 이미지, 배너 이미지를 S3에 업로드 하고 URL을 반환 받음
-    // const [albumCoverURL, bannerCoverURL] = this.adminService.uploadImage(
-    //   files.albumCover,
-    //   files.bannerCover,
-    //   albumId,
-    // );
+    // 앨범 임시 ID
+    const albumId = 'RANDOM_AHH_ALBUM_ID';
+    const imageUrls: {
+      albumCoverURL?: string;
+      bannerCoverURL?: string;
+    } = {};
+
+    //2. 앨범 커버 이미지, 배너 이미지를 S3에 업로드 하고 URL을 반환 받음
+    if (files.albumCover?.[0] || files.bannerCover?.[0]) {
+      const uploadResults = await this.adminService.uploadImageFiles(
+        files.albumCover?.[0],
+        files.bannerCover?.[0],
+        `converted/${albumId}`,
+      );
+
+      Object.assign(imageUrls, uploadResults);
+    }
 
     // await this.adminRepository.updateAlbumUrls(albumId, {
     //   albumCoverURL,
     //   bannerCoverURL
     // });
 
-    // 3. 노래 파일들 처리: 기존 processSongFiles 사용
+    //3. 노래 파일들 처리: 기존 processSongFiles 사용
     const message = await this.processSongFiles(
       files.songs,
       albumData,
@@ -65,6 +77,7 @@ export class AdminController {
     return message;
 
     // 4. MySQL DB에 노래 정보 저장
+    //return { albumId };
   }
 
   private async processSongFiles(
@@ -72,10 +85,8 @@ export class AdminController {
     albumData: AlbumDto,
     albumId: string,
   ): Promise<any> {
-    //Store the received file into separate temporary directories
     const tempDir = await this.createTempDirectory(albumId);
 
-    //Use music processor to parse mp3 to meu8 and upload to object storage
     await Promise.all(
       songFiles.map(async (file, index) => {
         const songInfo = albumData.songs[index];
@@ -86,7 +97,6 @@ export class AdminController {
       }),
     );
 
-    // 임시 디렉토리 제거
     await fs.rm(tempDir, { recursive: true, force: true });
 
     return {
