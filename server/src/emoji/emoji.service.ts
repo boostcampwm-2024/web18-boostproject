@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { S3 } from 'aws-sdk';
-import { v4 } from 'uuid';
+import { EmojiRequestDto } from './emoji-request-dto';
 
 @Injectable()
-export class AdminService {
+export class EmojiService {
   private readonly s3: S3;
 
   constructor(private readonly configService: ConfigService) {
@@ -18,11 +18,10 @@ export class AdminService {
     });
   }
 
-  async generateImageUrl(albumId: string): Promise<string> {
+  async generateImageUrl(req: EmojiRequestDto): Promise<string> {
     // URL 유효 시간 = 5분
     const S3_URL_EXPIRATION_SECONDS = 60 * 5;
-    const uniqueId = v4();
-    const key = `convert/${albumId}/${uniqueId}.png`;
+    const key = `emoji/${req.sessionId}/${req.emojiId}/${req.emojiName}.png`; // TODO : 이모지는 무슨 형식으로 저장해야 하는지 확인
 
     const s3Params = {
       Bucket: this.configService.get('S3_BUCKET_NAME'),

@@ -8,7 +8,7 @@ import { RoomRepository } from './room/room.repository';
 import { RoomController } from '@/room/room.controller';
 import { RoomGateway } from './room/room.gateway';
 import { MusicModule } from './music/music.module';
-import { AdminModule } from './admin/admin.module';
+import { EmojiModule } from './emoji/emoji.module';
 
 @Module({
   imports: [
@@ -16,7 +16,7 @@ import { AdminModule } from './admin/admin.module';
     ConfigModule.forRoot(),
     RedisModule,
     MusicModule,
-    AdminModule,
+    EmojiModule,
   ],
   controllers: [AppController, RoomController],
   providers: [Logger, AppService, RoomRepository, RoomGateway],
