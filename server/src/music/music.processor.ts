@@ -5,6 +5,11 @@ import path, { join } from 'path';
 import * as fs from 'fs/promises';
 import * as fsSync from 'fs';
 import { ConfigService } from '@nestjs/config';
+import { SongDto } from '@/admin/dto/SongDto';
+
+interface SongMetadata extends SongDto {
+  albumId: string;
+}
 
 @Injectable()
 export class MusicProcessingSevice {
@@ -25,20 +30,15 @@ export class MusicProcessingSevice {
   async processUpload(
     file: Express.Multer.File,
     tempDir: string,
-    songMetaData: { albumId: string; trackNumber: number; title: string },
+    songMetaData: SongMetadata,
   ) {
-    // 만든 임시 디렉토레이 파일 저장한다
     const inputPath = path.join(tempDir, file.originalname);
     const outputDir = path.join(tempDir, `song-${songMetaData.trackNumber}`);
-    //mp3파일 우선 설정
     await fs.writeFile(inputPath, file.buffer);
-    //mp3파일을 파싱한 파일들 저장할 디렉토리 설정
     await fs.mkdir(outputDir, { recursive: true });
 
-    // HLS 변환 -> 내부 함수:
     await this.convertToHLS(inputPath, outputDir);
 
-    // 변환된 파일들 S3에 업로드
     const s3DirectoryName = `converted/${songMetaData.albumId}/${songMetaData.title}`;
     await this.uploadConvertedFiles(s3DirectoryName, outputDir);
   }
@@ -76,7 +76,6 @@ export class MusicProcessingSevice {
     s3DirectoryName: string,
     outputDir: string,
   ) {
-    // workDir에 있는 파일들을 object storage에 전송
     const files = await fs.readdir(outputDir);
     const uploadPromises = files.map(async (fileName) => {
       const filePath = path.join(outputDir, fileName);

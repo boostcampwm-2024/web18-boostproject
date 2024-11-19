@@ -1,15 +1,12 @@
 import {
+  IsArray,
   IsDateString,
   IsNotEmpty,
   IsNumber,
   IsString,
   Min,
 } from 'class-validator';
-
-interface SongInfo {
-  title: string;
-  trackNumber: number;
-}
+import { SongDto } from './SongDto';
 
 export class AlbumDto {
   @IsNotEmpty()
@@ -24,10 +21,14 @@ export class AlbumDto {
   @IsDateString()
   releaseDate: string;
 
+  @IsString()
+  releaseTime?: string;
+
   @IsNotEmpty()
   @IsNumber()
   @Min(0)
   totalTracks?: number;
 
-  songs: SongInfo[];
+  @IsArray()
+  songs: SongDto[];
 }
