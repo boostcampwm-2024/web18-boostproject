@@ -2,7 +2,7 @@ name: Docker Image CD
 
 on:
   push:
-    branches: [ "dev" ]
+    branches: ['dev']
 
 jobs:
   build:
@@ -61,6 +61,7 @@ jobs:
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} " \
             mkdir -p /${{ secrets.SSH_USER }}/web18-inear-test && \
             cd /${{ secrets.SSH_USER }}/web18-inear-test && \
+            docker system prune -af && \
             docker pull ${{ secrets.DOCKER_USERNAME }}/inear-server:latest && \
             ./deploy.sh
           "
