@@ -4,7 +4,7 @@
 export interface CreateAlbumRequest {
   title: string;
   artist: string;
-  albumTag: string[];
+  albumTag: string;
   releaseDate: string;
   songs?: Song[];
 }

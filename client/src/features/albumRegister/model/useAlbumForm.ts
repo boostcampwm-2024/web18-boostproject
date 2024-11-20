@@ -34,11 +34,7 @@ function createAlbumData(
   songs: Song[],
 ): CreateAlbumRequest {
   const albumData = ALBUM_FIELDS.reduce((acc, field) => {
-    if (field === 'albumTag') {
-      acc[field] = (formData.get(field) as string).split(',');
-    } else {
-      acc[field] = formData.get(field) as string;
-    }
+    acc[field] = formData.get(field) as string;
     return acc;
   }, {} as CreateAlbumRequest);
 
@@ -113,6 +109,12 @@ export function useAlbumForm() {
       const albumFormData = new FormData(
         albumFormRef.current as HTMLFormElement,
       );
+
+      if (!validateForm(albumFormData, ALBUM_FIELDS)) {
+        alert('모든 필드를 입력해주세요.');
+        return;
+      }
+
       const albumData = createAlbumData(albumFormData, songs);
 
       const albumCover = albumFormData.get('albumCover') as File;
