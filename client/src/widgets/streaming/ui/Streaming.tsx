@@ -1,9 +1,9 @@
 import { AlbumBackground } from './AlbumBackground';
 import { AlbumInfo } from './AlbumInfo';
-import { Album } from '@/entities/album/types';
+import { AlbumDetail } from '@/entities/album/types';
 import SampleAlbumCover from '@/assets/sample-album-cover-1.png';
 
-const SAMPLE_ALBUM: Album = {
+const SAMPLE_ALBUM: AlbumDetail = {
   coverImage: SampleAlbumCover,
   tags: ['밴드', '국내'],
   title: '버그사냥단의 노동요',

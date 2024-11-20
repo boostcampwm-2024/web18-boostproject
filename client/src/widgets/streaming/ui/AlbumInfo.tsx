@@ -1,10 +1,10 @@
-import { Album } from '@/entities/album/types';
+import { AlbumDetail } from '@/entities/album/types';
 import { ChevronDown } from '@/shared/icon/ChevronDown';
 import { useState } from 'react';
 import './LyricsPanel.css';
 
 interface AlbumInfoProps {
-  album: Album;
+  album: AlbumDetail;
 }
 
 const CATEGORIES = {

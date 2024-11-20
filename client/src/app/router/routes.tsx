@@ -1,7 +1,7 @@
 import { MainPage } from '@/pages/MainPage';
 import { StreamingPage } from '@/pages/StreamingPage';
 import { Layout } from '@/Layout';
-import { ManagePage } from '@/pages/ManagePage';
+import { AdminPage } from '@/pages/AdminPage';
 import { AlbumPage } from '@/pages/AlbumPage';
 
 export const routes = [
@@ -24,7 +24,7 @@ export const routes = [
     ],
   },
   {
-    path: '/manager',
-    element: <ManagePage />,
+    path: '/admin',
+    element: <AdminPage />,
   },
 ];

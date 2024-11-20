@@ -1,1 +1,1 @@
-export { Streaming } from './Streaming';
+export { Streaming } from './ui/Streaming';

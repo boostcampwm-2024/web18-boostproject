@@ -1,1 +1,1 @@
-export { StreamingPage } from './StreamingPage';
+export { StreamingPage } from './ui/StreamingPage';
