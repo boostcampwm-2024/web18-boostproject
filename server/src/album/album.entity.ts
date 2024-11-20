@@ -1,4 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { AlbumDto } from '@/admin/dto/AlbumDto';
 
 @Entity()
 export class Album {
@@ -14,8 +15,8 @@ export class Album {
   @Column({ type: 'varchar', length: 30 })
   tags?: string;
 
-  @Column({ name: 'release_time', type: 'timestamp', nullable: false })
-  releaseTime: Date;
+  @Column({ name: 'release_date', type: 'char', length: 16, nullable: false })
+  releaseDate: string;
 
   @Column({ name: 'banner_url', type: 'varchar', length: 500 })
   bannerUrl?: string;
@@ -23,19 +24,12 @@ export class Album {
   @Column({ name: 'jacket_url', type: 'varchar', length: 500 })
   jacketUrl?: string;
 
-  constructor(
-    title: string,
-    artist: string,
-    tags: string,
-    releaseTime: Date,
-    bannerUrl: string = null,
-    jacketUrl: string = null,
-  ) {
-    this.title = title;
-    this.artist = artist;
-    this.tags = tags;
-    this.releaseTime = releaseTime;
-    this.bannerUrl = bannerUrl;
-    this.jacketUrl = jacketUrl;
+  constructor(albumDto: AlbumDto) {
+    this.title = albumDto.title;
+    this.artist = albumDto.artist;
+    this.tags = albumDto.tags;
+    this.releaseDate = albumDto.releaseDate;
+    this.bannerUrl = albumDto.bannerUrl;
+    this.jacketUrl = albumDto.jacketUrl;
   }
 }

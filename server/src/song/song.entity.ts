@@ -1,4 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { SongDto } from '@/admin/dto/SongDto';
 
 @Entity()
 export class Song {
@@ -32,25 +33,15 @@ export class Song {
   @Column({ type: 'int', nullable: false })
   private duration: number;
 
-  constructor(
-    albumId: number,
-    title: string,
-    trackNumber: number,
-    lyrics: string = null,
-    composer: string,
-    writer: string,
-    instrument: string,
-    source: string = null,
-    duration: number,
-  ) {
-    this.albumId = albumId;
-    this.title = title;
-    this.trackNumber = trackNumber;
-    this.lyrics = lyrics;
-    this.composer = composer;
-    this.writer = writer;
-    this.instrument = instrument;
-    this.source = source;
-    this.duration = duration;
+  constructor(songDto: SongDto) {
+    this.albumId = songDto.albumId;
+    this.title = songDto.title;
+    this.trackNumber = songDto.trackNumber;
+    this.lyrics = songDto.lyrics;
+    this.composer = songDto.composer;
+    this.writer = songDto.writer;
+    this.instrument = songDto.instrument;
+    this.source = songDto.source;
+    this.duration = songDto.duration;
   }
 }
