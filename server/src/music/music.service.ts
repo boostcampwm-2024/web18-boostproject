@@ -33,27 +33,17 @@ export class MusicService {
     });
   }
 
-  private validatePlayingTime(elapsedTime: number, duration: number): void {
-    // 곡이 시작 전일 때
-    if (elapsedTime < 0) {
-      throw new HttpException(
-        'Song has not started yet',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-    // 곡이 끝난 뒤일 때
-    if (elapsedTime > duration * 1000) {
-      throw new HttpException('Song has already ended', HttpStatus.BAD_REQUEST);
-    }
-  }
-
   async generateMusicFile(
-    musicId: string,
+    albumId: string,
     joinTimestamp: number,
   ): Promise<string> {
-    const songMetadata = await this.musicRepository.getSongMetadata(musicId);
+    const songMetadata = await this.musicRepository.findSongByJoinTimestamp(
+      albumId,
+      joinTimestamp,
+    );
+    const songIndex = songMetadata.id;
 
-    const cacheKey = `m3u8:${musicId}`;
+    const cacheKey = `m3u8:${albumId}:${songIndex}`;
     let cachedM3u8 = await this.cacheManager.get<string>(cacheKey);
 
     // 원본 가져오기
@@ -62,7 +52,7 @@ export class MusicService {
         const s3Response = await this.s3
           .getObject({
             Bucket: this.configService.get('S3_BUCKET_NAME'),
-            Key: `converted/18dfb0c0-fb45-409c-8bac-a3ff02fef9e0/${musicId}/playlist.m3u8`, // 폴더 구조 동기화 필요
+            Key: `converted/${albumId}/${parseInt(songIndex, 10)}/playlist.m3u8`, // 일단 songIndex 경로로 가져옴
           })
           .promise();
 
@@ -73,28 +63,33 @@ export class MusicService {
           songMetadata.duration * 1000,
         );
       } catch (error) {
-        throw new NotFoundException(`file not found for ${musicId}`);
+        throw new NotFoundException(
+          `file not found for ${albumId}, song index ${songIndex}`,
+        );
       }
     }
 
     const elapsedTime = joinTimestamp - songMetadata.startTime;
-    this.validatePlayingTime(elapsedTime, songMetadata.duration);
     const skipSegments = Math.floor(
       elapsedTime / (this.SEGMENT_DURATION * 1000),
     );
 
-    return this.m3u8Parser.parse(cachedM3u8, skipSegments);
+    return this.m3u8Parser.parse(cachedM3u8, skipSegments, albumId, songIndex);
   }
 
-  async getSegment(musicId: string, segmentId: string): Promise<Buffer> {
-    const cacheKey = `segment:${musicId}:${segmentId}`;
+  async getSegment(
+    albumId: string,
+    songIndex: string,
+    segmentId: string,
+  ): Promise<Buffer> {
+    const cacheKey = `segment:${albumId}:${songIndex}:${segmentId}`;
     let segment = await this.cacheManager.get<Buffer>(cacheKey);
     if (!segment) {
       try {
         const s3Response = await this.s3
           .getObject({
             Bucket: this.configService.get('S3_BUCKET_NAME'),
-            Key: `converted/18dfb0c0-fb45-409c-8bac-a3ff02fef9e0/${musicId}/playlist${segmentId}.ts`, // 폴더 구조 동기화 필요
+            Key: `converted/${albumId}/${parseInt(songIndex, 10)}/playlist${segmentId}.ts`, // 폴더 구조 동기화 필요
           })
           .promise();
 
@@ -102,7 +97,7 @@ export class MusicService {
         await this.cacheManager.set(cacheKey, segment, 3600000);
       } catch (error) {
         console.error(
-          `Failed to fetch segment ${segmentId} for ${musicId}:`,
+          `Failed to fetch segment ${segmentId} for ${albumId}:`,
           error,
         );
         throw new NotFoundException(`Segment not found: ${segmentId}`);

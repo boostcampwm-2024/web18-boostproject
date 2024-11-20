@@ -17,7 +17,7 @@ export class SongDto {
   trackNumber: number;
 
   @IsString()
-  lyrics: string;
+  lyrics?: string;
 
   @IsString()
   composer: string;
@@ -27,4 +27,7 @@ export class SongDto {
 
   @IsString()
   instrument: string;
+
+  @IsString()
+  source: string;
 }

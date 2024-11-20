@@ -1,6 +1,6 @@
 import {
   IsArray,
-  IsDateString,
+  IsISO8601,
   IsNotEmpty,
   IsNumber,
   IsString,
@@ -18,11 +18,8 @@ export class AlbumDto {
   artist: string;
 
   @IsNotEmpty()
-  @IsDateString()
+  @IsISO8601()
   releaseDate: string;
-
-  @IsString()
-  releaseTime?: string;
 
   @IsNotEmpty()
   @IsNumber()
