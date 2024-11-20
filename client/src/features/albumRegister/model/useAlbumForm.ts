@@ -2,7 +2,7 @@ import { useCallback, useState, useRef } from 'react';
 import { CreateAlbumRequest, Song } from './types';
 import axios from 'axios';
 
-const SONG_FIELDS = [
+const REQUIRED_SONG_FIELDS = [
   'title',
   'composer',
   'writer',
@@ -10,12 +10,13 @@ const SONG_FIELDS = [
   'instrument',
   'trackNumber',
   'source',
-  'lyrics',
 ] as const;
+
+const SONG_FIELDS = [...REQUIRED_SONG_FIELDS, 'lyrics'] as const;
 
 const ALBUM_FIELDS = ['title', 'artist', 'albumTag', 'releaseDate'] as const;
 
-function validateForm(formData: FormData, fields: readonly string[]) {
+function validateForm(formData: FormData, fields: readonly string[]): boolean {
   return fields.every((field) => {
     const value = formData.get(field);
     return value !== null && value !== '';
@@ -60,8 +61,8 @@ function createSubmitFormData(
 }
 
 async function submitAlbumForm(submitFormData: FormData) {
-  axios
-    .post('http://localhost/api/admin/album', submitFormData, {
+  await axios
+    .post('http://localhost:3000/api/admin/album', submitFormData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -88,7 +89,7 @@ export function useAlbumForm() {
     const songFile = songFormData.get('songFile') as File;
 
     // 필드가 비어있으면 경고창 띄우고 함수 종료
-    if (!validateForm(songFormData, SONG_FIELDS) || !songFile.name) {
+    if (!validateForm(songFormData, REQUIRED_SONG_FIELDS) || !songFile.name) {
       alert('모든 필드를 입력해주세요.');
       return;
     }
@@ -115,26 +116,21 @@ export function useAlbumForm() {
         return;
       }
 
-      const albumData = createAlbumData(albumFormData, songs);
-
-      const albumCover = albumFormData.get('albumCover') as File;
-      const bannerCover = albumFormData.get('bannerCover') as File;
-
       const submitFormData = createSubmitFormData(
-        albumData,
-        albumCover,
-        bannerCover,
+        createAlbumData(albumFormData, songs),
+        albumFormData.get('albumCover') as File,
+        albumFormData.get('bannerCover') as File,
         songFiles,
       );
 
-      const response = submitAlbumForm(submitFormData);
-      console.log(response);
+      await submitAlbumForm(submitFormData);
 
       // 성공 시 모든 상태 초기화
       setSongs([]);
       setSongFiles([]);
     } catch (error) {
       console.error('[ERROR] 앨범 등록 실패:', error);
+      alert('앨범 등록에 실패했습니다.');
       throw error;
     }
   }, [songs, songFiles]);
