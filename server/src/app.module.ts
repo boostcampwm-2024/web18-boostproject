@@ -10,6 +10,7 @@ import { RoomGateway } from './room/room.gateway';
 import { MusicModule } from './music/music.module';
 import { EmojiModule } from './emoji/emoji.module';
 import { AdminModule } from './admin/admin.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
@@ -19,6 +20,15 @@ import { AdminModule } from './admin/admin.module';
     MusicModule,
     AdminModule,
     EmojiModule,
+    TypeOrmModule.forRoot({
+      type: 'mysql',
+      host: process.env.DB_HOST,
+      port: parseInt(process.env.DB_PORT),
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_DATABASE,
+      entities: [],
+    }),
   ],
   controllers: [AppController, RoomController],
   providers: [Logger, AppService, RoomRepository, RoomGateway],
