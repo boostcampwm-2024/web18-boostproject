@@ -58,7 +58,7 @@ export class MusicRepository {
 
       if (joinTimestamp >= currentTime && joinTimestamp < songEndTime) {
         return {
-          id: `${i}`,
+          id: `${i + 1}`,
           startTime: currentTime,
           duration: session.songs[i],
         };

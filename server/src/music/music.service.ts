@@ -52,7 +52,7 @@ export class MusicService {
         const s3Response = await this.s3
           .getObject({
             Bucket: this.configService.get('S3_BUCKET_NAME'),
-            Key: `converted/${albumId}/${parseInt(songIndex, 10) + 1}/playlist.m3u8`, // 일단 songIndex 경로로 가져옴
+            Key: `converted/${albumId}/${parseInt(songIndex, 10)}/playlist.m3u8`, // 일단 songIndex 경로로 가져옴
           })
           .promise();
 
@@ -89,7 +89,7 @@ export class MusicService {
         const s3Response = await this.s3
           .getObject({
             Bucket: this.configService.get('S3_BUCKET_NAME'),
-            Key: `converted/${albumId}/${parseInt(songIndex, 10) + 1}/playlist${segmentId}.ts`, // 폴더 구조 동기화 필요
+            Key: `converted/${albumId}/${parseInt(songIndex, 10)}/playlist${segmentId}.ts`, // 폴더 구조 동기화 필요
           })
           .promise();
 
