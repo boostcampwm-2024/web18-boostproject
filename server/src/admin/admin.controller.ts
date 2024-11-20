@@ -6,14 +6,13 @@ import {
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
-import { REDIS_CLIENT } from '@/common/redis/redis.module';
-import { RedisClientType } from 'redis';
 import { AlbumDto } from './dto/AlbumDto';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import path from 'path';
 import * as fs from 'fs/promises';
 import { MusicProcessingSevice } from '@/music/music.processor';
 import { AdminService } from './admin.service';
+import { AdminRedisRepository } from './admin.redis.repository';
 
 export interface UploadedFiles {
   albumCover?: Express.Multer.File;
@@ -24,9 +23,9 @@ export interface UploadedFiles {
 @Controller('admin')
 export class AdminController {
   constructor(
-    @Inject(REDIS_CLIENT) private readonly redisClient: RedisClientType,
-    @Inject() private readonly musicProcessingService: MusicProcessingSevice,
+    private readonly adminRedisRepository: AdminRedisRepository,
     private readonly adminService: AdminService,
+    @Inject() private readonly musicProcessingService: MusicProcessingSevice,
   ) {}
 
   @Post('album')
@@ -73,6 +72,15 @@ export class AdminController {
       files.songs,
       albumData,
       albumId,
+    );
+
+    const songDurations = processedSongs.map((song) => song.duration);
+    const releaseTimestamp = new Date(albumData.releaseDate).getTime();
+
+    await this.adminRedisRepository.createStreamingSession(
+      albumId,
+      releaseTimestamp,
+      songDurations,
     );
 
     // TODO: MySQL에 processedSong에 들어가 있는 정보를 기반으로 DB에 노래 정보 저장

@@ -27,4 +27,7 @@ export class SongDto {
 
   @IsString()
   instrument: string;
+
+  @IsString()
+  source: string;
 }
