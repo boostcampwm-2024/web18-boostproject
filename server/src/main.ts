@@ -21,9 +21,7 @@ async function bootstrap() {
     .setVersion('1.0.0')
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
-
-  app.useStaticAssets(join(__dirname, '..', 'public'));
+  SwaggerModule.setup('api/api-document', app, document);
 
   await app.listen(process.env.PORT ?? 3000);
 }

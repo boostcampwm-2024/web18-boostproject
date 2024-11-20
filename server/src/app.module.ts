@@ -9,6 +9,7 @@ import { RoomController } from '@/room/room.controller';
 import { RoomGateway } from './room/room.gateway';
 import { MusicModule } from './music/music.module';
 import { EmojiModule } from './emoji/emoji.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { EmojiModule } from './emoji/emoji.module';
     ConfigModule.forRoot(),
     RedisModule,
     MusicModule,
+    AdminModule,
     EmojiModule,
   ],
   controllers: [AppController, RoomController],
