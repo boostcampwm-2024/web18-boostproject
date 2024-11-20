@@ -24,7 +24,7 @@ export class MusicService {
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {
     this.s3 = new S3({
-      endpoint: this.configService.get('S3_ENDPOINT'),
+      endpoint: this.configService.get('S3_END_POINT'),
       region: this.configService.get('S3_REGION'),
       credentials: {
         accessKeyId: this.configService.get('S3_ACCESS_KEY'),
