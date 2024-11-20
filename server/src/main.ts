@@ -26,10 +26,10 @@ async function bootstrap() {
   app.useStaticAssets(join(__dirname, '..', 'public'), {
     prefix: '/',
   });
-  await app.listen(process.env.PORT ?? 3000);
   app.enableCors({
     origin: ['http://localhost:5173', 'https://www.inear.live'],
     credentials: true,
   });
+  await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
