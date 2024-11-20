@@ -4,6 +4,7 @@ import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -12,6 +13,7 @@ async function bootstrap() {
 
   app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
   app.setGlobalPrefix('api');
+  app.useGlobalPipes(new ValidationPipe());
 
   const config = new DocumentBuilder()
     .setTitle('inear')
