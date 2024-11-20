@@ -1,7 +1,8 @@
 import { useCallback, useState, useRef } from 'react';
 import { CreateAlbumRequest, Song } from './types';
+import axios from 'axios';
 
-const SONG_FIELDS = [
+const REQUIRED_SONG_FIELDS = [
   'title',
   'composer',
   'writer',
@@ -9,23 +10,81 @@ const SONG_FIELDS = [
   'instrument',
   'trackNumber',
   'source',
-  'lyrics',
 ] as const;
 
-const ALBUM_FIELDS = [
-  'title',
-  'artist',
-  'album_tag',
-  'releaseDate',
-  'releaseTime',
-] as const;
+const SONG_FIELDS = [...REQUIRED_SONG_FIELDS, 'lyrics'] as const;
 
-function validateForm(formData: FormData, fields: readonly string[]) {
+const ALBUM_FIELDS = ['title', 'artist', 'albumTag', 'releaseDate'] as const;
+
+const API_URL = 'http://localhost:3000/api/admin/album';
+
+function validateForm(formData: FormData, fields: readonly string[]): boolean {
   return fields.every((field) => {
     const value = formData.get(field);
     return value !== null && value !== '';
   });
 }
+
+function validateFile(file: File | null): boolean {
+  return file !== null && file !== undefined && file.name !== '';
+}
+
+function createSongData(formData: FormData): Song {
+  return SONG_FIELDS.reduce((acc, field) => {
+    acc[field as keyof Song] = formData.get(field) as string;
+    return acc;
+  }, {} as Song);
+}
+
+function createAlbumData(
+  formData: FormData,
+  songs: Song[],
+): CreateAlbumRequest {
+  const albumData = ALBUM_FIELDS.reduce((acc, field) => {
+    acc[field] = formData.get(field) as string;
+    return acc;
+  }, {} as CreateAlbumRequest);
+
+  albumData.songs = songs;
+  return albumData;
+}
+
+function createSubmitFormData(
+  albumData: CreateAlbumRequest,
+  albumCover: File,
+  bannerCover: File,
+  songFiles: File[],
+): FormData {
+  const submitFormData = new FormData();
+  submitFormData.append('albumData', JSON.stringify(albumData));
+  if (validateFile(albumCover)) {
+    submitFormData.append('albumCover', albumCover);
+  }
+  if (validateFile(bannerCover)) {
+    submitFormData.append('bannerCover', bannerCover);
+  }
+  songFiles.forEach((file) => {
+    submitFormData.append('songs', file);
+  });
+  return submitFormData;
+}
+
+async function submitAlbumForm(submitFormData: FormData) {
+  await axios
+    .post(API_URL, submitFormData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+    .then((response) => {
+      console.log(response);
+    })
+    .catch((error) => {
+      console.error('[ERROR] 앨범 등록 실패:', error);
+      throw error;
+    });
+}
+
 export function useAlbumForm() {
   const [songs, setSongs] = useState<Song[]>([]);
   const [songFiles, setSongFiles] = useState<File[]>([]);
@@ -39,16 +98,13 @@ export function useAlbumForm() {
     const songFile = songFormData.get('songFile') as File;
 
     // 필드가 비어있으면 경고창 띄우고 함수 종료
-    if (!validateForm(songFormData, SONG_FIELDS) || !songFile.name) {
+    if (!validateForm(songFormData, REQUIRED_SONG_FIELDS) || !songFile.name) {
       alert('모든 필드를 입력해주세요.');
       return;
     }
 
     // FormData로부터 새로운 노래 객체 생성
-    const newSong = SONG_FIELDS.reduce((acc, field) => {
-      acc[field as keyof Song] = songFormData.get(field) as string;
-      return acc;
-    }, {} as Song);
+    const newSong = createSongData(songFormData);
 
     // 노래 추가 및 파일 추가
     setSongs((prev) => [...prev, newSong as Song]);
@@ -64,49 +120,29 @@ export function useAlbumForm() {
         albumFormRef.current as HTMLFormElement,
       );
 
-      const albumData: CreateAlbumRequest = ALBUM_FIELDS.reduce(
-        (acc, field) => {
-          if (field === 'album_tag') {
-            acc[field] = (albumFormData.get(field) as string).split(',');
-          } else {
-            acc[field] = albumFormData.get(field) as string;
-          }
-          return acc;
-        },
-        {} as CreateAlbumRequest,
+      if (!validateForm(albumFormData, ALBUM_FIELDS)) {
+        alert('모든 필드를 입력해주세요.');
+        return;
+      }
+
+      const submitFormData = createSubmitFormData(
+        createAlbumData(albumFormData, songs),
+        albumFormData.get('albumCover') as File,
+        albumFormData.get('bannerCover') as File,
+        songFiles,
       );
-
-      albumData.songs = songs;
-
-      const albumImage = albumFormData.get('albumImage') as File;
-      const bannerImage = albumFormData.get('bannerImage') as File;
-      console.log(songFiles);
-
-      // if (albumImage) {
-      //   submitFormData.append('albumImage', albumImage);
-      // }
-      // songFiles.forEach((file) => {
-      //   submitFormData.append('songFiles', file);
-      // });
-
-      // const response = await fetch('/api/albums', {
-      //   method: 'POST',
-      //   body: submitFormData,
-      // });
-
-      // if (!response.ok) {
-      //   throw new Error('Failed to submit album data');
-      // }
+      console.log(...submitFormData);
+      await submitAlbumForm(submitFormData);
 
       // 성공 시 모든 상태 초기화
       setSongs([]);
       setSongFiles([]);
-      // return await response.json();
     } catch (error) {
-      console.error('Failed to submit form:', error);
+      console.error('[ERROR] 앨범 등록 실패:', error);
+      alert('시스템 오류로 앨범 등록에 실패했습니다.');
       throw error;
     }
-  }, [songs]);
+  }, [songs, songFiles]);
 
   return { handleSubmit, handleAddSong, songs, songFormRef, albumFormRef };
 }
