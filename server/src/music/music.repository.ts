@@ -2,46 +2,69 @@ import { REDIS_CLIENT } from '@/common/redis/redis.module';
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { RedisClientType } from 'redis';
 
-export interface SongMetadata {
+interface RoomSession {
+  releaseTimestamp: number;
+  songs: number[];
+}
+
+interface SongMetadata {
   id: string;
   startTime: number;
   duration: number;
 }
 
-
-// 노래 하나 하나 따로 저장되어있다고 가정 song : { id : 1, startTime : 123212313, duration : 180}
 @Injectable()
 export class MusicRepository {
   constructor(
     @Inject(REDIS_CLIENT) private readonly redisClient: RedisClientType,
   ) {}
 
-  private songKey(songId: string): string {
-    return `songs:${songId}`;
+  private albumKey(albumId: string): string {
+    return `rooms:${albumId}:session`;
   }
 
-  async getSongMetadata(songId: string): Promise<SongMetadata> {
-    const songKey = this.songKey(songId);
-    const exists = await this.redisClient.exists(songKey);
-    
+  private async getRoomSession(albumId: string): Promise<RoomSession> {
+    const albumKey = this.albumKey(albumId);
+    const exists = await this.redisClient.exists(albumKey);
+
     if (!exists) {
-      throw new NotFoundException(`Song ${songId} not found`);
+      throw new NotFoundException(`Room session ${albumId} not found`);
     }
 
-    const [id, startTime, duration] = await Promise.all([
-      this.redisClient.hGet(songKey, 'id'),
-      this.redisClient.hGet(songKey, 'startTime'),
-      this.redisClient.hGet(songKey, 'duration'),
+    const [releaseTimestampStr, songStr] = await Promise.all([
+      this.redisClient.hGet(albumKey, 'releaseTimestamp'),
+      this.redisClient.hGet(albumKey, 'songs'),
     ]);
-
-    if (!id || !startTime || !duration) {
-      throw new NotFoundException(`Invalid Song ${songId} values`);
+    if (!releaseTimestampStr || !songStr) {
+      throw new NotFoundException(`Album ${albumId} not found`);
     }
 
     return {
-      id,
-      startTime: parseInt(startTime, 10),
-      duration: parseInt(duration, 10),
+      releaseTimestamp: parseInt(releaseTimestampStr, 10),
+      songs: JSON.parse(songStr),
     };
+  }
+
+  async findSongByJoinTimestamp(
+    albumId: string,
+    joinTimestamp: number,
+  ): Promise<SongMetadata> {
+    const session = await this.getRoomSession(albumId);
+
+    let currentTime = session.releaseTimestamp;
+    // TODO : 고차함수로 반복
+    for (let i = 0; i < session.songs.length; i++) {
+      const songEndTime = currentTime + session.songs[i] * 1000;
+
+      if (joinTimestamp >= currentTime && joinTimestamp < songEndTime) {
+        return {
+          id: `${i}`,
+          startTime: currentTime,
+          duration: session.songs[i],
+        };
+      }
+      currentTime = songEndTime;
+    }
+    throw new NotFoundException('No song found for the given timestamp');
   }
 }
