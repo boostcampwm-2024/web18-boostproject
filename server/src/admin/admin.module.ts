@@ -5,6 +5,9 @@ import { MusicModule } from '@/music/music.module';
 import { AdminService } from './admin.service';
 import { AdminRedisRepository } from './admin.redis.repository';
 import { RedisModule } from '@/common/redis/redis.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Song } from '@/song/song.entity';
+import { Album } from '@/album/album.entity';
 
 @Module({
   imports: [
@@ -14,6 +17,7 @@ import { RedisModule } from '@/common/redis/redis.module';
     }),
     RedisModule,
     MusicModule,
+    TypeOrmModule.forFeature([Album, Song]),
   ],
   controllers: [AdminController],
   providers: [AdminService, AdminRedisRepository],
