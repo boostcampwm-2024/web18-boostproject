@@ -24,17 +24,15 @@ services:
       - NODE_ENV=development
     networks:
       - webapp
-    depends_on:
-      - redis
-    # healthcheck:
-    #   test:
-    #     [
-    #       'CMD-SHELL',
-    #       'wget -q --spider http://server:3000/api/health || exit 1',
-    #     ]
-    #   interval: 7s
-    #   timeout: 10s
-    #   retries: 5
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'wget -q --spider http://server:3000/api/health || exit 1',
+        ]
+      interval: 7s
+      timeout: 10s
+      retries: 5
     restart: unless-stopped
 
   client:
@@ -69,15 +67,6 @@ services:
     depends_on:
       - server
       - client
-    networks:
-      - webapp
-    restart: unless-stopped
-
-  redis:
-    image: redis:7-alpine
-    container_name: redis
-    expose:
-      - '6379'
     networks:
       - webapp
     restart: unless-stopped
