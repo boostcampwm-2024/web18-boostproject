@@ -20,13 +20,12 @@ export class EmojiService {
 
   async generateImageUrl(req: EmojiRequestDto): Promise<string> {
     // URL 유효 시간 = 5분
-    const S3_URL_EXPIRATION_SECONDS = 60 * 5;
     const key = `emoji/${req.sessionId}/${req.emojiId}/${req.emojiName}.png`; // TODO : 이모지는 무슨 형식으로 저장해야 하는지 확인
 
     const s3Params = {
       Bucket: this.configService.get('S3_BUCKET_NAME'),
       Key: key,
-      Expires: S3_URL_EXPIRATION_SECONDS,
+      Expires: this.configService.get<number>('S3_URL_EXPIRATION_SECONDS'),
       ContentType: 'image/png',
     };
 
