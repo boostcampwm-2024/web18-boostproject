@@ -69,15 +69,19 @@ export class AdminController {
     // });
 
     //3. 노래 파일들 처리: 기존 processSongFiles 사용
-    const message = await this.processSongFiles(
+    const processedSongs = await this.processSongFiles(
       files.songs,
       albumData,
       albumId,
     );
-    return message;
 
-    // 4. MySQL DB에 노래 정보 저장
+    // TODO: MySQL에 processedSong에 들어가 있는 정보를 기반으로 DB에 노래 정보 저장
     //return { albumId };
+
+    return {
+      albumId,
+      message: 'Album songs updated to object storage successfully',
+    };
   }
 
   private async processSongFiles(
@@ -87,10 +91,12 @@ export class AdminController {
   ): Promise<any> {
     const tempDir = await this.createTempDirectory(albumId);
 
-    await Promise.all(
+    //Processed song 안에서 노래에 관한 모든 정보를 JSON 형태로 받을 수 있음
+    //TODO: processedSongs를 기반으로 MySQL에 정보 저장
+    const processedSongs = await Promise.all(
       songFiles.map(async (file, index) => {
         const songInfo = albumData.songs[index];
-        await this.musicProcessingService.processUpload(file, tempDir, {
+        return await this.musicProcessingService.processUpload(file, tempDir, {
           albumId,
           ...songInfo,
         });
@@ -99,10 +105,7 @@ export class AdminController {
 
     await fs.rm(tempDir, { recursive: true, force: true });
 
-    return {
-      albumId,
-      message: 'Album songs updated to object storage successfully',
-    };
+    return processedSongs;
   }
 
   private async createTempDirectory(albumId: string): Promise<string> {
