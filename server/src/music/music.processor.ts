@@ -27,6 +27,19 @@ export class MusicProcessingSevice {
     this.bucketName = this.configService.get<string>('S3_BUCKET_NAME');
   }
 
+  async getAudioDuration(filePath: string): Promise<number> {
+    return new Promise((resolve, reject) => {
+      ffmpeg.ffprobe(filePath, (err, metadata) => {
+        if (err) {
+          console.error('Error probing file:', err);
+          resolve(0);
+          return;
+        }
+        resolve(metadata.format.duration || 0);
+      });
+    });
+  }
+
   async processUpload(
     file: Express.Multer.File,
     tempDir: string,
@@ -37,10 +50,17 @@ export class MusicProcessingSevice {
     await fs.writeFile(inputPath, file.buffer);
     await fs.mkdir(outputDir, { recursive: true });
 
+    const duration = await this.getAudioDuration(inputPath);
+    console.log(duration);
+
     await this.convertToHLS(inputPath, outputDir);
 
-    const s3DirectoryName = `converted/${songMetaData.albumId}/${songMetaData.title}`;
+    const s3DirectoryName = `converted/${songMetaData.albumId}/${songMetaData.trackNumber}`;
     await this.uploadConvertedFiles(s3DirectoryName, outputDir);
+    return {
+      ...songMetaData,
+      duration,
+    };
   }
 
   private async convertToHLS(mp3Path: string, outputDir: string) {

@@ -1,15 +1,10 @@
-import { useStreamingRoom } from '@/shared/hook/useStreamingRoom';
 import { Button } from '@/shared/ui';
 import { AlbumForm, SongForm } from '@/features/albumRegister';
 import { useAlbumForm } from '@/features/albumRegister/model/useAlbumForm';
 
 export function AdminPage() {
-  const { isConnected } = useStreamingRoom();
   const { handleSubmit, handleAddSong, songs, songFormRef, albumFormRef } =
     useAlbumForm();
-
-  if (!isConnected)
-    return <div className="text-grayscale-100">소켓이 연결되지 않았습니다</div>;
 
   const handlePost = async () => {
     if (!albumFormRef.current || songs.length === 0) return;
