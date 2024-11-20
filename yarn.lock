@@ -1532,6 +1532,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nestjs/cache-manager@npm:2.1.0":
+  version: 2.1.0
+  resolution: "@nestjs/cache-manager@npm:2.1.0"
+  peerDependencies:
+    "@nestjs/common": ^9.0.0 || ^10.0.0
+    "@nestjs/core": ^9.0.0 || ^10.0.0
+    cache-manager: <=5
+    reflect-metadata: ^0.1.12
+    rxjs: ^7.0.0
+  checksum: 10c0/8edf02a017dce475c76ff9a9e8507882358acd175fa82f0f109728892f5916103c25a1bda5028307325c1c6856e5754fb5773b2091fc9220c15f1e408f9f5675
+  languageName: node
+  linkType: hard
+
 "@nestjs/cli@npm:^10.0.0":
   version: 10.4.7
   resolution: "@nestjs/cli@npm:10.4.7"
@@ -2660,6 +2673,13 @@ __metadata:
     "@types/connect": "npm:*"
     "@types/node": "npm:*"
   checksum: 10c0/aebeb200f25e8818d8cf39cd0209026750d77c9b85381cdd8deeb50913e4d18a1ebe4b74ca9b0b4d21952511eeaba5e9fbbf739b52731a2061e206ec60d568df
+  languageName: node
+  linkType: hard
+
+"@types/cache-manager@npm:^4.0.6":
+  version: 4.0.6
+  resolution: "@types/cache-manager@npm:4.0.6"
+  checksum: 10c0/3cf78d7ec98a03f651ceb31cc7fbd56f25476c90892d3b19a60c645e8fdd6fe7df99b14afde3fcaec407ab8bb5c8e77332dded77b335cad0fc4b06fbf2df5d62
   languageName: node
   linkType: hard
 
@@ -4401,6 +4421,16 @@ __metadata:
     tar: "npm:^6.1.11"
     unique-filename: "npm:^3.0.0"
   checksum: 10c0/6c055bafed9de4f3dcc64ac3dc7dd24e863210902b7c470eb9ce55a806309b3efff78033e3d8b4f7dcc5d467f2db43c6a2857aaaf26f0094b8a351d44c42179f
+  languageName: node
+  linkType: hard
+
+"cache-manager@npm:5.2.3":
+  version: 5.2.3
+  resolution: "cache-manager@npm:5.2.3"
+  dependencies:
+    lodash.clonedeep: "npm:^4.5.0"
+    lru-cache: "npm:^9.1.2"
+  checksum: 10c0/33ad28b8733022b9b71d9db222647a32dade52edaf9ce53df1121d8bab7faa428eb08adc05de58c521f2804c54335895e397f9a3a8be09cd4f98cad214eddf13
   languageName: node
   linkType: hard
 
@@ -8447,6 +8477,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lodash.clonedeep@npm:^4.5.0":
+  version: 4.5.0
+  resolution: "lodash.clonedeep@npm:4.5.0"
+  checksum: 10c0/2caf0e4808f319d761d2939ee0642fa6867a4bbf2cfce43276698828380756b99d4c4fa226d881655e6ac298dd453fe12a5ec8ba49861777759494c534936985
+  languageName: node
+  linkType: hard
+
 "lodash.defaults@npm:^4.2.0":
   version: 4.2.0
   resolution: "lodash.defaults@npm:4.2.0"
@@ -8544,6 +8581,13 @@ __metadata:
   dependencies:
     yallist: "npm:^3.0.2"
   checksum: 10c0/89b2ef2ef45f543011e38737b8a8622a2f8998cddf0e5437174ef8f1f70a8b9d14a918ab3e232cb3ba343b7abddffa667f0b59075b2b80e6b4d63c3de6127482
+  languageName: node
+  linkType: hard
+
+"lru-cache@npm:^9.1.2":
+  version: 9.1.2
+  resolution: "lru-cache@npm:9.1.2"
+  checksum: 10c0/886811ab451332c899c230274e7e51507c15e5b3b18f0b39fb55f558978d58799a0b1a50e04d60a448d8c970ff4e6ee718bb119083ca88abb78930284f1e0900
   languageName: node
   linkType: hard
 
@@ -10526,6 +10570,7 @@ __metadata:
   dependencies:
     "@ffmpeg-installer/ffmpeg": "npm:^1.1.0"
     "@nestjs/apollo": "npm:^12.1.0"
+    "@nestjs/cache-manager": "npm:2.1.0"
     "@nestjs/cli": "npm:^10.0.0"
     "@nestjs/common": "npm:^10.4.6"
     "@nestjs/config": "npm:^3.2.2"
@@ -10539,6 +10584,7 @@ __metadata:
     "@nestjs/testing": "npm:^10.0.0"
     "@nestjs/typeorm": "npm:^10.0.2"
     "@nestjs/websockets": "npm:^10.4.7"
+    "@types/cache-manager": "npm:^4.0.6"
     "@types/express": "npm:^5.0.0"
     "@types/fluent-ffmpeg": "npm:^2.1.27"
     "@types/jest": "npm:^29.5.14"
@@ -10548,6 +10594,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": "npm:^6.0.0"
     "@typescript-eslint/parser": "npm:^6.0.0"
     aws-sdk: "npm:^2.1692.0"
+    cache-manager: "npm:5.2.3"
     class-transformer: "npm:^0.5.1"
     class-validator: "npm:^0.14.1"
     eslint: "npm:^8.42.0"

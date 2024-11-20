@@ -8,14 +8,18 @@ services:
       context: .
       dockerfile: server/Dockerfile
     container_name: server
-    expose:
-      - '3000'
     volumes:
       - ./server:/app/server
+      - ./tsconfig.json:/app/tsconfig.json
       - ./package.json:/app/package.json
       - ./yarn.lock:/app/yarn.lock
       - ./.yarnrc.yml:/app/.yarnrc.yml
       - ./.yarn:/app/.yarn
+    command:
+      - yarn
+      - --cwd
+      - /app/server
+      - dev
     environment:
       - NODE_ENV=development
     networks:
@@ -33,6 +37,25 @@ services:
     #   retries: 5
     restart: unless-stopped
 
+  client:
+    build:
+      context: .
+      dockerfile: client/Dockerfile
+    container_name: client
+    volumes:
+      - ./client:/app/client
+      - ./package.json:/app/package.json
+      - ./yarn.lock:/app/yarn.lock
+      - ./.yarnrc.yml:/app/.yarnrc.yml
+      - ./.yarn:/app/.yarn
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
+    networks:
+      - webapp
+    restart: unless-stopped
+
   nginx:
     build:
       context: .
@@ -45,6 +68,7 @@ services:
       - '80:80'
     depends_on:
       - server
+      - client
     networks:
       - webapp
     restart: unless-stopped

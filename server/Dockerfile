@@ -1,12 +1,11 @@
-FROM node:20-alpine
+FROM node:22-alpine
 
 WORKDIR /app
 
 RUN apk add --no-cache ffmpeg
 
-COPY package.json yarn.lock .yarnrc.yml ./
+COPY package.json yarn.lock .yarnrc.yml tsconfig.json ./
 COPY .yarn .yarn
-COPY tsconfig.json ./
 COPY server/ server/
 
 RUN corepack enable && \
