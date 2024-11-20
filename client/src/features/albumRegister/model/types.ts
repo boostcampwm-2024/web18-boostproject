@@ -4,15 +4,14 @@
 export interface CreateAlbumRequest {
   title: string;
   artist: string;
-  album_tag: string[];
+  albumTag: string[];
   releaseDate: string;
-  releaseTime: string;
   songs?: Song[];
 }
 
 export interface AlbumImageRequest {
-  album_cover: any;
-  banner_cover?: any;
+  albumCover: any;
+  bannerCover?: any;
 }
 
 /**
@@ -23,12 +22,10 @@ export interface Song {
   trackNumber: string;
   lyrics?: string;
   composer?: string;
-  playtime: string;
   writer?: string;
   instrument?: string;
   producer?: string;
   source?: string;
-  // file: any;
 }
 
 export interface SongFilesRequest {
