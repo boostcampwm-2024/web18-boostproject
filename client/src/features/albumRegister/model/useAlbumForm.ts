@@ -16,11 +16,17 @@ const SONG_FIELDS = [...REQUIRED_SONG_FIELDS, 'lyrics'] as const;
 
 const ALBUM_FIELDS = ['title', 'artist', 'albumTag', 'releaseDate'] as const;
 
+const API_URL = 'http://localhost:3000/api/admin/album';
+
 function validateForm(formData: FormData, fields: readonly string[]): boolean {
   return fields.every((field) => {
     const value = formData.get(field);
     return value !== null && value !== '';
   });
+}
+
+function validateFile(file: File | null): boolean {
+  return file !== null && file !== undefined && file.name !== '';
 }
 
 function createSongData(formData: FormData): Song {
@@ -51,18 +57,21 @@ function createSubmitFormData(
 ): FormData {
   const submitFormData = new FormData();
   submitFormData.append('albumData', JSON.stringify(albumData));
-  submitFormData.append('albumCover', albumCover);
-  submitFormData.append('bannerCover', bannerCover);
+  if (validateFile(albumCover)) {
+    submitFormData.append('albumCover', albumCover);
+  }
+  if (validateFile(bannerCover)) {
+    submitFormData.append('bannerCover', bannerCover);
+  }
   songFiles.forEach((file) => {
     submitFormData.append('songs', file);
   });
-
   return submitFormData;
 }
 
 async function submitAlbumForm(submitFormData: FormData) {
   await axios
-    .post('http://localhost:3000/api/admin/album', submitFormData, {
+    .post(API_URL, submitFormData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -122,7 +131,7 @@ export function useAlbumForm() {
         albumFormData.get('bannerCover') as File,
         songFiles,
       );
-
+      console.log(...submitFormData);
       await submitAlbumForm(submitFormData);
 
       // 성공 시 모든 상태 초기화
@@ -130,7 +139,7 @@ export function useAlbumForm() {
       setSongFiles([]);
     } catch (error) {
       console.error('[ERROR] 앨범 등록 실패:', error);
-      alert('앨범 등록에 실패했습니다.');
+      alert('시스템 오류로 앨범 등록에 실패했습니다.');
       throw error;
     }
   }, [songs, songFiles]);
