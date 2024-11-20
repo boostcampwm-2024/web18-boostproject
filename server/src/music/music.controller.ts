@@ -15,10 +15,10 @@ import { MusicService } from './music.service';
 export class MusicController {
   constructor(private readonly musicService: MusicService) {}
 
-  @Get(':musicId/playlist.m3u8')
+  @Get(':albumId/playlist.m3u8')
   @Header('Content-Type', 'application/x-mpegURL')
   async getMusicFile(
-    @Param('musicId') musicId: string,
+    @Param('albumId') albumId: string,
     @Query('joinTimeStamp') joinTimeStamp: string,
   ) {
     if (!joinTimeStamp) {
@@ -29,19 +29,20 @@ export class MusicController {
     }
 
     return await this.musicService.generateMusicFile(
-      musicId,
+      albumId,
       parseInt(joinTimeStamp, 10),
     );
   }
 
-  @Get(':musicId/playlist:segmentId.ts')
+  @Get(':albumId/:songIndex/playlist:segmentId.ts')
   @Header('Content-Type', 'video/MP2T')
   async getSegment(
-    @Param('musicId') musicId: string,
+    @Param('albumId') albumId: string,
+    @Param('songIndex') songIndex: string,
     @Param('segmentId') segmentId: string,
   ) {
     return new StreamableFile(
-      await this.musicService.getSegment(musicId, segmentId),
+      await this.musicService.getSegment(albumId, songIndex, segmentId),
       { type: 'video/MP2T' },
     );
   }
