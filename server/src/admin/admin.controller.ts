@@ -13,6 +13,11 @@ import * as fs from 'fs/promises';
 import { MusicProcessingSevice } from '@/music/music.processor';
 import { AdminService } from './admin.service';
 import { AdminRedisRepository } from './admin.redis.repository';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Song } from '@/song/song.entity';
+import { Repository } from 'typeorm';
+import { SongSaveDto } from '@/song/songSave.dto';
+import { Album } from '@/album/album.entity';
 
 export interface UploadedFiles {
   albumCover?: Express.Multer.File;
@@ -26,6 +31,9 @@ export class AdminController {
     private readonly adminRedisRepository: AdminRedisRepository,
     private readonly adminService: AdminService,
     @Inject() private readonly musicProcessingService: MusicProcessingSevice,
+    @InjectRepository(Song) private readonly songRepository: Repository<Song>,
+    @InjectRepository(Album)
+    private readonly albumRepository: Repository<Album>,
   ) {}
 
   @Post('album')
@@ -66,6 +74,7 @@ export class AdminController {
     //   albumCoverURL,
     //   bannerCoverURL
     // });
+    // TODO: albumData.setBannerUrl(albumCoverUrl), albumData.setJacketUrl(bannerCoverUrl);
 
     //3. 노래 파일들 처리: 기존 processSongFiles 사용
     const processedSongs = await this.processSongFiles(
@@ -83,9 +92,13 @@ export class AdminController {
       songDurations,
     );
 
-    // TODO: MySQL에 processedSong에 들어가 있는 정보를 기반으로 DB에 노래 정보 저장
-    //return { albumId };
+    const album = await this.albumRepository.save(new Album(albumData));
 
+    // TODO: MySQL에 processedSong에 들어가 있는 정보를 기반으로 DB에 노래 정보 저장
+    processedSongs.forEach((song) => {
+      const songDto = new SongSaveDto({ ...song, albumId: album.getId() });
+      this.songRepository.save(new Song(songDto));
+    });
     return {
       albumId,
       message: 'Album songs updated to object storage successfully',
