@@ -25,7 +25,11 @@ services:
     networks:
       - webapp
     healthcheck:
-      test: ["CMD-SHELL", "wget -q --spider http://server:3000/api/health || exit 1"]
+      test:
+        [
+          'CMD-SHELL',
+          'wget -q --spider http://server:3000/api/health || exit 1',
+        ]
       interval: 7s
       timeout: 10s
       retries: 5
@@ -57,6 +61,7 @@ services:
     container_name: nginx
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./client/dist/:/usr/share/nginx/html
     ports:
       - '80:80'
     depends_on:
