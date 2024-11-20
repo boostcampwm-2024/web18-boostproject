@@ -65,7 +65,8 @@ export class MusicProcessingSevice {
 
   private async convertToHLS(mp3Path: string, outputDir: string) {
     // mp3 파일을 m3u8, ts 파일로 변환 -> 만든 임시 디렉토리에다가 저장
-    const HLS_SEGMENT_TIME = process.env.HLS_SEGMENT_TIME || '3';
+    const HLS_SEGMENT_TIME =
+      this.configService.get<string>('HLS_SEGMENT_TIME') || '3';
 
     return new Promise((resolve, reject) => {
       ffmpeg(mp3Path)
