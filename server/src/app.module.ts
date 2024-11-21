@@ -35,6 +35,7 @@ import { SongModule } from '@/song/song.module';
       database: process.env.DB_DATABASE,
       entities: [Album, Song],
     }),
+    TypeOrmModule.forFeature([Song, Album]),
   ],
   controllers: [AppController, RoomController],
   providers: [Logger, AppService, RoomRepository, RoomGateway],
