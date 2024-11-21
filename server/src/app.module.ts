@@ -15,6 +15,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Album } from '@/album/album.entity';
 import { Song } from '@/song/song.entity';
 import { SongModule } from '@/song/song.module';
+import { MusicRepository } from '@/music/music.repository';
 
 @Module({
   imports: [
@@ -38,6 +39,6 @@ import { SongModule } from '@/song/song.module';
     TypeOrmModule.forFeature([Song, Album]),
   ],
   controllers: [AppController, RoomController],
-  providers: [Logger, AppService, RoomRepository, RoomGateway],
+  providers: [Logger, AppService, RoomRepository, RoomGateway, MusicRepository],
 })
 export class AppModule {}

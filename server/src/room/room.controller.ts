@@ -68,16 +68,15 @@ export class RoomController {
         where: { id: roomId },
       });
       const albumResponse = await this.getAlbumResponseDto(albumInfo);
-      const songList = await this.songRepository.findBy({ albumId: roomId });
+      const songList = await this.songRepository.find({
+        where: { albumId: roomId },
+        order: { trackNumber: 'ASC' },
+      });
       const songResponseList = await Promise.all(
         songList.map(async (song) => await this.getSongResponseDto(song)),
       );
 
-      const sortedSongList = songResponseList.sort(
-        (a, b) => a.trackNumber - b.trackNumber,
-      );
-
-      const totalDuration = sortedSongList.reduce((acc, song) => {
+      const totalDuration = songResponseList.reduce((acc, song) => {
         return acc + parseInt(song.duration);
       }, 0);
 
@@ -90,7 +89,7 @@ export class RoomController {
         success: true,
         ...roomInfo,
         albumResponse,
-        sortedSongList,
+        songResponseList,
         totalDuration,
         trackOrder: trackInfo.id,
       };
