@@ -24,9 +24,11 @@ export interface SongDetail {
 }
 
 export interface RoomResponse {
+  success: boolean;
   albumResponse: AlbumDetail;
   songResponseList: SongDetail[];
   totalDuration: number;
+  trackOrder: string;
 }
 
 /**
