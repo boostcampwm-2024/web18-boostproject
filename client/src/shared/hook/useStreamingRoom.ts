@@ -13,6 +13,7 @@ export function useStreamingRoom() {
     if (roomId) {
       socket.emit('joinRoom', { roomId, userId: 'test' }, (response: any) => {
         console.log('방 입장 응답 : ', response);
+        setIsConnected(response.success);
       });
     }
   };

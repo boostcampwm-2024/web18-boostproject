@@ -2,6 +2,11 @@ import { AlbumDetail } from '@/entities/album/types';
 import { ChevronDown } from '@/shared/icon/ChevronDown';
 import { useState } from 'react';
 import './LyricsPanel.css';
+import { useRef, useEffect } from 'react';
+import Hls from 'hls.js';
+import { useParams } from 'react-router-dom';
+import { TestAudioController } from '@/pages/StreamingPage/ui/TestAudioController';
+import { PlayIcon } from '@/shared/icon/PlayIcon';
 
 interface AlbumInfoProps {
   album: AlbumDetail;
@@ -131,9 +136,80 @@ function PlaylistPanel() {
   return <p>플레이리스트</p>;
 }
 
+interface AlbumInfoProps {
+  album: {
+    tags: string[];
+    title: string;
+    artist: string;
+    currentTime: string;
+    coverImage: string;
+    trackName: string;
+  };
+}
+
 export function AlbumInfo({ album }: AlbumInfoProps) {
+  const audioRef = useRef<HTMLMediaElement>(null);
+  const { roomId } = useParams<{ roomId: string }>();
+  const joinTimeStamp = 1700000004500;
+  // const startTime = 1732165466570;
+  const url = `http://localhost:3000/api/music/${roomId}/playlist.m3u8?joinTimeStamp=${joinTimeStamp}`;
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  console.log(Date.now());
+
+  const handleAudioPlay = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    audio.play();
+    setIsLoaded(true);
+  };
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (Hls.isSupported()) {
+      const hls = new Hls();
+
+      hls.loadSource(url);
+      hls.attachMedia(audio);
+
+      hls.on(Hls.Events.MANIFEST_PARSED, (data) => {
+        setIsLoaded(true);
+        console.log('HLS Manifest Parsed:');
+      });
+
+      hls.on(Hls.Events.ERROR, (event, data) => {
+        console.error('HLS Error:', data);
+        console.log('Full m3u8 Link:', url);
+      });
+
+      return () => {
+        hls.destroy();
+      };
+    }
+  }, [url]);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio || !isLoaded) return;
+
+    // 재생 시도
+    // const currentOffset = (Date.now() - startTime) / 1000;
+    // audio.currentTime = currentOffset;
+    audio.play().catch((error) => {
+      if (error.name === 'NotAllowedError') {
+        setIsLoaded(false);
+      } else {
+        console.error('Failed to play audio', error);
+      }
+    });
+  }, [isLoaded]);
+
   return (
     <div className="flex flex-col items-center w-7/12 relative">
+      <audio ref={audioRef} controls controlsList="nodownload" />
       <div className="text-center mb-32 w-full">
         <p className="text-gray-300 mb-4">#{album.tags.join(' #')}</p>
         <p className="text-3xl font-bold mb-4">{album.title}</p>
@@ -141,12 +217,28 @@ export function AlbumInfo({ album }: AlbumInfoProps) {
       </div>
       <div className="flex flex-col items-center">
         <p className="text-sm mb-3">{album.currentTime}</p>
-        <img
-          src={album.coverImage}
-          alt="Album Cover"
-          className="w-52 h-52 object-cover rounded-lg mb-4"
-        />
-        <p className="text-2xl font-bold">{album.trackName}</p>
+        <div className="relative flex justify-center items-center">
+          <img
+            src={album.coverImage}
+            alt="Album Cover"
+            className="w-52 h-52 object-cover rounded-t-lg"
+          />
+          {!isLoaded && (
+            <>
+              <button
+                className="z-20 absolute px-4 py-2 rounded-lg text-xl bg-gray-700"
+                onClick={handleAudioPlay}
+              >
+                <PlayIcon />
+              </button>
+              <div className="bg-gray-900 absolute top-0 w-full h-full opacity-70"></div>
+            </>
+          )}
+        </div>
+
+        <TestAudioController audioRef={audioRef} />
+        <button className="text-sm text-gray-300 mt-3">재생</button>
+        <p className="mt-4 text-2xl font-bold">{album.trackName}</p>
       </div>
       <TrackDetail />
     </div>
