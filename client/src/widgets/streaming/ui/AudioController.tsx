@@ -28,8 +28,8 @@ export const AudioController = ({ audioRef }: TestAudioControllerProps) => {
   }, []);
 
   return (
-    <div className="w-full flex items-center space-x-2">
-      <div className="flex-grow h-1 bg-grayscale-50 relative cursor-default">
+    <div className="absolute bottom-0 z-50 w-full flex items-center space-x-2">
+      <div className="flex-grow h-1  relative cursor-default">
         <div
           className={`absolute left-0 top-0 h-full bg-brand`}
           style={{ width: `${progress}%` }}
