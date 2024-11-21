@@ -65,8 +65,43 @@ export class RoomGateway
     }
   }
 
-  handleDisconnect(client: Socket) {
+  async handleDisconnect(client: Socket) {
     console.log(`Client disconnected: ${client.id}`);
+    try {
+      const roomId = client.handshake.query.roomId as string;
+      const room = await this.roomRepository.findRoom(roomId);
+
+      if (!room) {
+        throw new Error('Room not found');
+      }
+
+      const clientId = client.id;
+      await this.roomRepository.leaveRoom(client.id, roomId);
+
+      const currentUserCount =
+        await this.roomRepository.getCurrentUsers(roomId);
+      await client.leave(roomId);
+
+      client.emit('leavedRoom', {
+        roomId,
+        userId: clientId,
+        timestamp: new Date(),
+      });
+      this.server.to(roomId).emit('roomUsersUpdated', {
+        roomId,
+        userCount: currentUserCount,
+      });
+
+      return {
+        success: true,
+        message: `Successfully left room ${roomId}`,
+      };
+    } catch (e) {
+      return {
+        success: false,
+        message: e.message,
+      };
+    }
   }
 
   @SubscribeMessage('createRoom')
@@ -136,48 +171,6 @@ export class RoomGateway
       return {
         success: false,
         error: error.message,
-      };
-    }
-  }
-
-  @SubscribeMessage('leaveRoom')
-  async handleLeaveRoom(
-    @ConnectedSocket() client: Socket,
-    @MessageBody() data: { roomId: string },
-  ): Promise<{ success: boolean; message?: string; error?: string }> {
-    try {
-      const room = await this.roomRepository.findRoom(data.roomId);
-
-      if (!room) {
-        throw new Error('Room not found');
-      }
-      const roomId = data.roomId;
-
-      const clientId = client.id;
-      await this.roomRepository.leaveRoom(client.id, roomId);
-
-      const currentUserCount =
-        await this.roomRepository.getCurrentUsers(roomId);
-      await client.leave(data.roomId);
-
-      client.emit('leavedRoom', {
-        roomId,
-        userId: clientId,
-        timestamp: new Date(),
-      });
-      this.server.to(data.roomId).emit('roomUsersUpdated', {
-        roomId,
-        userCount: currentUserCount,
-      });
-
-      return {
-        success: true,
-        message: `Successfully left room ${roomId}`,
-      };
-    } catch (e) {
-      return {
-        success: false,
-        message: e.message,
       };
     }
   }
