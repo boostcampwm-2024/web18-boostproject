@@ -242,7 +242,6 @@ export function AlbumInfo({ album }: AlbumInfoProps) {
         </div>
 
         <AudioController audioRef={audioRef} />
-        <button className="text-sm text-gray-300 mt-3">재생</button>
         <p className="mt-4 text-2xl font-bold">{album.trackName}</p>
       </div>
       <TrackDetail />
