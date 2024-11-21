@@ -1,4 +1,3 @@
-import { AlbumDetail } from '@/entities/album/types';
 import { ChevronDown } from '@/shared/icon/ChevronDown';
 import { useState } from 'react';
 import './LyricsPanel.css';
@@ -7,17 +6,15 @@ import Hls from 'hls.js';
 import { useParams } from 'react-router-dom';
 import { AudioController } from '@/widgets/streaming/ui/AudioController';
 import { PlayIcon } from '@/shared/icon/PlayIcon';
-
-interface AlbumInfoProps {
-  album: AlbumDetail;
-}
+import { AlbumDetail, SongDetail } from '@/entities/album/types';
+import SampleAlbumCover from '@/assets/sample-album-cover-1.png';
 
 const CATEGORIES = {
   LYRICS: 'lyrics',
   PLAYLIST: 'playlist',
 } as const;
 
-function TrackDetail() {
+function TrackDetail({ songs }: { songs: SongDetail[] }) {
   const [isOpen, setIsOpen] = useState(false);
   const [category, setCategory] = useState('lyrics');
 
@@ -33,7 +30,7 @@ function TrackDetail() {
         setIsOpen={setIsOpen}
         setCategory={setCategory}
       />
-      <TrackDetailContent isOpen={isOpen} category={category} />
+      <TrackDetailContent isOpen={isOpen} category={category} songs={songs} />
     </div>
   );
 }
@@ -41,10 +38,14 @@ function TrackDetail() {
 function TrackDetailContent({
   isOpen,
   category,
+  songs,
 }: {
   isOpen: boolean;
   category: string;
+  songs: SongDetail[];
 }) {
+  // 현재 노래의 가사 뽑기
+  // 현재 순서뽑기
   return (
     <div
       className={`px-6 py-4 h-64 transition-opacity duration-200 ease-in-out
@@ -137,17 +138,11 @@ function PlaylistPanel() {
 }
 
 interface AlbumInfoProps {
-  album: {
-    tags: string[];
-    title: string;
-    artist: string;
-    currentTime: string;
-    coverImage: string;
-    trackName: string;
-  };
+  album: AlbumDetail;
+  songs: SongDetail[];
 }
 
-export function AlbumInfo({ album }: AlbumInfoProps) {
+export function AlbumInfo({ album, songs }: AlbumInfoProps) {
   const audioRef = useRef<HTMLMediaElement>(null);
   const { roomId } = useParams<{ roomId: string }>();
   const [isLoaded, setIsLoaded] = useState(false);
@@ -156,7 +151,7 @@ export function AlbumInfo({ album }: AlbumInfoProps) {
     console.log('playStream');
     const audio = audioRef.current;
     if (!audio) return;
-    const streamUrl = `/api/music/${roomId}/playlist.m3u8?joinTimeStamp=${Date.now()}`;
+    const streamUrl = `http://localhost:3000/api/music/${roomId}/playlist.m3u8?joinTimeStamp=${Date.now()}`;
     if (Hls.isSupported()) {
       const hls = new Hls({
         maxBufferLength: 30, // 버퍼 길이 제한
@@ -212,19 +207,24 @@ export function AlbumInfo({ album }: AlbumInfoProps) {
     });
   }, [isLoaded]);
 
+  // 노래 길이 [100, 200]
+  // 시작시간
+
   return (
     <div className="flex flex-col items-center w-7/12 relative">
       <audio ref={audioRef} controls controlsList="nodownload" />
       <div className="text-center mb-32 w-full">
-        <p className="text-gray-300 mb-4">#{album.tags.join(' #')}</p>
+        <p className="text-gray-300 mb-4">
+          #{album.tags.split(', ').join(' #')}
+        </p>
         <p className="text-3xl font-bold mb-4">{album.title}</p>
         <p>{album.artist}</p>
       </div>
       <div className="flex flex-col items-center">
-        <p className="text-sm mb-3">{album.currentTime}</p>
+        {/* <p className="text-sm mb-3">{album.currentTime}</p> */}
         <div className="relative flex justify-center items-center">
           <img
-            src={album.coverImage}
+            src={album.jacketUrl ?? SampleAlbumCover}
             alt="Album Cover"
             className="w-52 h-52 object-cover rounded-t-lg"
           />
@@ -242,9 +242,9 @@ export function AlbumInfo({ album }: AlbumInfoProps) {
         </div>
 
         <AudioController audioRef={audioRef} />
-        <p className="mt-4 text-2xl font-bold">{album.trackName}</p>
+        <p className="mt-4 text-2xl font-bold">{}</p>
       </div>
-      <TrackDetail />
+      <TrackDetail songs={songs} />
     </div>
   );
 }

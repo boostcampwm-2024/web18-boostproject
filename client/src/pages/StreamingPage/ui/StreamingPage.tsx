@@ -9,9 +9,11 @@ export function StreamingPage() {
   // TODO: 소켓 이벤트들 handler로 만들어서 한번에 관리하기
   // TODO: 방 입장과 퇴장 이벤트 따로 처리하기
   const { isConnected } = useStreamingRoom();
+
   if (!isConnected) {
     return <StreamingErrorPage />;
   }
+
   return (
     <div className="flex flex-row h-screen">
       <Streaming />
