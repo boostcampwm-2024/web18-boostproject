@@ -11,6 +11,7 @@ export const AudioController = ({ audioRef }: TestAudioControllerProps) => {
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
+    audio.controls = false;
 
     const updateProgress = () => {
       const progressPercent =
