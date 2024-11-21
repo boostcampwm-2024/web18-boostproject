@@ -28,4 +28,21 @@ export class AlbumDto {
 
   @IsArray()
   songs: SongDto[];
+
+  @IsString()
+  tags: string;
+
+  @IsString()
+  bannerUrl: string;
+
+  @IsString()
+  jacketUrl: string;
+
+  public setBannerUrl(url: string) {
+    this.bannerUrl = url;
+  }
+
+  public setJacketUrl(url: string) {
+    this.jacketUrl = url;
+  }
 }

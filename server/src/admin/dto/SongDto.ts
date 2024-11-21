@@ -1,11 +1,4 @@
-import {
-  IsArray,
-  IsDateString,
-  IsNotEmpty,
-  IsNumber,
-  IsString,
-  Min,
-} from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString, Min } from 'class-validator';
 
 export class SongDto {
   @IsString()
@@ -30,4 +23,22 @@ export class SongDto {
 
   @IsString()
   source: string;
+
+  constructor(
+    title: string,
+    trackNumber: number,
+    composer: string,
+    writer: string,
+    instrument: string,
+    source: string,
+    lyrics?: string,
+  ) {
+    this.title = title;
+    this.trackNumber = trackNumber;
+    this.composer = composer;
+    this.writer = writer;
+    this.instrument = instrument;
+    this.source = source;
+    this.lyrics = lyrics;
+  }
 }
