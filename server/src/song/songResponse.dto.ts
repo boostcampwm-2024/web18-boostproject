@@ -16,7 +16,7 @@ export class SongResponseDto {
 
   @Expose()
   @IsNumber()
-  trackNumber: string;
+  trackNumber: number;
 
   @Expose()
   lyrics: string;

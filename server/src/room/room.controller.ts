@@ -73,7 +73,11 @@ export class RoomController {
         songList.map(async (song) => await this.getSongResponseDto(song)),
       );
 
-      const totalDuration = songResponseList.reduce((acc, song) => {
+      const sortedSongList = songResponseList.sort(
+        (a, b) => a.trackNumber - b.trackNumber,
+      );
+
+      const totalDuration = sortedSongList.reduce((acc, song) => {
         return acc + parseInt(song.duration);
       }, 0);
 
@@ -86,7 +90,7 @@ export class RoomController {
         success: true,
         ...roomInfo,
         albumResponse,
-        songResponseList,
+        sortedSongList,
         totalDuration,
         trackOrder: trackInfo.id,
       };
