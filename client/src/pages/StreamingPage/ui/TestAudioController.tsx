@@ -5,16 +5,17 @@ interface TestAudioControllerProps {
 }
 
 export const TestAudioController = ({ audioRef }: TestAudioControllerProps) => {
+  const songDuration = 98;
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
-    audio.controls = false;
-
     const updateProgress = () => {
-      const progressPercent = (audio.currentTime / audio.duration) * 100;
+      const progressPercent =
+        ((songDuration - audio.duration + audio.currentTime) / songDuration) *
+        100;
       setProgress(progressPercent);
     };
 

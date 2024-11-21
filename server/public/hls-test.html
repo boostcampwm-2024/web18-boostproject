@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>음악 스트리밍 테스트</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.4.12/hls.min.js"></script>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+          'Helvetica Neue', Arial, sans-serif;
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+        background-color: #f5f5f5;
+      }
+      .container {
+        background-color: white;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .form-group {
+        margin-bottom: 1rem;
+      }
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: bold;
+      }
+      input {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin-bottom: 1rem;
+      }
+      button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      audio {
+        width: 100%;
+        margin-top: 1rem;
+      }
+      #status {
+        margin-top: 1rem;
+        padding: 1rem;
+        border-radius: 4px;
+      }
+      .success {
+        background-color: #d4edda;
+        color: #155724;
+      }
+      .error {
+        background-color: #f8d7da;
+        color: #721c24;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>음악 스트리밍 테스트</h1>
+      <div class="form-group">
+        <label for="albumId">앨범 ID:</label>
+        <input type="text" id="albumId" placeholder="앨범 ID를 입력하세요" />
+      </div>
+      <div class="form-group">
+        <label for="timestamp">Timestamp:</label>
+        <input
+          type="number"
+          id="timestamp"
+          placeholder="타임스탬프를 입력하세요"
+        />
+      </div>
+      <button onclick="playStream()">재생</button>
+
+      <audio id="audioPlayer" controls></audio>
+      <div id="status"></div>
+    </div>
+
+    <script>
+      function updateStatus(message, isError = false) {
+        const statusDiv = document.getElementById('status');
+        statusDiv.textContent = message;
+        statusDiv.className = isError ? 'error' : 'success';
+      }
+      const timestamp = document.getElementById('timestamp').value;
+      const audioPlayer = document.getElementById('audioPlayer');
+      audioPlayer.addEventListener('ended', function () {
+        playStream();
+      });
+      console.log(Date.now());
+      function playStream() {
+        const albumId = document.getElementById('albumId').value;
+
+        const streamUrl = `/api/music/${albumId}/playlist.m3u8?joinTimeStamp=${Date.now()}`;
+        if (Hls.isSupported()) {
+          const hls = new Hls();
+          hls.loadSource(streamUrl);
+          hls.attachMedia(audioPlayer);
+
+          hls.on(Hls.Events.MANIFEST_PARSED, function () {
+            updateStatus('스트림 로드 완료! 재생을 시작합니다.');
+            audioPlayer.play();
+          });
+
+          hls.on(Hls.Events.ERROR, function (event, data) {
+            updateStatus(`스트리밍 에러: ${data.type}`, true);
+          });
+        } else if (audioPlayer.canPlayType('application/vnd.apple.mpegurl')) {
+          // Safari에서 네이티브 HLS 지원
+          audioPlayer.src = streamUrl;
+          audioPlayer.addEventListener('loadedmetadata', function () {
+            updateStatus('스트림 로드 완료! 재생을 시작합니다.');
+            audioPlayer.play();
+          });
+          audioPlayer.addEventListener('error', function () {
+            updateStatus('스트리밍 에러가 발생했습니다.', true);
+          });
+        } else {
+          updateStatus('HLS를 지원하지 않는 브라우저입니다.', true);
+        }
+      }
+    </script>
+  </body>
+</html>

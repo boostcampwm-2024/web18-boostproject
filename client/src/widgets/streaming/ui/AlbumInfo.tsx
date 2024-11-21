@@ -150,54 +150,59 @@ interface AlbumInfoProps {
 export function AlbumInfo({ album }: AlbumInfoProps) {
   const audioRef = useRef<HTMLMediaElement>(null);
   const { roomId } = useParams<{ roomId: string }>();
-  const joinTimeStamp = 1700000004500;
-  // const startTime = 1732165466570;
-  const url = `http://localhost:3000/api/music/${roomId}/playlist.m3u8?joinTimeStamp=${joinTimeStamp}`;
   const [isLoaded, setIsLoaded] = useState(false);
 
-  console.log(Date.now());
-
-  const handleAudioPlay = () => {
+  const playStream = () => {
+    console.log('playStream');
     const audio = audioRef.current;
     if (!audio) return;
+    const streamUrl = `http://localhost:3000/api/music/${roomId}/playlist.m3u8?joinTimeStamp=${Date.now()}`;
+    if (Hls.isSupported()) {
+      const hls = new Hls({
+        maxBufferLength: 30, // 버퍼 길이 제한
+        maxMaxBufferLength: 60, // 최대 버퍼 길이
+        maxBufferSize: 60 * 1000000, // 버퍼 크기 제한 (60MB)
+        maxBufferHole: 0.5, // 버퍼 홀 허용 범위
+        lowLatencyMode: true, // 낮은 지연 모드
+        backBufferLength: 30, // 뒤로 가기 버퍼 길이
+      });
+      hls.loadSource(streamUrl);
+      hls.attachMedia(audio);
 
-    audio.play();
-    setIsLoaded(true);
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        setIsLoaded(true);
+      });
+
+      hls.on(Hls.Events.ERROR, function (data) {
+        console.error('Error event:', data);
+      });
+    } else {
+      console.error('HLS is not supported');
+    }
   };
+  useEffect(() => {
+    playStream();
+    console.log(Date.now());
+  }, []);
 
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
-    if (Hls.isSupported()) {
-      const hls = new Hls();
-
-      hls.loadSource(url);
-      hls.attachMedia(audio);
-
-      hls.on(Hls.Events.MANIFEST_PARSED, (data) => {
-        setIsLoaded(true);
-        console.log('HLS Manifest Parsed:');
-      });
-
-      hls.on(Hls.Events.ERROR, (event, data) => {
-        console.error('HLS Error:', data);
-        console.log('Full m3u8 Link:', url);
-      });
-
-      return () => {
-        hls.destroy();
-      };
-    }
-  }, [url]);
+    const handleEnded = () => {
+      setIsLoaded(false);
+      playStream();
+    };
+    audio.addEventListener('ended', handleEnded);
+    return () => {
+      audio.removeEventListener('ended', handleEnded);
+    };
+  }, []);
 
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio || !isLoaded) return;
 
-    // 재생 시도
-    // const currentOffset = (Date.now() - startTime) / 1000;
-    // audio.currentTime = currentOffset;
     audio.play().catch((error) => {
       if (error.name === 'NotAllowedError') {
         setIsLoaded(false);
@@ -227,7 +232,7 @@ export function AlbumInfo({ album }: AlbumInfoProps) {
             <>
               <button
                 className="z-20 absolute px-4 py-2 rounded-lg text-xl bg-gray-700"
-                onClick={handleAudioPlay}
+                onClick={playStream}
               >
                 <PlayIcon />
               </button>
