@@ -20,7 +20,8 @@ import { Repository } from 'typeorm';
 import { Song } from '@/song/song.entity';
 import { AlbumResponseDto } from '@/album/albumResponse.dto';
 import { SongResponseDto } from '@/song/songResponse.dto';
-import { plainToClass, plainToInstance } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
+import { MusicRepository } from '@/music/music.repository';
 
 @ApiTags('기본')
 @Controller('room')
@@ -32,6 +33,7 @@ export class RoomController {
     private readonly albumRepository: Repository<Album>,
     @InjectRepository(Song)
     private readonly songRepository: Repository<Song>,
+    private readonly musicRepository: MusicRepository,
   ) {}
 
   @ApiOperation({ summary: '방 생성' })
@@ -75,12 +77,18 @@ export class RoomController {
         return acc + parseInt(song.duration);
       }, 0);
 
+      const trackInfo = await this.musicRepository.findSongByJoinTimestamp(
+        roomId,
+        Date.now(),
+      );
+
       return {
         success: true,
         ...roomInfo,
         albumResponse,
         songResponseList,
         totalDuration,
+        trackOrder: trackInfo.id,
       };
     } catch (e) {
       return { success: false, error: e.message };
