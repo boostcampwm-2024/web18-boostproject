@@ -32,13 +32,43 @@ export class RoomGateway
     console.log('WebSocket Gateway Initialized');
   }
 
-  handleConnection(client: Socket) {
+  async handleConnection(client: Socket) {
     console.log(`Client connected: ${client.id}`);
+    try {
+      const roomId = client.handshake.query.roomId as string;
+      const room = await this.roomRepository.findRoom(roomId);
+      if (!room) {
+        throw new Error('Room not found');
+      }
+
+      const clientId = client.id;
+      await this.roomRepository.joinRoom(clientId, roomId);
+
+      const currentUserCount =
+        await this.roomRepository.getCurrentUsers(roomId);
+      await client.join(roomId);
+      if (client.data.name === undefined) {
+        client.data.name = RandomNameUtil.generate();
+      }
+      client.emit('joinedRoom', {
+        roomId: roomId,
+        userId: clientId,
+        timestamp: new Date(),
+      });
+      this.server.to(roomId).emit('roomUsersUpdated', {
+        roomId,
+        userCount: currentUserCount,
+      });
+    } catch (error) {
+      console.error('Error in handleConnection:', error);
+      client.send('error', '방 참여에 실패하였습니다.');
+    }
   }
 
   handleDisconnect(client: Socket) {
     console.log(`Client disconnected: ${client.id}`);
   }
+
   @SubscribeMessage('createRoom')
   async handleCreateRoom(
     @ConnectedSocket() client: Socket,
@@ -101,53 +131,6 @@ export class RoomGateway
       return {
         success: true,
         message: `Successfully send message: ${data.message}`,
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error: error.message,
-      };
-    }
-  }
-
-  @SubscribeMessage('joinRoom')
-  async handleJoinRoom(
-    @ConnectedSocket() client: Socket,
-    @MessageBody()
-    data: {
-      roomId: string;
-    },
-  ): Promise<{ success: boolean; message?: string; error?: string }> {
-    console.log('joinRoom event received', data);
-    try {
-      const room = await this.roomRepository.findRoom(data.roomId);
-      if (!room) {
-        throw new Error('Room not found');
-      }
-
-      const clientId = client.id;
-      await this.roomRepository.joinRoom(clientId, data.roomId);
-
-      const currentUserCount = await this.roomRepository.getCurrentUsers(
-        data.roomId,
-      );
-      await client.join(data.roomId);
-      if (client.data.name === undefined) {
-        client.data.name = RandomNameUtil.generate();
-      }
-      client.emit('joinedRoom', {
-        roomId: data.roomId,
-        userId: clientId,
-        timestamp: new Date(),
-      });
-      this.server.to(data.roomId).emit('roomUsersUpdated', {
-        roomId: data.roomId,
-        userCount: currentUserCount,
-      });
-
-      return {
-        success: true,
-        message: `Successfully joined room ${data.roomId}`,
       };
     } catch (error) {
       return {
