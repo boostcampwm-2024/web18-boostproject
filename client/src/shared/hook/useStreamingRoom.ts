@@ -11,8 +11,9 @@ export function useStreamingRoom() {
     setIsConnected(true);
 
     if (roomId) {
-      socket.emit('joinRoom', { roomId, userId: 'test' }, (response: any) => {
+      socket.emit('joinRoom', { roomId }, (response: any) => {
         console.log('방 입장 응답 : ', response);
+        setIsConnected(response.success);
       });
     }
   };

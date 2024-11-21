@@ -11,7 +11,7 @@ interface RoomData {
 
 const dummyRoomList: RoomData[] = [
   {
-    roomId: 'room_39',
+    roomId: 'RANDOM_AHH_ALBUM_ID',
     album: '로제의 APT.',
     singer: '로제',
     tags: ['힙합'],

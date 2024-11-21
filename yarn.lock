@@ -4749,6 +4749,7 @@ __metadata:
     "@vitejs/plugin-react": "npm:^4.3.3"
     autoprefixer: "npm:^10.4.20"
     axios: "npm:^1.7.7"
+    hls.js: "npm:^1.5.17"
     msw: "npm:^2.6.1"
     postcss: "npm:^8.4.47"
     react: "npm:^18.2.0"
@@ -7148,6 +7149,13 @@ __metadata:
   bin:
     hlsserver: ./src/cli.js
   checksum: 10c0/46f5c3b2469a867bd053d2452de69dcc157d28c6f3dac400bd8acb87ed120584d7f9b904341e1dc27fe16b15a8834d9e46f183d03059647a365dc43f85a50c59
+  languageName: node
+  linkType: hard
+
+"hls.js@npm:^1.5.17":
+  version: 1.5.17
+  resolution: "hls.js@npm:1.5.17"
+  checksum: 10c0/37b6fe2c8ed961b0b45ae961035aeafd203ff43aea26f0b63ac1382a05c45415e0e5d2302a2c4e316444e93d438ccd12e7cd36159e4f1fe2c3bfe57f53be3e98
   languageName: node
   linkType: hard
 
