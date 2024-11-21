@@ -14,6 +14,14 @@ import { RedisClientType } from 'redis';
 import * as crypto from 'node:crypto';
 import { RandomNameUtil } from '@/common/randomname/random-name.util';
 import { Request } from 'express';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Album } from '@/album/album.entity';
+import { Repository } from 'typeorm';
+import { Song } from '@/song/song.entity';
+import { AlbumResponseDto } from '@/album/albumResponse.dto';
+import { SongResponseDto } from '@/song/songResponse.dto';
+import { plainToInstance } from 'class-transformer';
+import { MusicRepository } from '@/music/music.repository';
 
 @ApiTags('기본')
 @Controller('room')
@@ -21,6 +29,11 @@ export class RoomController {
   constructor(
     @Inject(REDIS_CLIENT) private readonly redisClient: RedisClientType,
     private readonly roomRepository: RoomRepository,
+    @InjectRepository(Album)
+    private readonly albumRepository: Repository<Album>,
+    @InjectRepository(Song)
+    private readonly songRepository: Repository<Song>,
+    private readonly musicRepository: MusicRepository,
   ) {}
 
   @ApiOperation({ summary: '방 생성' })
@@ -31,7 +44,7 @@ export class RoomController {
       const roomId = 'TEMP_RANDOM_ROOM_ID';
       const roomInfo: RoomInfo = {
         currentUsers: 0,
-        maxCapacity: 10,
+        maxCapacity: 999,
         isActive: true,
         currentSong: '',
         songs: ['LOVE SONG', 'POWER'],
@@ -51,10 +64,50 @@ export class RoomController {
     const roomKey = `rooms:${roomId}`;
     try {
       const roomInfo = await this.redisClient.hGetAll(roomKey);
-      return { success: true, roomInfo };
+      const albumInfo = await this.albumRepository.findOne({
+        where: { id: roomId },
+      });
+      const albumResponse = await this.getAlbumResponseDto(albumInfo);
+      const songList = await this.songRepository.find({
+        where: { albumId: roomId },
+        order: { trackNumber: 'ASC' },
+      });
+      const songResponseList = await Promise.all(
+        songList.map(async (song) => await this.getSongResponseDto(song)),
+      );
+
+      const totalDuration = songResponseList.reduce((acc, song) => {
+        return acc + parseInt(song.duration);
+      }, 0);
+
+      const trackInfo = await this.musicRepository.findSongByJoinTimestamp(
+        roomId,
+        Date.now(),
+      );
+
+      return {
+        success: true,
+        ...roomInfo,
+        albumResponse,
+        songResponseList,
+        totalDuration,
+        trackOrder: trackInfo.id,
+      };
     } catch (e) {
       return { success: false, error: e.message };
     }
+  }
+
+  async getAlbumResponseDto(album: Album): Promise<AlbumResponseDto> {
+    return plainToInstance(AlbumResponseDto, album, {
+      excludeExtraneousValues: true,
+    });
+  }
+
+  async getSongResponseDto(song: Song): Promise<SongResponseDto> {
+    return plainToInstance(SongResponseDto, song, {
+      excludeExtraneousValues: true,
+    });
   }
 
   @ApiOperation({ summary: '방 참여' })

@@ -11,35 +11,38 @@ import { Album } from '@/album/album.entity';
 @Entity()
 export class Song {
   @PrimaryGeneratedColumn()
-  private id: number;
+  id: number;
+
+  @Column({ name: 'album_id', type: 'char', length: 36 })
+  albumId: string;
 
   @ManyToOne(() => Album, { nullable: false })
   @JoinColumn({ name: 'album_id' })
-  private albumId: string;
+  album: Album;
 
   @Column({ type: 'varchar', length: 50, nullable: false })
-  private title: string;
+  title: string;
 
   @Column({ name: 'track_number', type: 'int', nullable: false })
-  private trackNumber!: number;
+  trackNumber: number;
 
   @Column({ type: 'text' })
-  private lyrics: string;
+  lyrics: string;
 
   @Column({ type: 'varchar', length: 200, nullable: false })
-  private composer!: string;
+  composer: string;
 
   @Column({ type: 'varchar', length: 200, nullable: false })
-  private writer: string;
+  writer: string;
 
   @Column({ type: 'varchar', length: 200, nullable: false })
-  private instrument!: string;
+  instrument: string;
 
   @Column({ name: 'sources', type: 'varchar', length: 50 })
-  private source: string;
+  source: string;
 
   @Column({ type: 'int', nullable: false })
-  private duration: number;
+  duration: number;
 
   constructor(songDto?: SongSaveDto) {
     if (!songDto) return;
@@ -47,10 +50,10 @@ export class Song {
     this.title = songDto.title;
     this.trackNumber = songDto.trackNumber;
     this.lyrics = songDto.lyrics;
-    this.composer! = songDto.composer;
-    this.writer! = songDto.writer;
-    this.instrument! = songDto.instrument;
+    this.composer = songDto.composer;
+    this.writer = songDto.writer;
+    this.instrument = songDto.instrument;
     this.source = songDto.source;
-    this.duration! = songDto.duration;
+    this.duration = songDto.duration;
   }
 }
