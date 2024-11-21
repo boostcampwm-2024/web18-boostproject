@@ -15,7 +15,12 @@ export class Album {
   @Column({ type: 'varchar', length: 30 })
   tags: string;
 
-  @Column({ name: 'release_date', type: 'char', length: 16, nullable: false })
+  @Column({
+    name: 'release_date',
+    type: 'char',
+    length: 19,
+    nullable: false,
+  })
   releaseDate: string;
 
   @Column({ name: 'banner_url', type: 'varchar', length: 500 })
