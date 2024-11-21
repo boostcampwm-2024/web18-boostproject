@@ -4,7 +4,7 @@ interface TestAudioControllerProps {
   audioRef: React.RefObject<HTMLMediaElement>;
 }
 
-export const TestAudioController = ({ audioRef }: TestAudioControllerProps) => {
+export const AudioController = ({ audioRef }: TestAudioControllerProps) => {
   const songDuration = 98;
   const [progress, setProgress] = useState(0);
 

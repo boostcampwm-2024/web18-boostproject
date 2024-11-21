@@ -5,7 +5,7 @@ import './LyricsPanel.css';
 import { useRef, useEffect } from 'react';
 import Hls from 'hls.js';
 import { useParams } from 'react-router-dom';
-import { TestAudioController } from '@/pages/StreamingPage/ui/TestAudioController';
+import { AudioController } from '@/widgets/streaming/ui/AudioController';
 import { PlayIcon } from '@/shared/icon/PlayIcon';
 
 interface AlbumInfoProps {
@@ -156,7 +156,7 @@ export function AlbumInfo({ album }: AlbumInfoProps) {
     console.log('playStream');
     const audio = audioRef.current;
     if (!audio) return;
-    const streamUrl = `http://localhost:3000/api/music/${roomId}/playlist.m3u8?joinTimeStamp=${Date.now()}`;
+    const streamUrl = `/api/music/${roomId}/playlist.m3u8?joinTimeStamp=${Date.now()}`;
     if (Hls.isSupported()) {
       const hls = new Hls({
         maxBufferLength: 30, // 버퍼 길이 제한
@@ -241,7 +241,7 @@ export function AlbumInfo({ album }: AlbumInfoProps) {
           )}
         </div>
 
-        <TestAudioController audioRef={audioRef} />
+        <AudioController audioRef={audioRef} />
         <button className="text-sm text-gray-300 mt-3">재생</button>
         <p className="mt-4 text-2xl font-bold">{album.trackName}</p>
       </div>
