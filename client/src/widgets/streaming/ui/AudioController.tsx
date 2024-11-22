@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-interface TestAudioControllerProps {
+interface AudioControllerProps {
   audioRef: React.RefObject<HTMLMediaElement>;
   songDuration: number;
 }
@@ -8,8 +8,9 @@ interface TestAudioControllerProps {
 export const AudioController = ({
   audioRef,
   songDuration,
-}: TestAudioControllerProps) => {
+}: AudioControllerProps) => {
   const [progress, setProgress] = useState(0);
+  console.log(songDuration);
 
   useEffect(() => {
     const audio = audioRef.current;

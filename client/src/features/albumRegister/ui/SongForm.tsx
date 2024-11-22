@@ -12,7 +12,7 @@ export function SongForm({ songFormRef }: SongFormProps) {
       </div>
       <div className="flex flex-col gap-4">
         <Input labelName="작곡가" name="composer" />
-        <Input labelName="프로듀서" name="producer" />{' '}
+        <Input labelName="프로듀서" name="producer" />
         <Input labelName="노래 순서" name="trackNumber" placeholder="예시) 1" />
       </div>
       <div className="flex flex-col gap-4">
