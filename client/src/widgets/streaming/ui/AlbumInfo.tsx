@@ -1,4 +1,3 @@
-import { AlbumDetail } from '@/entities/album/types';
 import { ChevronDown } from '@/shared/icon/ChevronDown';
 import { useState } from 'react';
 import './LyricsPanel.css';
@@ -7,24 +6,29 @@ import Hls from 'hls.js';
 import { useParams } from 'react-router-dom';
 import { AudioController } from '@/widgets/streaming/ui/AudioController';
 import { PlayIcon } from '@/shared/icon/PlayIcon';
-
-interface AlbumInfoProps {
-  album: AlbumDetail;
-}
+import { SongDetail, RoomResponse } from '@/entities/album/types';
+import SampleAlbumCover from '@/assets/sample-album-cover-1.png';
+import { StreamingErrorPage } from '@/pages/StreamingErrorPage';
 
 const CATEGORIES = {
   LYRICS: 'lyrics',
   PLAYLIST: 'playlist',
 } as const;
 
-function TrackDetail() {
+function TrackDetail({
+  songs,
+  streamingIndex,
+}: {
+  songs: SongDetail[];
+  streamingIndex: number;
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const [category, setCategory] = useState('lyrics');
 
   return (
     <div
       className={`absolute bottom-0 w-full bg-grayscale-800 text-gray-100 rounded-t-lg 
-      transform transition-transform duration-300 ease-in-out
+      transform transition-transform duration-300 ease-in-out z-50
       ${isOpen ? 'translate-y-0' : 'translate-y-[calc(100%-56px)]'}`}
     >
       <TrackDetailHeader
@@ -33,7 +37,12 @@ function TrackDetail() {
         setIsOpen={setIsOpen}
         setCategory={setCategory}
       />
-      <TrackDetailContent isOpen={isOpen} category={category} />
+      <TrackDetailContent
+        isOpen={isOpen}
+        category={category}
+        songs={songs}
+        streamingIndex={streamingIndex}
+      />
     </div>
   );
 }
@@ -41,16 +50,24 @@ function TrackDetail() {
 function TrackDetailContent({
   isOpen,
   category,
+  songs,
+  streamingIndex,
 }: {
   isOpen: boolean;
   category: string;
+  songs: SongDetail[];
+  streamingIndex: number;
 }) {
   return (
     <div
       className={`px-6 py-4 h-64 transition-opacity duration-200 ease-in-out
     ${isOpen ? 'opacity-100' : 'opacity-0'}`}
     >
-      {category === CATEGORIES.LYRICS ? <LyricsPanel /> : <PlaylistPanel />}
+      {category === CATEGORIES.LYRICS ? (
+        <LyricsPanel lyrics={songs[streamingIndex - 1].lyrics} />
+      ) : (
+        <PlaylistPanel />
+      )}
     </div>
   );
 }
@@ -110,24 +127,13 @@ function CategoryButton({ isActive, onClick, children }: CategoryButtonProps) {
   );
 }
 
-function LyricsPanel() {
+function LyricsPanel({ lyrics }: { lyrics: string }) {
+  const lyricsFormatted = lyrics
+    .split('\n')
+    .map((line, index) => <p key={index}>{line}</p>);
   return (
     <div className="lyrics text-center h-full overflow-y-auto">
-      모니터 앞에 또 밤을 새워 <br />
-      끝없이 쏟아지는 에러 메시지 <br />
-      콘솔창은 빨간색으로 가득해 <br />
-      내 머리속은 스택 오버플로우 <br /> <br />
-      우린 버그 헌터스 <br />
-      코드 속을 헤매는 탐정이 되어 <br />
-      우린 버그 헌터스 <br />
-      완벽한 코드를 찾아 떠나는 여행자 <br /> <br />
-      세미콜론 하나에 무너진 꿈 <br />
-      인덴트 하나에 날아간 기능 <br />
-      "동작은 하는데 왜 되는지 모르겠어" <br />
-      내일의 나에게 맡기는 주석 <br />
-      디버거는 내 유일한 친구 <br />
-      테스트 코드는 나의 보험 <br />
-      git blame은 차마 못 보겠어 <br /> 내 코드인 것 같기도 하고...
+      {lyricsFormatted}
     </div>
   );
 }
@@ -137,20 +143,18 @@ function PlaylistPanel() {
 }
 
 interface AlbumInfoProps {
-  album: {
-    tags: string[];
-    title: string;
-    artist: string;
-    currentTime: string;
-    coverImage: string;
-    trackName: string;
-  };
+  roomInfo: RoomResponse;
 }
 
-export function AlbumInfo({ album }: AlbumInfoProps) {
+export function AlbumInfo({ roomInfo }: AlbumInfoProps) {
   const audioRef = useRef<HTMLMediaElement>(null);
   const { roomId } = useParams<{ roomId: string }>();
   const [isLoaded, setIsLoaded] = useState(false);
+
+  console.log(roomInfo);
+  if (!roomInfo.success) {
+    return <StreamingErrorPage />;
+  }
 
   const playStream = () => {
     console.log('playStream');
@@ -216,22 +220,26 @@ export function AlbumInfo({ album }: AlbumInfoProps) {
     <div className="flex flex-col items-center w-7/12 relative">
       <audio ref={audioRef} controls controlsList="nodownload" />
       <div className="text-center mb-32 w-full">
-        <p className="text-gray-300 mb-4">#{album.tags.join(' #')}</p>
-        <p className="text-3xl font-bold mb-4">{album.title}</p>
-        <p>{album.artist}</p>
+        <p className="text-gray-300 mb-4">
+          #{roomInfo.albumResponse.tags.split(', ').join(' #')}
+        </p>
+        <p className="text-3xl font-bold mb-4">
+          {roomInfo.albumResponse.title}
+        </p>
+        <p>{roomInfo.albumResponse.artist}</p>
       </div>
-      <div className="flex flex-col items-center">
-        <p className="text-sm mb-3">{album.currentTime}</p>
+      <div className="relative flex flex-col items-center">
+        {/* <p className="text-sm mb-3">{album.currentTime}</p> */}
         <div className="relative flex justify-center items-center">
           <img
-            src={album.coverImage}
+            src={roomInfo.albumResponse.jacketUrl ?? SampleAlbumCover}
             alt="Album Cover"
             className="w-52 h-52 object-cover rounded-t-lg"
           />
           {!isLoaded && (
             <>
               <button
-                className="z-20 absolute px-4 py-2 rounded-lg text-xl bg-gray-700"
+                className="z-10 absolute px-4 py-2 rounded-lg text-xl bg-gray-700"
                 onClick={playStream}
               >
                 <PlayIcon />
@@ -240,11 +248,23 @@ export function AlbumInfo({ album }: AlbumInfoProps) {
             </>
           )}
         </div>
-
-        <AudioController audioRef={audioRef} />
-        <p className="mt-4 text-2xl font-bold">{album.trackName}</p>
+        <div className="absolute bottom-0 w-full">
+          <AudioController
+            audioRef={audioRef}
+            songDuration={
+              roomInfo.songResponseList[Number(roomInfo.trackOrder) - 1]
+                .duration
+            }
+          />
+        </div>
       </div>
-      <TrackDetail />
+      <p className="mt-4 text-2xl font-bold">
+        {roomInfo.songResponseList[Number(roomInfo.trackOrder) - 1].title}
+      </p>
+      <TrackDetail
+        songs={roomInfo.songResponseList}
+        streamingIndex={Number(roomInfo.trackOrder)}
+      />
     </div>
   );
 }

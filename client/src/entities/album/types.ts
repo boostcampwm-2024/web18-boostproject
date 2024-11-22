@@ -1,14 +1,34 @@
 /**
  * 스트리밍 페이지에서 사용되는 앨범 정보
- * trackName이 아니라 앨범 내의 트랙 리스트로 들어와야함.
  */
 export interface AlbumDetail {
-  coverImage: string;
-  tags: string[];
+  id: string;
   title: string;
   artist: string;
-  currentTime: string;
-  trackName: string;
+  tags: string;
+  bannerUrl: string;
+  jacketUrl: string;
+}
+
+export interface SongDetail {
+  id: number;
+  albumId: string;
+  title: string;
+  trackNumber: number;
+  lyrics: string;
+  composer: string;
+  writer: string;
+  instrument: string;
+  source: string;
+  duration: number;
+}
+
+export interface RoomResponse {
+  success: boolean;
+  albumResponse: AlbumDetail;
+  songResponseList: SongDetail[];
+  totalDuration: number;
+  trackOrder: string;
 }
 
 /**

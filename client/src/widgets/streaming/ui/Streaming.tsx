@@ -1,23 +1,34 @@
 import { AlbumBackground } from './AlbumBackground';
 import { AlbumInfo } from './AlbumInfo';
-import { AlbumDetail } from '@/entities/album/types';
+import { RoomResponse } from '@/entities/album/types';
 import SampleAlbumCover from '@/assets/sample-album-cover-1.png';
-
-const SAMPLE_ALBUM: AlbumDetail = {
-  coverImage: SampleAlbumCover,
-  tags: ['밴드', '국내'],
-  title: '버그사냥단의 노동요',
-  artist: '버그사냥단',
-  currentTime: '00:00',
-  trackName: '버그 없는 세상',
-};
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { useParams } from 'react-router-dom';
 
 export function Streaming() {
+  const { roomId } = useParams<{ roomId: string }>();
+  const [roomInfo, setRoomInfo] = useState<RoomResponse | null>(null);
+
+  const getRoomInfo = async () => {
+    const response = await axios.get<RoomResponse>(
+      `http://localhost:3000/api/room/${roomId}`,
+    );
+    console.log(response.data);
+    setRoomInfo(response.data);
+  };
+
+  useEffect(() => {
+    getRoomInfo();
+  }, []);
+
   return (
     <div className="bg-grayscale-400 w-3/4 relative overflow-hidden">
-      <AlbumBackground coverImage={SAMPLE_ALBUM.coverImage} />
+      <AlbumBackground
+        coverImage={roomInfo?.albumResponse?.jacketUrl ?? SampleAlbumCover}
+      />
       <div className="absolute inset-0 flex justify-center pt-28 text-grayscale-100 z-10">
-        <AlbumInfo album={SAMPLE_ALBUM} />
+        {roomInfo && <AlbumInfo roomInfo={roomInfo} />}
       </div>
     </div>
   );
