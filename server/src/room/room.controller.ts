@@ -82,7 +82,7 @@ export class RoomController {
 
       const trackInfo = await this.musicRepository.findSongByJoinTimestamp(
         roomId,
-        Date.now(),
+        1700000000000,
       );
 
       return {
