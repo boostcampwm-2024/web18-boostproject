@@ -12,7 +12,7 @@ export function Streaming() {
 
   const getRoomInfo = async () => {
     const response = await axios.get<RoomResponse>(
-      `http://localhost:3000/api/room/${roomId}`,
+      `/api/room/${roomId}`,
     );
     console.log(response.data);
     setRoomInfo(response.data);
