@@ -6,7 +6,7 @@ import Hls from 'hls.js';
 import { useParams } from 'react-router-dom';
 import { AudioController } from '@/widgets/streaming/ui/AudioController';
 import { PlayIcon } from '@/shared/icon/PlayIcon';
-import { AlbumDetail, SongDetail, RoomResponse } from '@/entities/album/types';
+import { SongDetail, RoomResponse } from '@/entities/album/types';
 import SampleAlbumCover from '@/assets/sample-album-cover-1.png';
 import { StreamingErrorPage } from '@/pages/StreamingErrorPage';
 
@@ -160,7 +160,7 @@ export function AlbumInfo({ roomInfo }: AlbumInfoProps) {
     console.log('playStream');
     const audio = audioRef.current;
     if (!audio) return;
-    const streamUrl = `http://localhost:3000/api/music/${roomId}/playlist.m3u8?joinTimeStamp=${Date.now()}`;
+    const streamUrl = `/api/music/${roomId}/playlist.m3u8?joinTimeStamp=${Date.now()}`;
     if (Hls.isSupported()) {
       const hls = new Hls({
         maxBufferLength: 30, // 버퍼 길이 제한
