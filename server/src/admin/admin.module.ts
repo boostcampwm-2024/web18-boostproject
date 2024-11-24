@@ -8,6 +8,7 @@ import { RedisModule } from '@/common/redis/redis.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Song } from '@/song/song.entity';
 import { Album } from '@/album/album.entity';
+import { RoomModule } from '@/room/room.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { Album } from '@/album/album.entity';
     }),
     RedisModule,
     MusicModule,
+    RoomModule,
     TypeOrmModule.forFeature([Album, Song]),
   ],
   controllers: [AdminController],

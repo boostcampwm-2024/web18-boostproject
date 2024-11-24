@@ -28,6 +28,6 @@ import { S3CacheService } from '../common/s3Cache/s3Cache.service';
     M3U8Parser,
     S3CacheService,
   ],
-  exports: [MusicProcessingSevice],
+  exports: [MusicProcessingSevice, MusicRepository],
 })
 export class MusicModule {}

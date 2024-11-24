@@ -20,6 +20,7 @@ import { SongSaveDto } from '@/song/songSave.dto';
 import { Album } from '@/album/album.entity';
 import { RoomRepository } from '@/room/room.repository';
 import { Room } from '@/room/room.entity';
+import { AlbumRepository } from '@/album/album.repository';
 
 export interface UploadedFiles {
   albumCover?: Express.Multer.File;
@@ -35,7 +36,7 @@ export class AdminController {
     @Inject() private readonly musicProcessingService: MusicProcessingSevice,
     @InjectRepository(Song) private readonly songRepository: Repository<Song>,
     @InjectRepository(Album)
-    private readonly albumRepository: Repository<Album>,
+    private readonly albumRepository: AlbumRepository,
     private readonly roomRepository: RoomRepository,
   ) {}
 
