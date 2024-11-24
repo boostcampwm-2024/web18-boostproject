@@ -10,7 +10,6 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { RoomRepository } from './room.repository';
-import { Room } from './room.entity';
 import { RandomNameUtil } from '@/common/randomname/random-name.util';
 
 @WebSocketGateway({

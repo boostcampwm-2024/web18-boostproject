@@ -29,13 +29,12 @@ export class RoomRepository {
     return `rooms:${roomId}:queue`;
   }
 
-  async createRoom(roomId: string, room: Room): Promise<void> {
-    const roomKey = this.roomKey(roomId);
+  async createRoom(room: Room): Promise<void> {
+    const roomKey = this.roomKey(room.id);
 
     await this.redisClient
       .multi()
       .hSet(roomKey, 'id', room.id)
-      .hSet(roomKey, 'hostId', room.hostId)
       .hSet(roomKey, 'createdAt', room.createdAt.toISOString())
       .hSet(roomKey, 'isActive', 'true')
       .hSet(roomKey, 'currentUsers', '0')
@@ -78,16 +77,14 @@ export class RoomRepository {
       return null;
     }
 
-    const [id, name, hostId, createdAt] = await Promise.all([
+    const [id, name, createdAt] = await Promise.all([
       this.redisClient.hGet(roomKey, 'id'),
       this.redisClient.hGet(roomKey, 'name'),
-      this.redisClient.hGet(roomKey, 'hostId'),
       this.redisClient.hGet(roomKey, 'createdAt'),
     ]);
 
     return new Room({
       id,
-      hostId,
       createdAt: new Date(createdAt),
     });
   }
