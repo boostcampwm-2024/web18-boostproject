@@ -1,4 +1,3 @@
-import { ChevronDown } from '@/shared/icon/ChevronDown';
 import { useState } from 'react';
 import './LyricsPanel.css';
 import { useRef, useEffect } from 'react';
@@ -6,141 +5,10 @@ import Hls from 'hls.js';
 import { useParams } from 'react-router-dom';
 import { AudioController } from '@/widgets/streaming/ui/AudioController';
 import { PlayIcon } from '@/shared/icon/PlayIcon';
-import { SongDetail, RoomResponse } from '@/entities/album/types';
+import { RoomResponse } from '@/entities/album/types';
 import SampleAlbumCover from '@/assets/sample-album-cover-1.png';
 import { StreamingErrorPage } from '@/pages/StreamingErrorPage';
-
-const CATEGORIES = {
-  LYRICS: 'lyrics',
-  PLAYLIST: 'playlist',
-} as const;
-
-function TrackDetail({
-  songs,
-  streamingIndex,
-}: {
-  songs: SongDetail[];
-  streamingIndex: number;
-}) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [category, setCategory] = useState('lyrics');
-
-  return (
-    <div
-      className={`absolute bottom-0 w-full bg-grayscale-800 text-gray-100 rounded-t-lg 
-      transform transition-transform duration-300 ease-in-out z-50
-      ${isOpen ? 'translate-y-0' : 'translate-y-[calc(100%-56px)]'}`}
-    >
-      <TrackDetailHeader
-        category={category}
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-        setCategory={setCategory}
-      />
-      <TrackDetailContent
-        isOpen={isOpen}
-        category={category}
-        songs={songs}
-        streamingIndex={streamingIndex}
-      />
-    </div>
-  );
-}
-
-function TrackDetailContent({
-  isOpen,
-  category,
-  songs,
-  streamingIndex,
-}: {
-  isOpen: boolean;
-  category: string;
-  songs: SongDetail[];
-  streamingIndex: number;
-}) {
-  return (
-    <div
-      className={`px-6 py-4 h-64 transition-opacity duration-200 ease-in-out
-    ${isOpen ? 'opacity-100' : 'opacity-0'}`}
-    >
-      {category === CATEGORIES.LYRICS ? (
-        <LyricsPanel lyrics={songs[streamingIndex - 1].lyrics} />
-      ) : (
-        <PlaylistPanel />
-      )}
-    </div>
-  );
-}
-
-function TrackDetailHeader({
-  category,
-  isOpen,
-  setIsOpen,
-  setCategory,
-}: {
-  category: string;
-  isOpen: boolean;
-  setIsOpen: (value: boolean) => void;
-  setCategory: (value: string) => void;
-}) {
-  return (
-    <div className="flex flex-row justify-between px-6 py-4 items-center bg-grayscale-900 rounded-t-lg">
-      <div className="flex flex-row space-x-4">
-        <CategoryButton
-          isActive={category === CATEGORIES.LYRICS}
-          onClick={() => isOpen && setCategory(CATEGORIES.LYRICS)}
-        >
-          가사
-        </CategoryButton>
-        <CategoryButton
-          isActive={category === CATEGORIES.PLAYLIST}
-          onClick={() => isOpen && setCategory(CATEGORIES.PLAYLIST)}
-        >
-          플레이리스트
-        </CategoryButton>
-      </div>
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className={`transform transition-transform duration-100 ease-in-out
-      ${isOpen ? 'rotate-0' : 'rotate-180'}`}
-      >
-        <ChevronDown />
-      </button>
-    </div>
-  );
-}
-
-interface CategoryButtonProps {
-  isActive: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-}
-
-function CategoryButton({ isActive, onClick, children }: CategoryButtonProps) {
-  return (
-    <button
-      onClick={onClick}
-      className={`${isActive ? 'text-grayscale-100' : 'text-grayscale-500'}`}
-    >
-      {children}
-    </button>
-  );
-}
-
-function LyricsPanel({ lyrics }: { lyrics: string }) {
-  const lyricsFormatted = lyrics
-    .split('\n')
-    .map((line, index) => <p key={index}>{line}</p>);
-  return (
-    <div className="lyrics text-center h-full overflow-y-auto">
-      {lyricsFormatted}
-    </div>
-  );
-}
-
-function PlaylistPanel() {
-  return <p>플레이리스트</p>;
-}
+import { SongDetail } from '@/features/songDetail';
 
 interface AlbumInfoProps {
   roomInfo: RoomResponse;
@@ -261,7 +129,7 @@ export function AlbumInfo({ roomInfo }: AlbumInfoProps) {
       <p className="mt-4 text-2xl font-bold">
         {roomInfo.songResponseList[Number(roomInfo.trackOrder) - 1].title}
       </p>
-      <TrackDetail
+      <SongDetail
         songs={roomInfo.songResponseList}
         streamingIndex={Number(roomInfo.trackOrder)}
       />

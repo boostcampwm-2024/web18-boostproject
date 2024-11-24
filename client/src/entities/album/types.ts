@@ -1,7 +1,7 @@
 /**
  * 스트리밍 페이지에서 사용되는 앨범 정보
  */
-export interface AlbumDetail {
+export interface AlbumData {
   id: string;
   title: string;
   artist: string;
@@ -10,7 +10,7 @@ export interface AlbumDetail {
   jacketUrl: string;
 }
 
-export interface SongDetail {
+export interface SongData {
   id: number;
   albumId: string;
   title: string;
@@ -25,8 +25,8 @@ export interface SongDetail {
 
 export interface RoomResponse {
   success: boolean;
-  albumResponse: AlbumDetail;
-  songResponseList: SongDetail[];
+  albumResponse: AlbumData;
+  songResponseList: SongData[];
   totalDuration: number;
   trackOrder: string;
 }
