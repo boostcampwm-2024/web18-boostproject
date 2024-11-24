@@ -43,11 +43,6 @@ export class RoomRepository {
     return;
   }
 
-  async generateRoomId(): Promise<string> {
-    const roomCount = await this.redisClient.incr('room_counter');
-    return `room_${roomCount}`;
-  }
-
   async leaveRoom(userId: string, roomId: string): Promise<void> {
     const roomKey = this.roomKey(roomId);
     const roomUsersKey = this.roomUsersKey(roomId);
