@@ -62,20 +62,15 @@ export class AdminController {
     } = {};
 
     //2. 앨범 커버 이미지, 배너 이미지를 S3에 업로드 하고 URL을 반환 받음
-    if (files.albumCover?.[0] || files.bannerCover?.[0]) {
-      const uploadResults = await this.adminService.uploadImageFiles(
-        files.albumCover?.[0],
-        files.bannerCover?.[0],
-        `converted/${album.id}`,
-      );
+    const uploadResults = await this.adminService.uploadImageFiles(
+      files.albumCover?.[0],
+      files.bannerCover?.[0],
+      `converted/${album.id}`,
+    );
 
-      Object.assign(imageUrls, uploadResults);
-    }
+    Object.assign(imageUrls, uploadResults);
 
-    // await this.adminRepository.updateAlbumUrls(albumId, {
-    //   albumCoverURL,
-    //   bannerCoverURL
-    // });
+    await this.albumRepository.updateAlbumUrls(album.id, imageUrls);
     // TODO: albumData.setBannerUrl(albumCoverUrl), albumData.setJacketUrl(bannerCoverUrl);
 
     //3. 노래 파일들 처리: 기존 processSongFiles 사용
