@@ -1,35 +1,40 @@
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import {
-  HttpException,
-  HttpStatus,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { S3 } from 'aws-sdk';
-import { Cache } from 'cache-manager';
+import { Injectable } from '@nestjs/common';
 import { MusicRepository } from './music.repository';
 import { M3U8Parser } from './parser/m3u8-parser';
+import { S3CacheService } from '@/common/s3Cache/s3Cache.service';
 
 @Injectable()
 export class MusicService {
-  private readonly s3: S3;
   private readonly SEGMENT_DURATION = 2;
 
   constructor(
-    private readonly configService: ConfigService,
     private readonly musicRepository: MusicRepository,
     private readonly m3u8Parser: M3U8Parser,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
-  ) {
-    this.s3 = new S3({
-      endpoint: this.configService.get('S3_END_POINT'),
-      region: this.configService.get('S3_REGION'),
-      credentials: {
-        accessKeyId: this.configService.get('S3_ACCESS_KEY'),
-        secretAccessKey: this.configService.get('S3_SECRET_KEY'),
-      },
+    private readonly s3CacheService: S3CacheService,
+  ) {}
+
+  private async getM3U8Content(
+    albumId: string,
+    songMetadata: { id: string; duration: number },
+  ): Promise<string> {
+    return this.s3CacheService.fetchFromS3({
+      cacheKey: `m3u8:${albumId}:${songMetadata.id}`,
+      s3Key: `converted/${albumId}/${parseInt(songMetadata.id, 10)}/playlist.m3u8`,
+      cacheTTL: songMetadata.duration * 1000,
+      transform: (buffer) => buffer.toString(),
+    });
+  }
+
+  private async getSegmentContent(
+    albumId: string,
+    songIndex: string,
+    segmentId: string,
+  ): Promise<Buffer> {
+    return this.s3CacheService.fetchFromS3({
+      cacheKey: `segment:${albumId}:${songIndex}:${segmentId}`,
+      s3Key: `converted/${albumId}/${parseInt(songIndex, 10)}/playlist${segmentId}.ts`,
+      cacheTTL: 3600000,
+      transform: (buffer) => buffer,
     });
   }
 
@@ -41,40 +46,17 @@ export class MusicService {
       albumId,
       joinTimestamp,
     );
-    const songIndex = songMetadata.id;
-
-    const cacheKey = `m3u8:${albumId}:${songIndex}`;
-    let cachedM3u8 = await this.cacheManager.get<string>(cacheKey);
-
-    // 원본 가져오기
-    if (!cachedM3u8) {
-      try {
-        const s3Response = await this.s3
-          .getObject({
-            Bucket: this.configService.get('S3_BUCKET_NAME'),
-            Key: `converted/${albumId}/${parseInt(songIndex, 10)}/playlist.m3u8`, // 일단 songIndex 경로로 가져옴
-          })
-          .promise();
-
-        cachedM3u8 = s3Response.Body.toString();
-        await this.cacheManager.set(
-          cacheKey,
-          cachedM3u8,
-          songMetadata.duration * 1000,
-        );
-      } catch (error) {
-        throw new NotFoundException(
-          `file not found for ${albumId}, song index ${songIndex}`,
-        );
-      }
-    }
-
-    const elapsedTime = joinTimestamp - songMetadata.startTime;
+    const m3u8Content = await this.getM3U8Content(albumId, songMetadata);
     const skipSegments = Math.floor(
-      elapsedTime / (this.SEGMENT_DURATION * 1000),
+      (joinTimestamp - songMetadata.startTime) / (this.SEGMENT_DURATION * 1000),
     );
 
-    return this.m3u8Parser.parse(cachedM3u8, skipSegments, albumId, songIndex);
+    return this.m3u8Parser.parse(
+      m3u8Content,
+      skipSegments,
+      albumId,
+      songMetadata.id,
+    );
   }
 
   async getSegment(
@@ -82,28 +64,6 @@ export class MusicService {
     songIndex: string,
     segmentId: string,
   ): Promise<Buffer> {
-    const cacheKey = `segment:${albumId}:${songIndex}:${segmentId}`;
-    let segment = await this.cacheManager.get<Buffer>(cacheKey);
-    if (!segment) {
-      try {
-        const s3Response = await this.s3
-          .getObject({
-            Bucket: this.configService.get('S3_BUCKET_NAME'),
-            Key: `converted/${albumId}/${parseInt(songIndex, 10)}/playlist${segmentId}.ts`, // 폴더 구조 동기화 필요
-          })
-          .promise();
-
-        segment = s3Response.Body as Buffer;
-        await this.cacheManager.set(cacheKey, segment, 3600000);
-      } catch (error) {
-        console.error(
-          `Failed to fetch segment ${segmentId} for ${albumId}:`,
-          error,
-        );
-        throw new NotFoundException(`Segment not found: ${segmentId}`);
-      }
-    }
-
-    return segment;
+    return await this.getSegmentContent(albumId, songIndex, segmentId);
   }
 }
