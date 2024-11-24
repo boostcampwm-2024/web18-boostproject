@@ -13,9 +13,8 @@ import { MusicProcessingSevice } from '@/music/music.processor';
 import { AdminService } from './admin.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Album } from '@/album/album.entity';
-import { RoomRepository } from '@/room/room.repository';
-import { Room } from '@/room/room.entity';
 import { AlbumRepository } from '@/album/album.repository';
+import { RoomService } from '@/room/room.service';
 
 export interface UploadedFiles {
   albumCover?: Express.Multer.File;
@@ -30,7 +29,7 @@ export class AdminController {
     private readonly musicProcessingService: MusicProcessingSevice,
     @InjectRepository(Album)
     private readonly albumRepository: AlbumRepository,
-    private readonly roomRepository: RoomRepository,
+    private readonly roomService: RoomService,
   ) {}
 
   @Post('album')
@@ -60,9 +59,7 @@ export class AdminController {
 
     await this.adminService.initializeStreamingSession(processedSongs, album);
     await this.adminService.saveSongs(processedSongs, album.id);
-    await this.roomRepository.createRoom(
-      new Room({ id: album.getId(), createdAt: new Date() }),
-    );
+    await this.roomService.initializeRoom(album.id);
 
     return {
       albumId: album.id,

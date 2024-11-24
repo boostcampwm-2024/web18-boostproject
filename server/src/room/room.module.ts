@@ -7,6 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AlbumModule } from '@/album/album.module';
 import { SongModule } from '@/song/song.module';
 import { MusicModule } from '@/music/music.module';
+import { RoomService } from '@/room/room.service';
 
 @Module({
   imports: [
@@ -16,7 +17,7 @@ import { MusicModule } from '@/music/music.module';
     MusicModule,
   ],
   controllers: [RoomController],
-  providers: [RoomRepository, RoomGateway],
-  exports: [TypeOrmModule, RoomRepository],
+  providers: [RoomRepository, RoomGateway, RoomService],
+  exports: [TypeOrmModule, RoomService],
 })
 export class RoomModule {}

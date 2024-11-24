@@ -8,23 +8,21 @@ import {
   Req,
 } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { RoomInfo, RoomRepository } from '@/room/room.repository';
+import { RoomRepository } from '@/room/room.repository';
 import { REDIS_CLIENT } from '@/common/redis/redis.module';
 import { RedisClientType } from 'redis';
 import * as crypto from 'node:crypto';
 import { RandomNameUtil } from '@/common/randomname/random-name.util';
 import { Request } from 'express';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Album } from '@/album/album.entity';
-import { Repository } from 'typeorm';
 import { Song } from '@/song/song.entity';
 import { AlbumResponseDto } from '@/album/albumResponse.dto';
 import { SongResponseDto } from '@/song/songResponse.dto';
 import { plainToInstance } from 'class-transformer';
-import { MusicRepository } from '@/music/music.repository';
 import { SongRepository } from '@/song/song.repository';
 import { ORDER } from '@/common/constants/repository.constant';
 import { AlbumRepository } from '@/album/album.repository';
+import { RoomService } from '@/room/room.service';
 
 @ApiTags('기본')
 @Controller('room')
@@ -34,7 +32,7 @@ export class RoomController {
     private readonly roomRepository: RoomRepository,
     private readonly albumRepository: AlbumRepository,
     private readonly songRepository: SongRepository,
-    private readonly musicRepository: MusicRepository,
+    private readonly roomService: RoomService,
   ) {}
 
   @ApiOperation({ summary: '방 정보 확인' })
@@ -59,10 +57,7 @@ export class RoomController {
         return acc + parseInt(song.duration);
       }, 0);
 
-      const trackInfo = await this.musicRepository.findSongByJoinTimestamp(
-        roomId,
-        1700000000000,
-      );
+      const trackOrder = this.roomService.getTrackOrder(roomId);
 
       return {
         success: true,
@@ -70,7 +65,7 @@ export class RoomController {
         albumResponse,
         songResponseList,
         totalDuration,
-        trackOrder: trackInfo.id,
+        trackOrder,
       };
     } catch (e) {
       return { success: false, error: e.message };
