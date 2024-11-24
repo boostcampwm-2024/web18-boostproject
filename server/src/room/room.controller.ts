@@ -22,6 +22,8 @@ import { AlbumResponseDto } from '@/album/albumResponse.dto';
 import { SongResponseDto } from '@/song/songResponse.dto';
 import { plainToInstance } from 'class-transformer';
 import { MusicRepository } from '@/music/music.repository';
+import { SongRepository } from '@/song/song.repository';
+import { ORDER } from '@/common/constants/repository.constant';
 
 @ApiTags('기본')
 @Controller('room')
@@ -31,8 +33,7 @@ export class RoomController {
     private readonly roomRepository: RoomRepository,
     @InjectRepository(Album)
     private readonly albumRepository: Repository<Album>,
-    @InjectRepository(Song)
-    private readonly songRepository: Repository<Song>,
+    private readonly songRepository: SongRepository,
     private readonly musicRepository: MusicRepository,
   ) {}
 
@@ -48,10 +49,10 @@ export class RoomController {
         where: { id: roomId },
       });
       const albumResponse = await this.getAlbumResponseDto(albumInfo);
-      const songList = await this.songRepository.find({
-        where: { albumId: roomId },
-        order: { trackNumber: 'ASC' },
-      });
+      const songList = await this.songRepository.findByIdWithOrderByTrackNumber(
+        roomId,
+        ORDER.ASC,
+      );
       const songResponseList = await Promise.all(
         songList.map(async (song) => await this.getSongResponseDto(song)),
       );
