@@ -78,7 +78,6 @@ export class AdminController {
     const tempDir = await this.createTempDirectory(albumId);
 
     //Processed song 안에서 노래에 관한 모든 정보를 JSON 형태로 받을 수 있음
-    //TODO: processedSongs를 기반으로 MySQL에 정보 저장
     const processedSongs = await Promise.all(
       songFiles.map(async (file, index) => {
         const songInfo = albumData.songs[index];
