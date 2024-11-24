@@ -24,6 +24,7 @@ import { plainToInstance } from 'class-transformer';
 import { MusicRepository } from '@/music/music.repository';
 import { SongRepository } from '@/song/song.repository';
 import { ORDER } from '@/common/constants/repository.constant';
+import { AlbumRepository } from '@/album/album.repository';
 
 @ApiTags('기본')
 @Controller('room')
@@ -31,8 +32,7 @@ export class RoomController {
   constructor(
     @Inject(REDIS_CLIENT) private readonly redisClient: RedisClientType,
     private readonly roomRepository: RoomRepository,
-    @InjectRepository(Album)
-    private readonly albumRepository: Repository<Album>,
+    private readonly albumRepository: AlbumRepository,
     private readonly songRepository: SongRepository,
     private readonly musicRepository: MusicRepository,
   ) {}
@@ -45,9 +45,7 @@ export class RoomController {
     const roomKey = `rooms:${roomId}`;
     try {
       const roomInfo = await this.redisClient.hGetAll(roomKey);
-      const albumInfo = await this.albumRepository.findOne({
-        where: { id: roomId },
-      });
+      const albumInfo = await this.albumRepository.findById(roomId);
       const albumResponse = await this.getAlbumResponseDto(albumInfo);
       const songList = await this.songRepository.findByIdWithOrderByTrackNumber(
         roomId,
