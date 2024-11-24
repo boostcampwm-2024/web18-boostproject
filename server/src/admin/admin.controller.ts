@@ -12,7 +12,6 @@ import path from 'path';
 import * as fs from 'fs/promises';
 import { MusicProcessingSevice } from '@/music/music.processor';
 import { AdminService } from './admin.service';
-import { AdminRedisRepository } from './admin.redis.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Album } from '@/album/album.entity';
 import { RoomRepository } from '@/room/room.repository';
@@ -28,7 +27,6 @@ export interface UploadedFiles {
 @Controller('admin')
 export class AdminController {
   constructor(
-    private readonly adminRedisRepository: AdminRedisRepository,
     private readonly adminService: AdminService,
     @Inject() private readonly musicProcessingService: MusicProcessingSevice,
     @InjectRepository(Album)
@@ -61,17 +59,8 @@ export class AdminController {
       album.id,
     );
 
-    const songDurations = processedSongs.map((song) => song.duration);
-    const releaseTimestamp = new Date(albumData.releaseDate).getTime();
-
-    await this.adminRedisRepository.createStreamingSession(
-      album.id,
-      releaseTimestamp,
-      songDurations,
-    );
-
+    await this.adminService.initializeStreamingSession(processedSongs, album);
     await this.adminService.saveSongs(processedSongs, album.id);
-
     await this.roomRepository.createRoom(
       new Room({ id: album.getId(), createdAt: new Date() }),
     );

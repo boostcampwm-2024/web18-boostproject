@@ -8,6 +8,7 @@ import { AlbumRepository } from '@/album/album.repository';
 import { UploadedFiles } from '@/admin/admin.controller';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Album } from '@/album/album.entity';
+import { AdminRedisRepository } from '@/admin/admin.redis.repository';
 
 @Injectable()
 export class AdminService {
@@ -19,6 +20,7 @@ export class AdminService {
     private readonly songRepository: SongRepository,
     @InjectRepository(Album)
     private readonly albumRepository: AlbumRepository,
+    private readonly adminRedisRepository: AdminRedisRepository,
   ) {
     this.s3 = new AWS.S3({
       endpoint: new AWS.Endpoint('https://kr.object.ncloudstorage.com'),
@@ -105,5 +107,16 @@ export class AdminService {
     );
 
     await this.albumRepository.updateAlbumUrls(albumId, imageUrls);
+  }
+
+  async initializeStreamingSession(processedSongs: Song[], album: Album) {
+    const songDurations = processedSongs.map((song) => song.duration);
+    const releaseTimestamp = new Date(album.releaseDate).getTime();
+
+    await this.adminRedisRepository.createStreamingSession(
+      album.id,
+      releaseTimestamp,
+      songDurations,
+    );
   }
 }
