@@ -14,9 +14,6 @@ import { MusicProcessingSevice } from '@/music/music.processor';
 import { AdminService } from './admin.service';
 import { AdminRedisRepository } from './admin.redis.repository';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Song } from '@/song/song.entity';
-import { Repository } from 'typeorm';
-import { SongSaveDto } from '@/song/songSave.dto';
 import { Album } from '@/album/album.entity';
 import { RoomRepository } from '@/room/room.repository';
 import { Room } from '@/room/room.entity';
@@ -34,7 +31,6 @@ export class AdminController {
     private readonly adminRedisRepository: AdminRedisRepository,
     private readonly adminService: AdminService,
     @Inject() private readonly musicProcessingService: MusicProcessingSevice,
-    @InjectRepository(Song) private readonly songRepository: Repository<Song>,
     @InjectRepository(Album)
     private readonly albumRepository: AlbumRepository,
     private readonly roomRepository: RoomRepository,
@@ -84,11 +80,7 @@ export class AdminController {
       songDurations,
     );
 
-    // TODO: MySQL에 processedSong에 들어가 있는 정보를 기반으로 DB에 노래 정보 저장
-    processedSongs.forEach((song) => {
-      const songDto = new SongSaveDto({ ...song, albumId: album.getId() });
-      this.songRepository.save(new Song(songDto));
-    });
+    await this.adminService.saveSongs(processedSongs, album.id);
 
     await this.roomRepository.createRoom(
       new Room({ id: album.getId(), createdAt: new Date() }),

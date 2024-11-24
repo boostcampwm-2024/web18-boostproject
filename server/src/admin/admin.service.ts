@@ -1,12 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as AWS from 'aws-sdk';
+import { Song } from '@/song/song.entity';
+import { SongSaveDto } from '@/song/songSave.dto';
+import { SongRepository } from '@/song/song.repository';
 
 @Injectable()
 export class AdminService {
   private s3;
 
-  constructor(private configService: ConfigService) {
+  constructor(
+    private configService: ConfigService,
+    private readonly songRepository: SongRepository,
+  ) {
     this.s3 = new AWS.S3({
       endpoint: new AWS.Endpoint('https://kr.object.ncloudstorage.com'),
       region: 'kr-standard',
@@ -72,5 +78,12 @@ export class AdminService {
     } catch (error) {
       throw new Error(`Failed to upload file to S3: ${error.message}`);
     }
+  }
+
+  async saveSongs(songs: Song[], albumId: string) {
+    songs.forEach((song) => {
+      const songDto = new SongSaveDto({ ...song, albumId: albumId });
+      this.songRepository.save(new Song(songDto));
+    });
   }
 }

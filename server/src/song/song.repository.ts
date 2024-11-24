@@ -18,4 +18,8 @@ export class SongRepository {
       order: { trackNumber: ORDER[orderBy] },
     });
   }
+
+  async save(song: Song) {
+    return this.repository.save(song);
+  }
 }
