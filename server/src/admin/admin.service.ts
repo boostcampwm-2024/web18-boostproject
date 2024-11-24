@@ -21,7 +21,10 @@ export class AdminService {
     albumCoverFile: Express.Multer.File,
     bannerCoverFile: Express.Multer.File,
     prefix: string,
-  ) {
+  ): Promise<{
+    albumCoverURL?: string;
+    bannerCoverURL?: string;
+  }> {
     const results: {
       albumCoverURL?: string;
       bannerCoverURL?: string;

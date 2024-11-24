@@ -59,16 +59,11 @@ export class AdminController {
     const imageUrls: {
       albumCoverURL?: string;
       bannerCoverURL?: string;
-    } = {};
-
-    //2. 앨범 커버 이미지, 배너 이미지를 S3에 업로드 하고 URL을 반환 받음
-    const uploadResults = await this.adminService.uploadImageFiles(
+    } = await this.adminService.uploadImageFiles(
       files.albumCover?.[0],
       files.bannerCover?.[0],
       `converted/${album.id}`,
     );
-
-    Object.assign(imageUrls, uploadResults);
 
     await this.albumRepository.updateAlbumUrls(album.id, imageUrls);
     // TODO: albumData.setBannerUrl(albumCoverUrl), albumData.setJacketUrl(bannerCoverUrl);
