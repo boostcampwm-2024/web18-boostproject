@@ -38,7 +38,6 @@ import { RoomModule } from '@/room/room.module';
       database: process.env.DB_DATABASE,
       entities: [Album, Song],
     }),
-    TypeOrmModule.forFeature([Song, Album]),
   ],
   controllers: [AppController],
   providers: [Logger, AppService, MusicRepository],
