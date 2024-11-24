@@ -11,7 +11,6 @@ import path from 'path';
 import * as fs from 'fs/promises';
 import { MusicProcessingSevice } from '@/music/music.processor';
 import { AdminService } from './admin.service';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Album } from '@/album/album.entity';
 import { AlbumRepository } from '@/album/album.repository';
 import { RoomService } from '@/room/room.service';
@@ -27,7 +26,6 @@ export class AdminController {
   constructor(
     private readonly adminService: AdminService,
     private readonly musicProcessingService: MusicProcessingSevice,
-    @InjectRepository(Album)
     private readonly albumRepository: AlbumRepository,
     private readonly roomService: RoomService,
   ) {}

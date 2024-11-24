@@ -6,7 +6,6 @@ import { SongSaveDto } from '@/song/songSave.dto';
 import { SongRepository } from '@/song/song.repository';
 import { AlbumRepository } from '@/album/album.repository';
 import { UploadedFiles } from '@/admin/admin.controller';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Album } from '@/album/album.entity';
 import { AdminRedisRepository } from '@/admin/admin.redis.repository';
 
@@ -16,9 +15,7 @@ export class AdminService {
 
   constructor(
     private configService: ConfigService,
-    @InjectRepository(Song)
     private readonly songRepository: SongRepository,
-    @InjectRepository(Album)
     private readonly albumRepository: AlbumRepository,
     private readonly adminRedisRepository: AdminRedisRepository,
   ) {
