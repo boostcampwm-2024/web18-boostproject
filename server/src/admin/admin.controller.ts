@@ -52,11 +52,9 @@ export class AdminController {
     @Body('albumData') albumDataString: string,
   ): Promise<any> {
     const albumData = JSON.parse(albumDataString) as AlbumDto;
-    // TODO 성준님 1. MySQL DB에 앨범 정보 저장 하고 앨범 Id를 반환 받음
-    //const albumId = this.adminRepository.createAlbum();
+    const album = await this.albumRepository.save(new Album(albumData));
 
     // 앨범 임시 ID
-    const albumId = 'RANDOM_AHH_ALBUM_ID';
     const imageUrls: {
       albumCoverURL?: string;
       bannerCoverURL?: string;
@@ -67,7 +65,7 @@ export class AdminController {
       const uploadResults = await this.adminService.uploadImageFiles(
         files.albumCover?.[0],
         files.bannerCover?.[0],
-        `converted/${albumId}`,
+        `converted/${album.id}`,
       );
 
       Object.assign(imageUrls, uploadResults);
@@ -83,19 +81,17 @@ export class AdminController {
     const processedSongs = await this.processSongFiles(
       files.songs,
       albumData,
-      albumId,
+      album.id,
     );
 
     const songDurations = processedSongs.map((song) => song.duration);
     const releaseTimestamp = new Date(albumData.releaseDate).getTime();
 
     await this.adminRedisRepository.createStreamingSession(
-      albumId,
+      album.id,
       releaseTimestamp,
       songDurations,
     );
-
-    const album = await this.albumRepository.save(new Album(albumData));
 
     // TODO: MySQL에 processedSong에 들어가 있는 정보를 기반으로 DB에 노래 정보 저장
     processedSongs.forEach((song) => {
@@ -108,7 +104,7 @@ export class AdminController {
     );
 
     return {
-      albumId,
+      albumId: album.id,
       message: 'Album songs updated to object storage successfully',
     };
   }
