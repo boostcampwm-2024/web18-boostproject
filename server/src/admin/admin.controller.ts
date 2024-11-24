@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Inject,
   Post,
   UploadedFiles,
   UseInterceptors,
@@ -28,7 +27,7 @@ export interface UploadedFiles {
 export class AdminController {
   constructor(
     private readonly adminService: AdminService,
-    @Inject() private readonly musicProcessingService: MusicProcessingSevice,
+    private readonly musicProcessingService: MusicProcessingSevice,
     @InjectRepository(Album)
     private readonly albumRepository: AlbumRepository,
     private readonly roomRepository: RoomRepository,
