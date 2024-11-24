@@ -18,6 +18,8 @@ import { Song } from '@/song/song.entity';
 import { Repository } from 'typeorm';
 import { SongSaveDto } from '@/song/songSave.dto';
 import { Album } from '@/album/album.entity';
+import { RoomRepository } from '@/room/room.repository';
+import { Room } from '@/room/room.entity';
 
 export interface UploadedFiles {
   albumCover?: Express.Multer.File;
@@ -34,6 +36,7 @@ export class AdminController {
     @InjectRepository(Song) private readonly songRepository: Repository<Song>,
     @InjectRepository(Album)
     private readonly albumRepository: Repository<Album>,
+    private readonly roomRepository: RoomRepository,
   ) {}
 
   @Post('album')
@@ -99,6 +102,11 @@ export class AdminController {
       const songDto = new SongSaveDto({ ...song, albumId: album.getId() });
       this.songRepository.save(new Song(songDto));
     });
+
+    await this.roomRepository.createRoom(
+      new Room({ id: album.getId(), createdAt: new Date() }),
+    );
+
     return {
       albumId,
       message: 'Album songs updated to object storage successfully',
