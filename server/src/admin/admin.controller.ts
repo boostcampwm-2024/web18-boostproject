@@ -51,18 +51,8 @@ export class AdminController {
     const albumData = JSON.parse(albumDataString) as AlbumDto;
     const album = await this.albumRepository.save(new Album(albumData));
 
-    // 앨범 임시 ID
-    const imageUrls: {
-      albumCoverURL?: string;
-      bannerCoverURL?: string;
-    } = await this.adminService.uploadImageFiles(
-      files.albumCover?.[0],
-      files.bannerCover?.[0],
-      `converted/${album.id}`,
-    );
-
-    await this.albumRepository.updateAlbumUrls(album.id, imageUrls);
-    // TODO: albumData.setBannerUrl(albumCoverUrl), albumData.setJacketUrl(bannerCoverUrl);
+    // 앨범 이미지 업로드 및 DB 저장
+    await this.adminService.saveAlbumCoverAndBanner(files, album.id);
 
     //3. 노래 파일들 처리: 기존 processSongFiles 사용
     const processedSongs = await this.processSongFiles(

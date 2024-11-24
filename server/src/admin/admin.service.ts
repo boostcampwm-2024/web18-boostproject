@@ -4,6 +4,10 @@ import * as AWS from 'aws-sdk';
 import { Song } from '@/song/song.entity';
 import { SongSaveDto } from '@/song/songSave.dto';
 import { SongRepository } from '@/song/song.repository';
+import { AlbumRepository } from '@/album/album.repository';
+import { UploadedFiles } from '@/admin/admin.controller';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Album } from '@/album/album.entity';
 
 @Injectable()
 export class AdminService {
@@ -11,7 +15,10 @@ export class AdminService {
 
   constructor(
     private configService: ConfigService,
+    @InjectRepository(Song)
     private readonly songRepository: SongRepository,
+    @InjectRepository(Album)
+    private readonly albumRepository: AlbumRepository,
   ) {
     this.s3 = new AWS.S3({
       endpoint: new AWS.Endpoint('https://kr.object.ncloudstorage.com'),
@@ -23,7 +30,7 @@ export class AdminService {
     });
   }
 
-  async uploadImageFiles(
+  private async uploadImageFiles(
     albumCoverFile: Express.Multer.File,
     bannerCoverFile: Express.Multer.File,
     prefix: string,
@@ -85,5 +92,18 @@ export class AdminService {
       const songDto = new SongSaveDto({ ...song, albumId: albumId });
       this.songRepository.save(new Song(songDto));
     });
+  }
+
+  async saveAlbumCoverAndBanner(files: UploadedFiles, albumId: string) {
+    const imageUrls: {
+      albumCoverURL?: string;
+      bannerCoverURL?: string;
+    } = await this.uploadImageFiles(
+      files.albumCover?.[0],
+      files.bannerCover?.[0],
+      `converted/${albumId}`,
+    );
+
+    await this.albumRepository.updateAlbumUrls(albumId, imageUrls);
   }
 }
