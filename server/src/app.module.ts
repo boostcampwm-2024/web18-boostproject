@@ -16,6 +16,7 @@ import { Album } from '@/album/album.entity';
 import { Song } from '@/song/song.entity';
 import { SongModule } from '@/song/song.module';
 import { MusicRepository } from '@/music/music.repository';
+import { RoomModule } from '@/room/room.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { MusicRepository } from '@/music/music.repository';
     EmojiModule,
     AlbumModule,
     SongModule,
+    RoomModule,
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.DB_HOST,
@@ -38,7 +40,7 @@ import { MusicRepository } from '@/music/music.repository';
     }),
     TypeOrmModule.forFeature([Song, Album]),
   ],
-  controllers: [AppController, RoomController],
-  providers: [Logger, AppService, RoomRepository, RoomGateway, MusicRepository],
+  controllers: [AppController],
+  providers: [Logger, AppService, MusicRepository],
 })
 export class AppModule {}
