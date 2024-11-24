@@ -14,9 +14,10 @@ export function SongDetail({ songs, streamingIndex }: SongDetailProps) {
 
   return (
     <div
-      className={`absolute bottom-0 w-full bg-grayscale-800 text-gray-100 rounded-t-lg 
-      transform transition-transform duration-300 ease-in-out z-50
-      ${isOpen ? 'translate-y-0' : 'translate-y-[calc(100%-56px)]'}`}
+      className={`absolute bottom-0 bg-grayscale-800 text-gray-100 w-full
+      ${isOpen ? 'h-[40vh]' : 'h-14'} 
+      transition-all duration-300 ease-in-out z-50
+      rounded-t-lg`}
     >
       <SongDetailHeader
         category={category}
@@ -24,12 +25,14 @@ export function SongDetail({ songs, streamingIndex }: SongDetailProps) {
         setIsOpen={setIsOpen}
         setCategory={setCategory}
       />
-      <SongDetailContent
-        isOpen={isOpen}
-        category={category}
-        songs={songs}
-        streamingIndex={streamingIndex}
-      />
+      {isOpen && (
+        <SongDetailContent
+          isOpen={isOpen}
+          category={category}
+          songs={songs}
+          streamingIndex={streamingIndex}
+        />
+      )}
     </div>
   );
 }

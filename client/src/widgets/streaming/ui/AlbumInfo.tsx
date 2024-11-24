@@ -19,16 +19,14 @@ export function AlbumInfo({ roomInfo }: AlbumInfoProps) {
   const { roomId } = useParams<{ roomId: string }>();
   const [isLoaded, setIsLoaded] = useState(false);
 
-  console.log(roomInfo);
   if (!roomInfo.success) {
     return <StreamingErrorPage />;
   }
 
   const playStream = () => {
-    console.log('playStream');
     const audio = audioRef.current;
     if (!audio) return;
-    const streamUrl = `/api/music/${roomId}/playlist.m3u8?joinTimeStamp=1700000000000`;
+    const streamUrl = `http://localhost:3000/api/music/${roomId}/playlist.m3u8?joinTimeStamp=1700000000000`;
     if (Hls.isSupported()) {
       const hls = new Hls({
         maxBufferLength: 30, // 버퍼 길이 제한
@@ -52,9 +50,9 @@ export function AlbumInfo({ roomInfo }: AlbumInfoProps) {
       console.error('HLS is not supported');
     }
   };
+
   useEffect(() => {
     playStream();
-    console.log(Date.now());
   }, []);
 
   useEffect(() => {
@@ -85,9 +83,9 @@ export function AlbumInfo({ roomInfo }: AlbumInfoProps) {
   }, [isLoaded]);
 
   return (
-    <div className="flex flex-col items-center w-7/12 relative">
+    <div className="flex flex-col items-center relative text-grayscale-100">
       <audio ref={audioRef} controls controlsList="nodownload" />
-      <div className="text-center mb-32 w-full">
+      <div className="text-center mb-20 w-full">
         <p className="text-gray-300 mb-4">
           #{roomInfo.albumResponse.tags.split(', ').join(' #')}
         </p>
@@ -129,10 +127,6 @@ export function AlbumInfo({ roomInfo }: AlbumInfoProps) {
       <p className="mt-4 text-2xl font-bold">
         {roomInfo.songResponseList[Number(roomInfo.trackOrder) - 1].title}
       </p>
-      <SongDetail
-        songs={roomInfo.songResponseList}
-        streamingIndex={Number(roomInfo.trackOrder)}
-      />
     </div>
   );
 }

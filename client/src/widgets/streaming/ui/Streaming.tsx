@@ -5,6 +5,7 @@ import SampleAlbumCover from '@/assets/sample-album-cover-1.png';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import { SongDetail } from '@/features/songDetail';
 
 export function Streaming() {
   const { roomId } = useParams<{ roomId: string }>();
@@ -12,9 +13,8 @@ export function Streaming() {
 
   const getRoomInfo = async () => {
     const response = await axios.get<RoomResponse>(
-      `/api/room/${roomId}`,
+      `http://localhost:3000/api/room/${roomId}`,
     );
-    console.log(response.data);
     setRoomInfo(response.data);
   };
 
@@ -23,13 +23,23 @@ export function Streaming() {
   }, []);
 
   return (
-    <div className="bg-grayscale-400 w-3/4 relative overflow-hidden">
-      <AlbumBackground
-        coverImage={roomInfo?.albumResponse?.jacketUrl ?? SampleAlbumCover}
-      />
-      <div className="absolute inset-0 flex justify-center pt-28 text-grayscale-100 z-10">
-        {roomInfo && <AlbumInfo roomInfo={roomInfo} />}
-      </div>
+    <div className="overflow-hidden relative w-3/4 h-full">
+      {roomInfo && (
+        <>
+          <AlbumBackground
+            coverImage={roomInfo?.albumResponse?.jacketUrl ?? SampleAlbumCover}
+          />
+          <div className="flex justify-center">
+            <div className="w-7/12 h-screen relative flex items-center justify-center">
+              <AlbumInfo roomInfo={roomInfo} />
+              <SongDetail
+                songs={roomInfo.songResponseList}
+                streamingIndex={Number(roomInfo.trackOrder)}
+              />
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
