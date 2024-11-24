@@ -1,86 +1,23 @@
-import { useState } from 'react';
-import './LyricsPanel.css';
-import { useRef, useEffect } from 'react';
-import Hls from 'hls.js';
 import { useParams } from 'react-router-dom';
 import { AudioController } from '@/widgets/streaming/ui/AudioController';
 import { PlayIcon } from '@/shared/icon/PlayIcon';
 import { RoomResponse } from '@/entities/album/types';
 import SampleAlbumCover from '@/assets/sample-album-cover-1.png';
 import { StreamingErrorPage } from '@/pages/StreamingErrorPage';
-import { SongDetail } from '@/features/songDetail';
+import { useStreamingPlayer } from '@/features/albumStreaming/lib/useStreamingPlayer';
 
 interface AlbumInfoProps {
   roomInfo: RoomResponse;
 }
 
 export function AlbumInfo({ roomInfo }: AlbumInfoProps) {
-  const audioRef = useRef<HTMLMediaElement>(null);
   const { roomId } = useParams<{ roomId: string }>();
-  const [isLoaded, setIsLoaded] = useState(false);
+  if (!roomId) return;
+  const { audioRef, isLoaded, playStream } = useStreamingPlayer(roomId);
 
   if (!roomInfo.success) {
     return <StreamingErrorPage />;
   }
-
-  const playStream = () => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    const streamUrl = `http://localhost:3000/api/music/${roomId}/playlist.m3u8?joinTimeStamp=1700000000000`;
-    if (Hls.isSupported()) {
-      const hls = new Hls({
-        maxBufferLength: 30, // 버퍼 길이 제한
-        maxMaxBufferLength: 60, // 최대 버퍼 길이
-        maxBufferSize: 60 * 1000000, // 버퍼 크기 제한 (60MB)
-        maxBufferHole: 0.5, // 버퍼 홀 허용 범위
-        lowLatencyMode: true, // 낮은 지연 모드
-        backBufferLength: 30, // 뒤로 가기 버퍼 길이
-      });
-      hls.loadSource(streamUrl);
-      hls.attachMedia(audio);
-
-      hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        setIsLoaded(true);
-      });
-
-      hls.on(Hls.Events.ERROR, function (data) {
-        console.error('Error event:', data);
-      });
-    } else {
-      console.error('HLS is not supported');
-    }
-  };
-
-  useEffect(() => {
-    playStream();
-  }, []);
-
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    const handleEnded = () => {
-      setIsLoaded(false);
-      playStream();
-    };
-    audio.addEventListener('ended', handleEnded);
-    return () => {
-      audio.removeEventListener('ended', handleEnded);
-    };
-  }, []);
-
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio || !isLoaded) return;
-
-    audio.play().catch((error) => {
-      if (error.name === 'NotAllowedError') {
-        setIsLoaded(false);
-      } else {
-        console.error('Failed to play audio', error);
-      }
-    });
-  }, [isLoaded]);
 
   return (
     <div className="flex flex-col items-center relative text-grayscale-100">

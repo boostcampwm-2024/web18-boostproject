@@ -1,3 +1,5 @@
+import './LyricsPanel.css';
+
 interface LyricsPanelProps {
   lyrics: string;
 }
