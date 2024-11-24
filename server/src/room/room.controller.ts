@@ -36,26 +36,6 @@ export class RoomController {
     private readonly musicRepository: MusicRepository,
   ) {}
 
-  @ApiOperation({ summary: '방 생성' })
-  @ApiResponse({ status: 201, description: 'Room created successfully' })
-  @Post()
-  async createRoom(): Promise<any> {
-    try {
-      const roomId = 'TEMP_RANDOM_ROOM_ID';
-      const roomInfo: RoomInfo = {
-        currentUsers: 0,
-        maxCapacity: 999,
-        isActive: true,
-        currentSong: '',
-        songs: ['LOVE SONG', 'POWER'],
-      };
-      // await this.roomRepository.createRoom(roomId, roomInfo);
-      return { success: true, message: 'Room created' };
-    } catch (e) {
-      return { success: false, error: e.message };
-    }
-  }
-
   @ApiOperation({ summary: '방 정보 확인' })
   @ApiParam({ name: 'roomId', required: true })
   @ApiResponse({ status: 200, description: 'Room info retrieved successfully' })
