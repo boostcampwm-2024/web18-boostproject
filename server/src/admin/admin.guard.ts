@@ -38,6 +38,6 @@ export class AdminGuard implements CanActivate {
       return undefined;
     }
     const [check, token] = request.headers.authorization.split(' ');
-    return check.toLowerCase() === 'bearer' ? token : undefined;
+    return check === 'Bearer' ? token : undefined;
   }
 }
