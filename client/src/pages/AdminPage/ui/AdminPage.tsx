@@ -2,7 +2,6 @@ import { Button } from '@/shared/ui';
 import { AlbumForm, SongForm } from '@/features/albumRegister';
 import { useAlbumForm } from '@/features/albumRegister/model/useAlbumForm';
 import { useStreamingRoom } from '@/shared/hook/useStreamingRoom';
-import { socket } from '@/shared/api/socket';
 
 export function AdminPage() {
   const { isConnected } = useStreamingRoom();
@@ -14,14 +13,6 @@ export function AdminPage() {
     if (!albumFormRef.current || songs.length === 0) return;
     await handleSubmit();
     albumFormRef.current.reset();
-  };
-
-  const handleCreateRoom = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    console.log('createRoom');
-    socket.emit('createRoom', { userId: 'TEMP_USER_ID' }, (response: any) => {
-      console.log('createRoom', response);
-    });
   };
 
   return (
@@ -42,7 +33,6 @@ export function AdminPage() {
             <Button message="노래 추가" onClick={handleAddSong} />
             <Button message="방 만들기" onClick={handlePost} />
           </div>
-          <Button message="초오고속 방 만들기" onClick={handleCreateRoom} />
         </div>
       </div>
     </div>

@@ -68,7 +68,7 @@
     </div>
 
     <script>
-      const socket = io('http://localhost:3000/rooms', {
+      const socket = io('/rooms', {
         transports: ['websocket'],
         autoConnect: true,
       });
@@ -135,7 +135,9 @@
       // 방 생성 함수
       function createRoom() {
         socket.emit('createRoom', null, (response) => {
-          addEvent(`Create Room Response: ${JSON.stringify(response, null, 2)}`);
+          addEvent(
+            `Create Room Response: ${JSON.stringify(response, null, 2)}`,
+          );
           if (response.success && response.room) {
             roomIdDom.innerHTML = response.room.id; // 생성된 방 ID를 화면에 표시
           }

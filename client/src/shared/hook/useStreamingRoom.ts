@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useSocketEvents } from './useSocketEvents';
 import { io } from 'socket.io-client';
 
-const URL = 'http://localhost:3000/rooms';
+const URL = '/rooms';
 export function useStreamingRoom() {
   const [isConnected, setIsConnected] = useState(false);
   const { roomId } = useParams();
