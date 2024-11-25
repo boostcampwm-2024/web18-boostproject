@@ -3,7 +3,6 @@ import { StreamingPage } from '@/pages/StreamingPage';
 import { Layout } from '@/Layout';
 import { AdminPage } from '@/pages/AdminPage';
 import { AlbumPage } from '@/pages/AlbumPage';
-import { HlsTestPage } from '@/pages/HlsTestPage';
 
 export const routes = [
   {
@@ -27,9 +26,5 @@ export const routes = [
   {
     path: '/admin',
     element: <AdminPage />,
-  },
-  {
-    path: '/hls-test',
-    element: <HlsTestPage />,
   },
 ];
