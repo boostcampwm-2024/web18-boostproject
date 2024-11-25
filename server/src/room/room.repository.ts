@@ -6,6 +6,7 @@ import { ROOM_STATUS } from '@/room/room.constant';
 import { RoomNotFoundException } from '@/common/exceptions/domain/room/room-not-found.exception';
 import { RoomIsFullException } from '@/common/exceptions/domain/room/room-is-full.exception';
 import { RoomInactiveException } from '@/common/exceptions/domain/room/room-inactive.exception';
+import { UserNotInRoomException } from '@/common/exceptions/domain/room/user-not-in-room.exception';
 
 export interface RoomInfo {
   currentUsers: number;
@@ -58,7 +59,7 @@ export class RoomRepository {
 
     const isMember = await this.redisClient.sIsMember(roomUsersKey, userId);
     if (!isMember) {
-      throw new Error('User is not in the room');
+      throw new UserNotInRoomException(roomId, userId);
     }
 
     const multi = this.redisClient.multi();
