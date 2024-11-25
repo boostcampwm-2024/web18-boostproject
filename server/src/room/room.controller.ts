@@ -92,14 +92,7 @@ export class RoomController {
       .digest('hex')
       .slice(0, 4);
     const randomName = RandomNameUtil.generate();
-    try {
-      await this.roomRepository.joinRoom(
-        joinRoomDto.userId,
-        joinRoomDto.roomId,
-      );
-      return { success: true, message: 'Joined room', identifier, randomName };
-    } catch (e) {
-      return { success: false, error: e.message };
-    }
+    await this.roomRepository.joinRoom(joinRoomDto.userId, joinRoomDto.roomId);
+    return { success: true, message: 'Joined room', identifier, randomName };
   }
 }
