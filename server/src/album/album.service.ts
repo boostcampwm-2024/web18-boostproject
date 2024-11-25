@@ -5,6 +5,7 @@ import {
   MainBannerResponse,
   MainBannerResponseDto,
 } from './dto/main-banner-response';
+import { SideBarResponseDto } from './dto/side-bar-response';
 
 @Injectable()
 export class AlbumService {
@@ -12,7 +13,7 @@ export class AlbumService {
     private readonly albumRepository: AlbumRepository,
     private readonly albumRedisRepository: AlbumRedisRepository,
   ) {}
-  async getMainBannerInfos() {
+  async getMainBannerInfos(): Promise<MainBannerResponseDto> {
     const date = new Date();
     const albumBannerInfos =
       await this.albumRepository.getAlbumBannerInfos(date);
@@ -25,5 +26,15 @@ export class AlbumService {
       }),
     );
     return new MainBannerResponseDto(banners);
+  }
+
+  async getSideBarInfos() {
+    const date = new Date();
+    const recentSideBarAlbums =
+      await this.albumRepository.getRecentSideBarInfos(date);
+
+    const upComingAlbums =
+      await this.albumRepository.getUpComingSideBarInfos(date);
+    return new SideBarResponseDto(recentSideBarAlbums, upComingAlbums);
   }
 }
