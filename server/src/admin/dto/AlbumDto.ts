@@ -32,6 +32,9 @@ export class AlbumDto {
   @IsString()
   tags: string;
 
+  @IsNumber()
+  totalDuration: number;
+
   @IsString()
   bannerUrl: string;
 
