@@ -5,7 +5,7 @@ export function HlsTestPage() {
   const audioRef = useRef<HTMLMediaElement>(null);
   const albumId = 'RANDOM_AHH_ALBUM_ID';
   const joinTimeStamp = 1700000000000;
-  const url = `http://localhost:3000/api/music/${albumId}/playlist.m3u8?joinTimeStamp=${joinTimeStamp}`;
+  const url = `/api/music/${albumId}/playlist.m3u8?joinTimeStamp=${joinTimeStamp}`;
 
   useEffect(() => {
     const audio = audioRef.current;

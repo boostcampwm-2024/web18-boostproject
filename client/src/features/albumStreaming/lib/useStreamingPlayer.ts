@@ -7,7 +7,7 @@ export const useStreamingPlayer = (roomId: string) => {
   const [isLoaded, setIsLoaded] = useState(false);
 
   const createStreamUrl = (roomId: string) =>
-    `http://localhost:3000/api/music/${roomId}/playlist.m3u8?joinTimeStamp=1700000000000`;
+    `/api/music/${roomId}/playlist.m3u8?joinTimeStamp=1700000000000`;
 
   const initializeHls = (audio: HTMLMediaElement, streamUrl: string) => {
     const hls = new Hls(DEFAULT_STREAMING_CONFIG);
