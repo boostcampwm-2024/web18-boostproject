@@ -3,11 +3,9 @@ import { HttpStatus } from '@nestjs/common';
 
 export class UserNotInRoomException extends BaseException {
   constructor(roomId: string, userId: string) {
-    super(
-      '방에 사용자가 존재하지 않습니다.',
-      HttpStatus.FORBIDDEN,
-      'USER_NOT_IN_ROOM',
-      { roomId, userId },
-    );
+    super('방에 사용자가 존재하지 않습니다.', HttpStatus.FORBIDDEN, {
+      roomId,
+      userId,
+    });
   }
 }

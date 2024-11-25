@@ -3,6 +3,6 @@ import { HttpStatus } from '@nestjs/common';
 
 export class RoomNotFoundException extends BaseException {
   constructor() {
-    super('방이 존재하지 않습니다.', HttpStatus.NOT_FOUND, 'Room Is Not Found');
+    super('방이 존재하지 않습니다.', HttpStatus.NOT_FOUND);
   }
 }

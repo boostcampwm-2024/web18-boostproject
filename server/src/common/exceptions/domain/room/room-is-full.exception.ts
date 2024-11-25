@@ -3,11 +3,9 @@ import { HttpStatus } from '@nestjs/common';
 
 export class RoomIsFullException extends BaseException {
   constructor(roomKey: string, maxCapacity: number) {
-    super(
-      '방의 인원이 가득찼습니다.',
-      HttpStatus.SERVICE_UNAVAILABLE,
-      'Room Is Full',
-      { roomKey, maxCapacity },
-    );
+    super('방의 인원이 가득찼습니다.', HttpStatus.SERVICE_UNAVAILABLE, {
+      roomKey,
+      maxCapacity,
+    });
   }
 }
