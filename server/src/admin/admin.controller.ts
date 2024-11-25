@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Inject,
   Post,
   UploadedFiles,
   UseInterceptors,
@@ -12,12 +11,9 @@ import path from 'path';
 import * as fs from 'fs/promises';
 import { MusicProcessingSevice } from '@/music/music.processor';
 import { AdminService } from './admin.service';
-import { AdminRedisRepository } from './admin.redis.repository';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Song } from '@/song/song.entity';
-import { Repository } from 'typeorm';
-import { SongSaveDto } from '@/song/songSave.dto';
 import { Album } from '@/album/album.entity';
+import { AlbumRepository } from '@/album/album.repository';
+import { RoomService } from '@/room/room.service';
 
 export interface UploadedFiles {
   albumCover?: Express.Multer.File;
@@ -28,12 +24,10 @@ export interface UploadedFiles {
 @Controller('admin')
 export class AdminController {
   constructor(
-    private readonly adminRedisRepository: AdminRedisRepository,
     private readonly adminService: AdminService,
-    @Inject() private readonly musicProcessingService: MusicProcessingSevice,
-    @InjectRepository(Song) private readonly songRepository: Repository<Song>,
-    @InjectRepository(Album)
-    private readonly albumRepository: Repository<Album>,
+    private readonly musicProcessingService: MusicProcessingSevice,
+    private readonly albumRepository: AlbumRepository,
+    private readonly roomService: RoomService,
   ) {}
 
   @Post('album')
@@ -49,58 +43,24 @@ export class AdminController {
     @Body('albumData') albumDataString: string,
   ): Promise<any> {
     const albumData = JSON.parse(albumDataString) as AlbumDto;
-    // TODO 성준님 1. MySQL DB에 앨범 정보 저장 하고 앨범 Id를 반환 받음
-    //const albumId = this.adminRepository.createAlbum();
+    const album = await this.albumRepository.save(new Album(albumData));
 
-    // 앨범 임시 ID
-    const albumId = 'RANDOM_AHH_ALBUM_ID';
-    const imageUrls: {
-      albumCoverURL?: string;
-      bannerCoverURL?: string;
-    } = {};
-
-    //2. 앨범 커버 이미지, 배너 이미지를 S3에 업로드 하고 URL을 반환 받음
-    if (files.albumCover?.[0] || files.bannerCover?.[0]) {
-      const uploadResults = await this.adminService.uploadImageFiles(
-        files.albumCover?.[0],
-        files.bannerCover?.[0],
-        `converted/${albumId}`,
-      );
-
-      Object.assign(imageUrls, uploadResults);
-    }
-
-    // await this.adminRepository.updateAlbumUrls(albumId, {
-    //   albumCoverURL,
-    //   bannerCoverURL
-    // });
-    // TODO: albumData.setBannerUrl(albumCoverUrl), albumData.setJacketUrl(bannerCoverUrl);
+    // 앨범 이미지 업로드 및 DB 저장
+    await this.adminService.saveAlbumCoverAndBanner(files, album.id);
 
     //3. 노래 파일들 처리: 기존 processSongFiles 사용
     const processedSongs = await this.processSongFiles(
       files.songs,
       albumData,
-      albumId,
+      album.id,
     );
 
-    const songDurations = processedSongs.map((song) => song.duration);
-    const releaseTimestamp = new Date(albumData.releaseDate).getTime();
+    await this.adminService.initializeStreamingSession(processedSongs, album);
+    await this.adminService.saveSongs(processedSongs, album.id);
+    await this.roomService.initializeRoom(album.id);
 
-    await this.adminRedisRepository.createStreamingSession(
-      albumId,
-      releaseTimestamp,
-      songDurations,
-    );
-
-    const album = await this.albumRepository.save(new Album(albumData));
-
-    // TODO: MySQL에 processedSong에 들어가 있는 정보를 기반으로 DB에 노래 정보 저장
-    processedSongs.forEach((song) => {
-      const songDto = new SongSaveDto({ ...song, albumId: album.getId() });
-      this.songRepository.save(new Song(songDto));
-    });
     return {
-      albumId,
+      albumId: album.id,
       message: 'Album songs updated to object storage successfully',
     };
   }
@@ -113,7 +73,6 @@ export class AdminController {
     const tempDir = await this.createTempDirectory(albumId);
 
     //Processed song 안에서 노래에 관한 모든 정보를 JSON 형태로 받을 수 있음
-    //TODO: processedSongs를 기반으로 MySQL에 정보 저장
     const processedSongs = await Promise.all(
       songFiles.map(async (file, index) => {
         const songInfo = albumData.songs[index];

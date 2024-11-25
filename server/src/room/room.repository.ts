@@ -2,11 +2,12 @@ import { REDIS_CLIENT } from '@/common/redis/redis.module';
 import { Inject, Injectable } from '@nestjs/common';
 import { RedisClientType } from 'redis';
 import { Room } from './room.entity';
+import { ROOM_STATUS } from '@/room/room.constant';
 
 export interface RoomInfo {
   currentUsers: number;
   maxCapacity: number;
-  isActive: boolean;
+  isActive: keyof typeof ROOM_STATUS;
   currentSong: string;
   songs: string[];
 }
@@ -29,24 +30,18 @@ export class RoomRepository {
     return `rooms:${roomId}:queue`;
   }
 
-  async createRoom(roomId: string, room: Room): Promise<void> {
-    const roomKey = this.roomKey(roomId);
+  async createRoom(room: Room): Promise<void> {
+    const roomKey = this.roomKey(room.id);
 
     await this.redisClient
       .multi()
       .hSet(roomKey, 'id', room.id)
-      .hSet(roomKey, 'hostId', room.hostId)
       .hSet(roomKey, 'createdAt', room.createdAt.toISOString())
-      .hSet(roomKey, 'isActive', 'true')
+      .hSet(roomKey, 'isActive', ROOM_STATUS.ACTIVE)
       .hSet(roomKey, 'currentUsers', '0')
-      .hSet(roomKey, 'maxCapacity', '10')
+      .hSet(roomKey, 'maxCapacity', process.env.MAX_CAPACITY || '100')
       .exec();
     return;
-  }
-
-  async generateRoomId(): Promise<string> {
-    const roomCount = await this.redisClient.incr('room_counter');
-    return `room_${roomCount}`;
   }
 
   async leaveRoom(userId: string, roomId: string): Promise<void> {
@@ -70,7 +65,7 @@ export class RoomRepository {
     await multi.exec();
   }
 
-  async findRoom(roomId: string): Promise<Room | any> {
+  async findRoom(roomId: string): Promise<Room> {
     const roomKey = this.roomKey(roomId);
 
     const exists = await this.redisClient.exists(roomKey);
@@ -78,16 +73,13 @@ export class RoomRepository {
       return null;
     }
 
-    const [id, name, hostId, createdAt] = await Promise.all([
+    const [id, createdAt] = await Promise.all([
       this.redisClient.hGet(roomKey, 'id'),
-      this.redisClient.hGet(roomKey, 'name'),
-      this.redisClient.hGet(roomKey, 'hostId'),
       this.redisClient.hGet(roomKey, 'createdAt'),
     ]);
 
     return new Room({
       id,
-      hostId,
       createdAt: new Date(createdAt),
     });
   }
@@ -102,7 +94,7 @@ export class RoomRepository {
       this.redisClient.hGet(roomKey, 'maxCapacity'),
     ]);
 
-    if (!isActive || isActive !== 'true') {
+    if (!isActive || isActive === ROOM_STATUS.INACTIVE) {
       throw new Error('Room is inactive');
     }
     if (Number(currentUsers) >= Number(maxCapacity)) {
