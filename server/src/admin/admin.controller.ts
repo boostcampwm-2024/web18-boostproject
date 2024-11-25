@@ -30,6 +30,11 @@ export class AdminController {
     private readonly roomService: RoomService,
   ) {}
 
+  @Post('login')
+  async login(@Body() body: { adminKey: string }) {
+    return this.adminService.login(body.adminKey);
+  }
+
   @Post('album')
   @UseInterceptors(
     FileFieldsInterceptor([
