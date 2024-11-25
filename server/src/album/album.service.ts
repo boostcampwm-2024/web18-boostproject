@@ -5,7 +5,6 @@ import {
   MainBannerResponse,
   MainBannerResponseDto,
 } from './dto/main-banner-response';
-import moment from 'moment-timezone';
 
 @Injectable()
 export class AlbumService {
