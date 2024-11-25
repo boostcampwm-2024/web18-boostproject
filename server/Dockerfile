@@ -13,5 +13,7 @@ RUN corepack enable && \
 
 WORKDIR /app/server
 
+RUN yarn build
+
 EXPOSE 3000
 CMD ["yarn", "start"]

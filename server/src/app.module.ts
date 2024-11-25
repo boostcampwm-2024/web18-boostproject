@@ -40,6 +40,7 @@ import { RoomModule } from '@/room/room.module';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
       entities: [Album, Song],
+      synchronize: true,
     }),
   ],
   controllers: [AppController],

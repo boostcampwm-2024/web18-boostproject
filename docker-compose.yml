@@ -15,13 +15,18 @@ services:
       - ./yarn.lock:/app/yarn.lock
       - ./.yarnrc.yml:/app/.yarnrc.yml
       - ./.yarn:/app/.yarn
+    depends_on:
+      - redis
+      - mysql
     command:
       - yarn
       - --cwd
       - /app/server
       - dev
+    env_file:
+      - ./server/.env.production
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=production
     networks:
       - webapp
     healthcheck:
@@ -47,7 +52,7 @@ services:
       - ./.yarnrc.yml:/app/.yarnrc.yml
       - ./.yarn:/app/.yarn
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=production
       - CHOKIDAR_USEPOLLING=true
       - WATCHPACK_POLLING=true
     networks:
@@ -70,3 +75,33 @@ services:
     networks:
       - webapp
     restart: unless-stopped
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    expose:
+      - '6379'
+    networks:
+      - webapp
+    restart: unless-stopped
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    expose:
+      - '3306'
+    env_file:
+      - ./server/.env.production
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_USER=${DB_USERNAME}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - webapp
+    restart: unless-stopped
+
+volumes:
+  mysql_data:

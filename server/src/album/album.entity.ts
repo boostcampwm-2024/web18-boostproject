@@ -23,10 +23,10 @@ export class Album {
   })
   releaseDate: string;
 
-  @Column({ name: 'banner_url', type: 'varchar', length: 500 })
+  @Column({ name: 'banner_url', type: 'varchar', length: 500, nullable: true })
   bannerUrl: string;
 
-  @Column({ name: 'jacket_url', type: 'varchar', length: 500 })
+  @Column({ name: 'jacket_url', type: 'varchar', length: 500, nullable: true })
   jacketUrl: string;
 
   constructor(albumDto?: AlbumDto) {

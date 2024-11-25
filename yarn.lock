@@ -10856,6 +10856,7 @@ __metadata:
     cache-manager: "npm:5.2.3"
     class-transformer: "npm:^0.5.1"
     class-validator: "npm:^0.14.1"
+    cross-env: "npm:^7.0.3"
     eslint: "npm:^8.42.0"
     eslint-config-prettier: "npm:^9.0.0"
     eslint-plugin-prettier: "npm:^5.0.0"
