@@ -10,7 +10,6 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { RoomRepository } from './room.repository';
-import { Room } from './room.entity';
 import { RandomNameUtil } from '@/common/randomname/random-name.util';
 
 @WebSocketGateway({
@@ -100,53 +99,6 @@ export class RoomGateway
       return {
         success: false,
         message: e.message,
-      };
-    }
-  }
-
-  @SubscribeMessage('createRoom')
-  async handleCreateRoom(
-    @ConnectedSocket() client: Socket,
-  ): Promise<{ success: boolean; room?: Room; error?: string }> {
-    try {
-      const clientId = client.id;
-      const roomId = await this.roomRepository.generateRoomId();
-
-      if (client.data.name === undefined) {
-        client.data.name = RandomNameUtil.generate();
-      }
-      const room = new Room({
-        id: roomId,
-        hostId: clientId,
-        createdAt: new Date(),
-      });
-
-      await this.roomRepository.createRoom(roomId, room);
-      await this.roomRepository.joinRoom(clientId, roomId);
-      await client.join(roomId);
-
-      client.emit('roomCreated', {
-        roomId: room.id,
-        hostId: room.hostId,
-      });
-
-      const currentUserCount =
-        await this.roomRepository.getCurrentUsers(roomId);
-
-      this.server.to(roomId).emit('roomUsersUpdated', {
-        roomId: roomId,
-        userCount: currentUserCount,
-      });
-
-      return {
-        success: true,
-        room,
-      };
-    } catch (error) {
-      console.error('Error in createRoom:', error);
-      return {
-        success: false,
-        error: error.message,
       };
     }
   }

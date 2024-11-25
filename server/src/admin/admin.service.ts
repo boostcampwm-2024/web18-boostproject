@@ -1,12 +1,24 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as AWS from 'aws-sdk';
+import { Song } from '@/song/song.entity';
+import { SongSaveDto } from '@/song/songSave.dto';
+import { SongRepository } from '@/song/song.repository';
+import { AlbumRepository } from '@/album/album.repository';
+import { UploadedFiles } from '@/admin/admin.controller';
+import { Album } from '@/album/album.entity';
+import { AdminRedisRepository } from '@/admin/admin.redis.repository';
 
 @Injectable()
 export class AdminService {
   private s3;
 
-  constructor(private configService: ConfigService) {
+  constructor(
+    private configService: ConfigService,
+    private readonly songRepository: SongRepository,
+    private readonly albumRepository: AlbumRepository,
+    private readonly adminRedisRepository: AdminRedisRepository,
+  ) {
     this.s3 = new AWS.S3({
       endpoint: new AWS.Endpoint('https://kr.object.ncloudstorage.com'),
       region: 'kr-standard',
@@ -17,11 +29,14 @@ export class AdminService {
     });
   }
 
-  async uploadImageFiles(
+  private async uploadImageFiles(
     albumCoverFile: Express.Multer.File,
     bannerCoverFile: Express.Multer.File,
     prefix: string,
-  ) {
+  ): Promise<{
+    albumCoverURL?: string;
+    bannerCoverURL?: string;
+  }> {
     const results: {
       albumCoverURL?: string;
       bannerCoverURL?: string;
@@ -69,5 +84,36 @@ export class AdminService {
     } catch (error) {
       throw new Error(`Failed to upload file to S3: ${error.message}`);
     }
+  }
+
+  async saveSongs(songs: Song[], albumId: string) {
+    songs.forEach((song) => {
+      const songDto = new SongSaveDto({ ...song, albumId: albumId });
+      this.songRepository.save(new Song(songDto));
+    });
+  }
+
+  async saveAlbumCoverAndBanner(files: UploadedFiles, albumId: string) {
+    const imageUrls: {
+      albumCoverURL?: string;
+      bannerCoverURL?: string;
+    } = await this.uploadImageFiles(
+      files.albumCover?.[0],
+      files.bannerCover?.[0],
+      `converted/${albumId}`,
+    );
+
+    await this.albumRepository.updateAlbumUrls(albumId, imageUrls);
+  }
+
+  async initializeStreamingSession(processedSongs: Song[], album: Album) {
+    const songDurations = processedSongs.map((song) => song.duration);
+    const releaseTimestamp = new Date(album.releaseDate).getTime();
+
+    await this.adminRedisRepository.createStreamingSession(
+      album.id,
+      releaseTimestamp,
+      songDurations,
+    );
   }
 }
