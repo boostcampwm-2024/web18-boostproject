@@ -44,6 +44,9 @@ export class AlbumRepository {
       .where('release_date > :currentTime', {
         currentTime,
       })
+      .andWhere('release_date <= DATE_ADD(:currentTime, INTERVAL 7 DAY)', {
+        currentTime,
+      })
       .getRawMany();
 
     return plainToInstance(GetAlbumBannerInfosTuple, albumBannerInfos);
