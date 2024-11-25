@@ -14,7 +14,7 @@ export class AlbumResponseDto {
   tags: string;
 
   @Expose()
-  releaseDate: string;
+  releaseDate: Date;
 
   @Expose()
   bannerUrl: string;

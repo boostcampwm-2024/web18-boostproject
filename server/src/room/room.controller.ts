@@ -57,7 +57,7 @@ export class RoomController {
         return acc + parseInt(song.duration);
       }, 0);
 
-      const trackOrder = this.roomService.getTrackOrder(roomId);
+      const trackOrder = await this.roomService.getTrackOrder(roomId);
 
       return {
         success: true,
