@@ -6,9 +6,9 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development nest start --watch",
-    "build": "cross-env NODE_ENV=production nest build",
-    "start": "cross-env NODE_ENV=production node dist/main",
+    "dev": "nest start --watch",
+    "build": "nest build",
+    "start": "node dist/main",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",

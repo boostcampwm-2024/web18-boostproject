@@ -22,7 +22,6 @@ import { RoomModule } from '@/room/room.module';
   imports: [
     CommonModule,
     ConfigModule.forRoot({
-      envFilePath: `.env.${process.env.NODE_ENV}`,
       isGlobal: true,
     }),
     RedisModule,
