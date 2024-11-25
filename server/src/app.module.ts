@@ -21,7 +21,23 @@ import { RoomModule } from '@/room/room.module';
 @Module({
   imports: [
     CommonModule,
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      envFilePath: `.env.${process.env.NODE_ENV}`,
+      isGlobal: true,
+      // 환경변수 로드 확인용
+      load: [
+        () => {
+          console.log('Current NODE_ENV:', process.env.NODE_ENV);
+          console.log('DB Connection Info:', {
+            host: process.env.DB_HOST,
+            port: process.env.DB_PORT,
+            username: process.env.DB_USERNAME,
+            database: process.env.DB_DATABASE,
+          });
+          return {};
+        },
+      ],
+    }),
     RedisModule,
     MusicModule,
     AdminModule,
