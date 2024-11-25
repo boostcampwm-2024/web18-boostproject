@@ -4,6 +4,7 @@ import { RedisClientType } from 'redis';
 import { Room } from './room.entity';
 import { ROOM_STATUS } from '@/room/room.constant';
 import { RoomNotFoundException } from '@/common/exceptions/domain/room/room-not-found.exception';
+import { RoomIsFullException } from '@/common/exceptions/domain/room/room-is-full.exception';
 
 export interface RoomInfo {
   currentUsers: number;
@@ -99,7 +100,7 @@ export class RoomRepository {
       throw new Error('Room is inactive');
     }
     if (Number(currentUsers) >= Number(maxCapacity)) {
-      throw new Error('Room is full');
+      throw new RoomIsFullException(roomKey, parseInt(maxCapacity));
     }
   }
 
