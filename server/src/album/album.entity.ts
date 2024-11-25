@@ -17,11 +17,10 @@ export class Album {
 
   @Column({
     name: 'release_date',
-    type: 'char',
-    length: 19,
+    type: 'timestamp',
     nullable: false,
   })
-  releaseDate: string;
+  releaseDate: Date;
 
   @Column({ name: 'banner_url', type: 'varchar', length: 500 })
   bannerUrl: string;

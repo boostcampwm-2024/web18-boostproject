@@ -125,7 +125,7 @@ export class AdminService {
 
   async initializeStreamingSession(processedSongs: Song[], album: Album) {
     const songDurations = processedSongs.map((song) => song.duration);
-    const releaseTimestamp = new Date(album.releaseDate).getTime();
+    const releaseTimestamp = album.releaseDate.getTime();
 
     await this.adminRedisRepository.createStreamingSession(
       album.id,

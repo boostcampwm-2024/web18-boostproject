@@ -14,6 +14,7 @@ import { AdminService } from './admin.service';
 import { Album } from '@/album/album.entity';
 import { AlbumRepository } from '@/album/album.repository';
 import { RoomService } from '@/room/room.service';
+import { plainToInstance } from 'class-transformer';
 
 export interface UploadedFiles {
   albumCover?: Express.Multer.File;
@@ -42,7 +43,7 @@ export class AdminController {
     @UploadedFiles() files: UploadedFiles,
     @Body('albumData') albumDataString: string,
   ): Promise<any> {
-    const albumData = JSON.parse(albumDataString) as AlbumDto;
+    const albumData = plainToInstance(AlbumDto, JSON.parse(albumDataString));
     const album = await this.albumRepository.save(new Album(albumData));
 
     // 앨범 이미지 업로드 및 DB 저장
