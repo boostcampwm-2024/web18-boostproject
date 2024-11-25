@@ -41,35 +41,31 @@ export class RoomController {
   @Get('/:roomId')
   async getRoomInfo(@Param('roomId') roomId: string): Promise<any> {
     const roomKey = `rooms:${roomId}`;
-    try {
-      const roomInfo = await this.redisClient.hGetAll(roomKey);
-      const albumInfo = await this.albumRepository.findById(roomId);
-      const albumResponse = await this.getAlbumResponseDto(albumInfo);
-      const songList = await this.songRepository.getAlbumTracksSorted(
-        roomId,
-        ORDER.ASC,
-      );
-      const songResponseList = await Promise.all(
-        songList.map(async (song) => await this.getSongResponseDto(song)),
-      );
+    const roomInfo = await this.redisClient.hGetAll(roomKey);
+    const albumInfo = await this.albumRepository.findById(roomId);
+    const albumResponse = await this.getAlbumResponseDto(albumInfo);
+    const songList = await this.songRepository.getAlbumTracksSorted(
+      roomId,
+      ORDER.ASC,
+    );
+    const songResponseList = await Promise.all(
+      songList.map(async (song) => await this.getSongResponseDto(song)),
+    );
 
-      const totalDuration = songResponseList.reduce((acc, song) => {
-        return acc + parseInt(song.duration);
-      }, 0);
+    const totalDuration = songResponseList.reduce((acc, song) => {
+      return acc + parseInt(song.duration);
+    }, 0);
 
-      const trackOrder = await this.roomService.getTrackOrder(roomId);
+    const trackOrder = await this.roomService.getTrackOrder(roomId);
 
-      return {
-        success: true,
-        ...roomInfo,
-        albumResponse,
-        songResponseList,
-        totalDuration,
-        trackOrder,
-      };
-    } catch (e) {
-      return { success: false, error: e.message };
-    }
+    return {
+      success: true,
+      ...roomInfo,
+      albumResponse,
+      songResponseList,
+      totalDuration,
+      trackOrder,
+    };
   }
 
   async getAlbumResponseDto(album: Album): Promise<AlbumResponseDto> {
