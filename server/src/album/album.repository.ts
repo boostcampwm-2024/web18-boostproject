@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { Album } from '@/album/album.entity';
 import { DataSource, Repository } from 'typeorm';
@@ -34,6 +34,15 @@ export class AlbumRepository {
     });
   }
 
+  async saveTotalDuration(albumId: string, totalDuration: number) {
+    const album = await this.repository.findOne({ where: { id: albumId } });
+    if (!album) {
+      throw new NotFoundException(`Album ${albumId} not found`);
+    }
+    album.setTotalDuration(totalDuration);
+    await this.save(album);
+  }
+
   async getAlbumBannerInfos(
     currentTime: Date,
   ): Promise<GetAlbumBannerInfosTuple[]> {
@@ -56,4 +65,10 @@ export class AlbumRepository {
 export class GetAlbumBannerInfosTuple {
   albumId: string;
   bannerImageUrl: string;
+}
+
+export class GetSideBarInfosTuple {
+  albumId: string;
+  albumName: string;
+  albumTags: string;
 }

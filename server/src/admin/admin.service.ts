@@ -115,5 +115,8 @@ export class AdminService {
       releaseTimestamp,
       songDurations,
     );
+
+    const totalDuration = songDurations.reduce((acc, cur) => acc + cur, 0);
+    await this.albumRepository.saveTotalDuration(album.id, totalDuration);
   }
 }
