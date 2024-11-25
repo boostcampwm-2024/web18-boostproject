@@ -2,11 +2,11 @@ import {
   ArgumentsHost,
   Catch,
   ExceptionFilter,
+  HttpException,
   HttpStatus,
   Logger,
 } from '@nestjs/common';
-import { BaseException } from '@/common/exceptions/base.exception';
-import { Response, Request } from 'express';
+import { Request, Response } from 'express';
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
@@ -17,7 +17,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
 
-    if (exception instanceof BaseException) {
+    if (exception instanceof HttpException) {
       this.logException(exception, { path: request.url });
       return response
         .status(exception.getStatus())
