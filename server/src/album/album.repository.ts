@@ -49,6 +49,7 @@ export class AlbumRepository {
     await this.save(album);
   }
 
+  // 3일 이내 앨범 표시
   async getAlbumBannerInfos(
     currentTime: Date,
   ): Promise<GetAlbumBannerInfosTuple[]> {
@@ -66,7 +67,7 @@ export class AlbumRepository {
       .where('release_date > :currentTime', {
         currentTime,
       })
-      .andWhere('release_date <= DATE_ADD(:currentTime, INTERVAL 7 DAY)', {
+      .andWhere('release_date <= DATE_ADD(:currentTime, INTERVAL 3 DAY)', {
         currentTime,
       })
       .getRawMany();
