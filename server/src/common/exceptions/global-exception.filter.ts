@@ -19,14 +19,21 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
     if (exception instanceof HttpException) {
       this.logException(exception, { path: request.url });
-      return response
-        .status(exception.getStatus())
-        .json(exception.getResponse());
+      return response.status(exception.getStatus()).json({
+        ...this.getExceptionResponse(exception),
+        timestamp: new Date().toISOString(),
+      });
     }
-
     // 예상치 못한 예외 처리
     this.logException(exception, { path: request.url });
     return this.getUnexpectedExceptionResponse(response);
+  }
+
+  private getExceptionResponse(exception: any): Record<string, any> {
+    const exceptionResponse = exception.getResponse();
+    return exceptionResponse instanceof Object
+      ? exceptionResponse
+      : { message: exceptionResponse };
   }
 
   private getUnexpectedExceptionResponse(response: Response) {
