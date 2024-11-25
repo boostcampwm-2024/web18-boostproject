@@ -14,9 +14,9 @@ export class AlbumService {
     private readonly albumRedisRepository: AlbumRedisRepository,
   ) {}
   async getMainBannerInfos() {
-    const KST = moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
+    const date = new Date();
     const albumBannerInfos =
-      await this.albumRepository.getAlbumBannerInfos(KST);
+      await this.albumRepository.getAlbumBannerInfos(date);
 
     const banners = await Promise.all(
       albumBannerInfos.map(async (album) => {

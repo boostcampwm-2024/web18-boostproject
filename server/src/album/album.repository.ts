@@ -3,6 +3,7 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { Album } from '@/album/album.entity';
 import { DataSource, Repository } from 'typeorm';
 import { plainToInstance } from 'class-transformer';
+import { Moment } from 'moment-timezone';
 
 @Injectable()
 export class AlbumRepository {
@@ -35,13 +36,15 @@ export class AlbumRepository {
   }
 
   async getAlbumBannerInfos(
-    currentTime: string,
+    currentTime: Date,
   ): Promise<GetAlbumBannerInfosTuple[]> {
     const albumBannerInfos = await this.dataSource
       .createQueryBuilder()
       .from(Album, 'album')
       .select(['id as albumId', 'banner_url as bannerImageUrl'])
-      .where('release_date > :currentTime', { currentTime })
+      .where('release_date > :currentTime', {
+        currentTime,
+      })
       .getRawMany();
 
     return plainToInstance(GetAlbumBannerInfosTuple, albumBannerInfos);
