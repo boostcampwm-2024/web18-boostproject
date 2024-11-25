@@ -12,8 +12,11 @@ export function AdminLoginPage() {
     e.preventDefault();
 
     try {
-      const { data } = await axios.post('/api/admin/login', { adminKey });
-      localStorage.setItem('adminToken', data.token);
+      const { data } = await axios.post(
+        'http://localhost:3000/api/admin/login',
+        { adminKey },
+      );
+      localStorage.setItem('adminToken', `BEARER ${data.token}`);
       navigate('/admin');
     } catch (error) {
       console.error('Login error:', error);
