@@ -60,6 +60,47 @@ export class AlbumRepository {
 
     return plainToInstance(GetAlbumBannerInfosTuple, albumBannerInfos);
   }
+
+  // 스트리밍 시작 시간 <= currentTIme < 스트리밍 끝나는 시간
+  async getRecentSideBarInfos(
+    currentTime: Date,
+  ): Promise<GetSideBarInfosTuple[]> {
+    const recentSideBarInfos = await this.dataSource
+      .createQueryBuilder()
+      .from(Album, 'album')
+      .select(['id as albumId', 'title as albumName', 'tags as albumTags'])
+      .where('release_date <= :currentTime', {
+        currentTime,
+      })
+      .andWhere(
+        'DATE_ADD(release_date, INTERVAL total_duration SECOND) > :currentTime',
+        {
+          currentTime,
+        },
+      )
+      .getRawMany();
+
+    return plainToInstance(GetSideBarInfosTuple, recentSideBarInfos);
+  }
+
+  // 스트리밍 끝나는 시간 < currentTime <= 현재시간으로 부터 6시간 뒤
+  async getUpComingSideBarInfos(
+    currentTime: Date,
+  ): Promise<GetSideBarInfosTuple[]> {
+    const upComingAlbumInfos = await this.dataSource
+      .createQueryBuilder()
+      .from(Album, 'album')
+      .select(['id as albumId', 'title as albumName', 'tags as albumTags'])
+      .where('release_date > :currentTime', {
+        currentTime,
+      })
+      .andWhere('release_date <= DATE_ADD(:currentTime, INTERVAL 6 HOUR)', {
+        currentTime,
+      })
+      .getRawMany();
+
+    return plainToInstance(GetSideBarInfosTuple, upComingAlbumInfos);
+  }
 }
 
 export class GetAlbumBannerInfosTuple {
