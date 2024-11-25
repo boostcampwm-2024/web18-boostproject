@@ -15,13 +15,23 @@ export class SongSaveDto extends SongDto {
     title,
     trackNumber,
     lyrics = null,
+    producer,
     composer,
     writer,
     instrument,
     source,
     duration,
   }) {
-    super(title, trackNumber, composer, writer, instrument, source, lyrics);
+    super(
+      title,
+      trackNumber,
+      producer,
+      composer,
+      writer,
+      instrument,
+      source,
+      lyrics,
+    );
     this.albumId = albumId;
     this.duration = duration;
   }

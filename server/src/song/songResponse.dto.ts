@@ -23,6 +23,10 @@ export class SongResponseDto {
 
   @Expose()
   @IsString()
+  producer: string;
+
+  @Expose()
+  @IsString()
   composer: string;
 
   @Expose()
