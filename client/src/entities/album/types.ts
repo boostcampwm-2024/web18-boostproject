@@ -6,8 +6,8 @@ export interface AlbumData {
   title: string;
   artist: string;
   tags: string;
-  bannerUrl: string;
-  jacketUrl: string;
+  bannerUrl: string | null;
+  jacketUrl: string | null;
 }
 
 export interface SongData {
