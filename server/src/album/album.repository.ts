@@ -12,14 +12,20 @@ export class AlbumRepository {
     @InjectDataSource() private readonly dataSource: DataSource,
   ) {}
 
-  async updateAlbumUrls(
-    albumId: string,
-    urls: { albumCoverURL?: string; bannerCoverURL?: string },
-  ): Promise<void> {
+  async updateCoverById(albumId: string, coverURL: string): Promise<void> {
     await this.repository
       .createQueryBuilder()
       .update(Album)
-      .set({ bannerUrl: urls.bannerCoverURL, jacketUrl: urls.albumCoverURL })
+      .set({ jacketUrl: coverURL })
+      .where('id = :albumId', { albumId })
+      .execute();
+  }
+
+  async updateBannerById(albumId: string, bannerUrl: string): Promise<void> {
+    await this.repository
+      .createQueryBuilder()
+      .update(Album)
+      .set({ bannerUrl })
       .where('id = :albumId', { albumId })
       .execute();
   }

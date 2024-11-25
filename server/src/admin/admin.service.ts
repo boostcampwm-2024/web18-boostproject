@@ -103,7 +103,24 @@ export class AdminService {
       `converted/${albumId}`,
     );
 
-    await this.albumRepository.updateAlbumUrls(albumId, imageUrls);
+    await this.saveAlbumImages(
+      albumId,
+      imageUrls.albumCoverURL,
+      imageUrls.bannerCoverURL,
+    );
+  }
+
+  private async saveAlbumImages(
+    albumId: string,
+    coverUrl?: string,
+    bannerUrl?: string,
+  ) {
+    if (coverUrl) {
+      await this.albumRepository.updateCoverById(albumId, coverUrl);
+    }
+    if (bannerUrl) {
+      await this.albumRepository.updateBannerById(albumId, bannerUrl);
+    }
   }
 
   async initializeStreamingSession(processedSongs: Song[], album: Album) {
