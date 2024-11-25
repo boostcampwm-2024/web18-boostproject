@@ -124,12 +124,29 @@ export class AdminService {
       `converted/${albumId}`,
     );
 
-    await this.albumRepository.updateAlbumUrls(albumId, imageUrls);
+    await this.saveAlbumImages(
+      albumId,
+      imageUrls.albumCoverURL,
+      imageUrls.bannerCoverURL,
+    );
+  }
+
+  private async saveAlbumImages(
+    albumId: string,
+    coverUrl?: string,
+    bannerUrl?: string,
+  ) {
+    if (coverUrl) {
+      await this.albumRepository.updateCoverById(albumId, coverUrl);
+    }
+    if (bannerUrl) {
+      await this.albumRepository.updateBannerById(albumId, bannerUrl);
+    }
   }
 
   async initializeStreamingSession(processedSongs: Song[], album: Album) {
     const songDurations = processedSongs.map((song) => song.duration);
-    const releaseTimestamp = new Date(album.releaseDate).getTime();
+    const releaseTimestamp = album.releaseDate.getTime();
 
     await this.adminRedisRepository.createStreamingSession(
       album.id,

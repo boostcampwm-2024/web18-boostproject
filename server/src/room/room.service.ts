@@ -10,13 +10,19 @@ export class RoomService {
     private readonly musicRepository: MusicRepository,
   ) {}
 
-  async getTrackOrder(roomId: string): Promise<object> {
-    return this.musicRepository.findSongByJoinTimestamp(roomId, Date.now());
+  async getTrackOrder(roomId: string): Promise<string> {
+    // return await this.musicRepository
+    //   .findSongByJoinTimestamp(roomId, Date.now())
+    //   .then((data) => data.id);
+    return await this.musicRepository
+      .findSongByJoinTimestamp(roomId, 1700000000000)
+      .then((data) => data.id);
   }
 
   async initializeRoom(albumId: string) {
     await this.roomRepository.createRoom(
-      new Room({ id: albumId, createdAt: new Date() }),
+      // new Room({ id: albumId, createdAt: new Date() }),
+      new Room({ id: albumId, createdAt: new Date(1700000000000) }),
     );
   }
 }
