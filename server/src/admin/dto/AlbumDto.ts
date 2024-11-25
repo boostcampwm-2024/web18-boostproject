@@ -1,12 +1,15 @@
 import {
   IsArray,
-  IsISO8601,
+  IsDate,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
   Min,
+  ValidateNested,
 } from 'class-validator';
 import { SongDto } from './SongDto';
+import { Type } from 'class-transformer';
 
 export class AlbumDto {
   @IsNotEmpty()
@@ -18,15 +21,19 @@ export class AlbumDto {
   artist: string;
 
   @IsNotEmpty()
-  @IsISO8601()
-  releaseDate: string;
+  @IsDate()
+  @Type(() => Date)
+  releaseDate: Date;
 
   @IsNotEmpty()
   @IsNumber()
   @Min(0)
+  @IsOptional()
   totalTracks?: number;
 
   @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => SongDto)
   songs: SongDto[];
 
   @IsString()

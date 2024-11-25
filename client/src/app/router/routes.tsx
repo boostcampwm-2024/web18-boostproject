@@ -3,6 +3,7 @@ import { StreamingPage } from '@/pages/StreamingPage';
 import { Layout } from '@/Layout';
 import { AdminPage } from '@/pages/AdminPage';
 import { AlbumPage } from '@/pages/AlbumPage';
+import { AdminLoginPage } from '@/pages/AdminLoginPage';
 
 export const routes = [
   {
@@ -22,6 +23,10 @@ export const routes = [
         element: <AlbumPage />,
       },
     ],
+  },
+  {
+    path: '/admin/login',
+    element: <AdminLoginPage />,
   },
   {
     path: '/admin',

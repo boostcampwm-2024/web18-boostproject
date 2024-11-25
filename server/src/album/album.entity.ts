@@ -17,11 +17,10 @@ export class Album {
 
   @Column({
     name: 'release_date',
-    type: 'char',
-    length: 19,
+    type: 'timestamp',
     nullable: false,
   })
-  releaseDate: string;
+  releaseDate: Date;
 
   @Column({ name: 'total_duration', type: 'int' })
   totalDuration: number;
