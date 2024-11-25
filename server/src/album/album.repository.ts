@@ -1,13 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { Album } from '@/album/album.entity';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class AlbumRepository {
   constructor(
     @InjectRepository(Album)
     private readonly repository: Repository<Album>,
+    @InjectDataSource() private readonly dataSource: DataSource,
   ) {}
 
   async updateAlbumUrls(
@@ -31,4 +33,27 @@ export class AlbumRepository {
       where: { id: roomId },
     });
   }
+
+  async getAlbumBannerInfos(
+    currentTime: Date,
+  ): Promise<GetAlbumBannerInfosTuple[]> {
+    const albumBannerInfos = await this.dataSource
+      .createQueryBuilder()
+      .from(Album, 'album')
+      .select(['id as albumId', 'banner_url as bannerImageUrl'])
+      .where('release_date > :currentTime', {
+        currentTime,
+      })
+      .andWhere('release_date <= DATE_ADD(:currentTime, INTERVAL 7 DAY)', {
+        currentTime,
+      })
+      .getRawMany();
+
+    return plainToInstance(GetAlbumBannerInfosTuple, albumBannerInfos);
+  }
+}
+
+export class GetAlbumBannerInfosTuple {
+  albumId: string;
+  bannerImageUrl: string;
 }
