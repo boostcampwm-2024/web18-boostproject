@@ -3,6 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { RedisClientType } from 'redis';
 import { Room } from './room.entity';
 import { ROOM_STATUS } from '@/room/room.constant';
+import { RoomNotFoundException } from '@/common/exceptions/domain/room/room-not-found.exception';
 
 export interface RoomInfo {
   currentUsers: number;
@@ -50,7 +51,7 @@ export class RoomRepository {
 
     const exists = await this.redisClient.exists(roomKey);
     if (!exists) {
-      throw new Error('Room not found');
+      throw new RoomNotFoundException();
     }
 
     const isMember = await this.redisClient.sIsMember(roomUsersKey, userId);
@@ -86,7 +87,7 @@ export class RoomRepository {
 
   async validateRoom(roomKey: string): Promise<void> {
     const exists = await this.redisClient.exists(roomKey);
-    if (!exists) throw new Error('Room not found');
+    if (!exists) throw new RoomNotFoundException();
 
     const [isActive, currentUsers, maxCapacity] = await Promise.all([
       this.redisClient.hGet(roomKey, 'isActive'),

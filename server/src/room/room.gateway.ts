@@ -11,6 +11,7 @@ import {
 import { Server, Socket } from 'socket.io';
 import { RoomRepository } from './room.repository';
 import { RandomNameUtil } from '@/common/randomname/random-name.util';
+import { RoomNotFoundException } from '@/common/exceptions/domain/room/room-not-found.exception';
 
 @WebSocketGateway({
   namespace: 'rooms',
@@ -37,7 +38,7 @@ export class RoomGateway
       const roomId = client.handshake.query.roomId as string;
       const room = await this.roomRepository.findRoom(roomId);
       if (!room) {
-        throw new Error('Room not found');
+        throw new RoomNotFoundException();
       }
 
       const clientId = client.id;
@@ -66,41 +67,33 @@ export class RoomGateway
 
   async handleDisconnect(client: Socket) {
     console.log(`Client disconnected: ${client.id}`);
-    try {
-      const roomId = client.handshake.query.roomId as string;
-      const room = await this.roomRepository.findRoom(roomId);
+    const roomId = client.handshake.query.roomId as string;
+    const room = await this.roomRepository.findRoom(roomId);
 
-      if (!room) {
-        throw new Error('Room not found');
-      }
-
-      const clientId = client.id;
-      await this.roomRepository.leaveRoom(client.id, roomId);
-
-      const currentUserCount =
-        await this.roomRepository.getCurrentUsers(roomId);
-      await client.leave(roomId);
-
-      client.emit('leavedRoom', {
-        roomId,
-        userId: clientId,
-        timestamp: new Date(),
-      });
-      this.server.to(roomId).emit('roomUsersUpdated', {
-        roomId,
-        userCount: currentUserCount,
-      });
-
-      return {
-        success: true,
-        message: `Successfully left room ${roomId}`,
-      };
-    } catch (e) {
-      return {
-        success: false,
-        message: e.message,
-      };
+    if (!room) {
+      throw new RoomNotFoundException();
     }
+
+    const clientId = client.id;
+    await this.roomRepository.leaveRoom(client.id, roomId);
+
+    const currentUserCount = await this.roomRepository.getCurrentUsers(roomId);
+    await client.leave(roomId);
+
+    client.emit('leavedRoom', {
+      roomId,
+      userId: clientId,
+      timestamp: new Date(),
+    });
+    this.server.to(roomId).emit('roomUsersUpdated', {
+      roomId,
+      userCount: currentUserCount,
+    });
+
+    return {
+      success: true,
+      message: `Successfully left room ${roomId}`,
+    };
   }
 
   @SubscribeMessage('message')

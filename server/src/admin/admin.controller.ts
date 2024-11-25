@@ -15,7 +15,7 @@ import { Album } from '@/album/album.entity';
 import { AlbumRepository } from '@/album/album.repository';
 import { RoomService } from '@/room/room.service';
 import { plainToInstance } from 'class-transformer';
-import { SongFileNotFoundException } from '@/common/exceptions/domain/admin/song-file-not-found.exception';
+import { SongFileNotFoundException } from '@/common/exceptions/domain/song/song-file-not-found.exception';
 
 export interface UploadedFiles {
   albumCover?: Express.Multer.File;
