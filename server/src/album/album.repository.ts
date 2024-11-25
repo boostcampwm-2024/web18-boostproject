@@ -55,7 +55,14 @@ export class AlbumRepository {
     const albumBannerInfos = await this.dataSource
       .createQueryBuilder()
       .from(Album, 'album')
-      .select(['id as albumId', 'banner_url as bannerImageUrl'])
+      .select([
+        'id as albumId',
+        'title as albumName',
+        'tags as albumTags',
+        'artist',
+        'release_date as releaseDate',
+        'banner_url as bannerImageUrl',
+      ])
       .where('release_date > :currentTime', {
         currentTime,
       })
@@ -111,6 +118,10 @@ export class AlbumRepository {
 
 export class GetAlbumBannerInfosTuple {
   albumId: string;
+  albumName: string;
+  albumTags: string;
+  artist: string;
+  releaseDate: Date;
   bannerImageUrl: string;
 }
 
