@@ -25,3 +25,6 @@ dist-ssr
 
 *storybook.log
 src/stories/*
+
+.env.development
+.env.production
