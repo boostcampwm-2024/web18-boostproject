@@ -5,6 +5,7 @@ import { Room } from './room.entity';
 import { ROOM_STATUS } from '@/room/room.constant';
 import { RoomNotFoundException } from '@/common/exceptions/domain/room/room-not-found.exception';
 import { RoomIsFullException } from '@/common/exceptions/domain/room/room-is-full.exception';
+import { RoomInactiveException } from '@/common/exceptions/domain/room/room-inactive.exception';
 
 export interface RoomInfo {
   currentUsers: number;
@@ -97,7 +98,7 @@ export class RoomRepository {
     ]);
 
     if (!isActive || isActive === ROOM_STATUS.INACTIVE) {
-      throw new Error('Room is inactive');
+      throw new RoomInactiveException(roomKey);
     }
     if (Number(currentUsers) >= Number(maxCapacity)) {
       throw new RoomIsFullException(roomKey, parseInt(maxCapacity));
