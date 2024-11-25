@@ -5,6 +5,7 @@ import {
   MainBannerResponse,
   MainBannerResponseDto,
 } from './dto/main-banner-response';
+import moment from 'moment-timezone';
 
 @Injectable()
 export class AlbumService {
@@ -13,14 +14,9 @@ export class AlbumService {
     private readonly albumRedisRepository: AlbumRedisRepository,
   ) {}
   async getMainBannerInfos() {
-    const utcDate = new Date();
-    // KTC로 변환 후, 포맷팅
-    const formattedTime = new Date(utcDate.getTime() + 9 * 60 * 60 * 1000)
-      .toISOString()
-      .slice(0, 19)
-      .replace('T', ' ');
+    const KST = moment().tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
     const albumBannerInfos =
-      await this.albumRepository.getAlbumBannerInfos(formattedTime);
+      await this.albumRepository.getAlbumBannerInfos(KST);
 
     const banners = await Promise.all(
       albumBannerInfos.map(async (album) => {
