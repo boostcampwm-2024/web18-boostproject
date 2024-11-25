@@ -23,6 +23,9 @@ export class Album {
   })
   releaseDate: string;
 
+  @Column({ name: 'total_duration', type: 'int' })
+  totalDuration: number;
+
   @Column({ name: 'banner_url', type: 'varchar', length: 500 })
   bannerUrl: string;
 
@@ -35,11 +38,17 @@ export class Album {
     this.artist = albumDto.artist;
     this.tags = albumDto.tags;
     this.releaseDate = albumDto.releaseDate;
+    this.totalDuration = albumDto.totalDuration;
     this.bannerUrl = albumDto.bannerUrl;
     this.jacketUrl = albumDto.jacketUrl;
   }
 
   public getId() {
     return this.id;
+  }
+
+  // 소수 잘려있는 것 대비해 2초 추가
+  public setTotalDuration(totalDuration: number) {
+    this.totalDuration = totalDuration + 2;
   }
 }
