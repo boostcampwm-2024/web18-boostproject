@@ -9,6 +9,7 @@ import { UploadedFiles } from '@/admin/admin.controller';
 import { Album } from '@/album/album.entity';
 import { AdminRedisRepository } from '@/admin/admin.redis.repository';
 import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AdminService {
@@ -32,9 +33,10 @@ export class AdminService {
   }
 
   async login(adminKey: string) {
-    const correctAdminKey = this.configService.get<string>('ADMIN_KEY');
+    const correctHash = this.configService.get<string>('ADMIN_KEY');
+    const isValid = await bcrypt.compare(adminKey, correctHash);
 
-    if (adminKey !== correctAdminKey) {
+    if (!isValid) {
       throw new UnauthorizedException('Invalid admin key');
     }
 
