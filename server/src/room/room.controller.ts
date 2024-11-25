@@ -45,7 +45,7 @@ export class RoomController {
       const roomInfo = await this.redisClient.hGetAll(roomKey);
       const albumInfo = await this.albumRepository.findById(roomId);
       const albumResponse = await this.getAlbumResponseDto(albumInfo);
-      const songList = await this.songRepository.findByIdWithOrderByTrackNumber(
+      const songList = await this.songRepository.getAlbumTracksSorted(
         roomId,
         ORDER.ASC,
       );

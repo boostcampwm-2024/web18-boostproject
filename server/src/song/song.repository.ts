@@ -11,10 +11,7 @@ export class SongRepository {
     private readonly repository: Repository<Song>,
   ) {}
 
-  async findByIdWithOrderByTrackNumber(
-    albumId: string,
-    orderBy: keyof typeof ORDER,
-  ) {
+  async getAlbumTracksSorted(albumId: string, orderBy: keyof typeof ORDER) {
     return this.repository.find({
       where: { albumId },
       order: { trackNumber: ORDER[orderBy] },
