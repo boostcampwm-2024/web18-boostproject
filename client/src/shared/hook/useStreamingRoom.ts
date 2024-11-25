@@ -15,16 +15,6 @@ export function useStreamingRoom() {
     },
   });
 
-  // const handleConnect = () => {
-  //   setIsConnected(true);
-  //   if (roomId) {
-  //     socket.emit('joinRoom', { roomId }, (response: any) => {
-  //       console.log('방 입장 응답 : ', response);
-  //       setIsConnected(response.success);
-  //     });
-  //   }
-  // };
-
   const handleDisconnect = () => {
     setIsConnected(false);
   };
