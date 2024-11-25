@@ -13,13 +13,9 @@ export class AppController {
   @ApiOperation({ summary: '기본' })
   @Get('/redis')
   async testRedis(): Promise<any> {
-    try {
-      await this.redisClient.set('inear', '인이어임다');
-      const value = await this.redisClient.get('inear');
-      return { success: true, value };
-    } catch (e) {
-      return { success: false, error: e.message };
-    }
+    await this.redisClient.set('inear', '인이어임다');
+    const value = await this.redisClient.get('inear');
+    return { success: true, value };
   }
 
   @ApiOperation({ summary: 'health check' })
