@@ -9,6 +9,7 @@ export class BaseException extends HttpException {
     const response = {
       status,
       message,
+      error: HttpStatus[status],
       timestamp: new Date().toISOString(),
       details,
     };
