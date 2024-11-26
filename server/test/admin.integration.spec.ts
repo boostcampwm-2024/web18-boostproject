@@ -10,6 +10,7 @@ import { AdminController, UploadedFiles } from '../src/admin/admin.controller';
 import { AlbumRepository } from '@/album/album.repository';
 import { SongRepository } from '@/song/song.repository';
 import { AlbumDto } from '../src/admin/dto/album.dto';
+import { testTypeOrmConfig } from './config/typeorm.config';
 
 describe('AdminController Integration test', () => {
   let app: INestApplication;
@@ -21,19 +22,7 @@ describe('AdminController Integration test', () => {
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
-      imports: [
-        TypeOrmModule.forRoot({
-          type: 'mysql',
-          host: 'localhost',
-          port: 3306,
-          username: 'root',
-          password: 'Yooncer$00',
-          database: 'inear_test',
-          entities: [Album, Song],
-          synchronize: true,
-        }),
-        AdminModule,
-      ],
+      imports: [TypeOrmModule.forRootAsync(testTypeOrmConfig), AdminModule],
     }).compile();
 
     app = moduleRef.createNestApplication();
