@@ -31,6 +31,7 @@ export function Streaming() {
         composer: 'Sarah Johnson',
         writer: 'Sarah Johnson',
         instrument: 'Piano, Strings',
+        producer: 'Sarah Johnson',
         source:
           'Original CompositionOriginal CompositionOriginal CompositionOriginal CompositionOriginal CompositionOriginal CompositionOriginal CompositionOriginal Compositionaaaaaaaabbbbbbbvcvcvcvcccvcvcvcv',
         duration: 235,
@@ -43,6 +44,7 @@ export function Streaming() {
         lyrics: 'Instrumental piece - no lyrics',
         composer: 'Sarah Johnson',
         writer: 'Sarah Johnson',
+        producer: 'Sarah Johnson',
         instrument: 'Piano, Saxophone',
         source: 'Original Composition',
         duration: 184,
@@ -55,6 +57,7 @@ export function Streaming() {
         lyrics: 'Instrumental piece - no lyrics',
         composer: 'Sarah Johnson',
         writer: 'Sarah Johnson',
+        producer: 'Sarah Johnson',
         instrument: 'Piano, Percussion',
         source: 'Original Composition',
         duration: 198,
@@ -67,6 +70,7 @@ export function Streaming() {
         lyrics: 'Instrumental',
         composer: 'James Wilson',
         writer: 'James Wilson',
+        producer: 'James Wilson',
         instrument: 'Saxophone, Piano',
         source: 'Live Recording',
         duration: 235, // 3:55
@@ -79,6 +83,7 @@ export function Streaming() {
         lyrics: 'Instrumental',
         composer: 'James Wilson',
         writer: 'James Wilson',
+        producer: 'James Wilson',
         instrument: 'Saxophone, Double Bass',
         source: 'Live Recording',
         duration: 184, // 3:04
@@ -91,6 +96,7 @@ export function Streaming() {
         lyrics: 'Instrumental',
         composer: 'James Wilson',
         writer: 'James Wilson',
+        producer: 'James Wilson',
         instrument: 'Saxophone, Drums',
         source: 'Live Recording',
         duration: 198, // 3:18
@@ -103,6 +109,7 @@ export function Streaming() {
         lyrics: 'Instrumental',
         composer: 'James Wilson',
         writer: 'James Wilson',
+        producer: 'James Wilson',
         instrument: 'Saxophone, Piano',
         source: 'Live Recording',
         duration: 212, // 3:32
@@ -115,6 +122,7 @@ export function Streaming() {
         lyrics: 'Instrumental',
         composer: 'James Wilson',
         writer: 'James Wilson',
+        producer: 'James Wilson',
         instrument: 'Saxophone, Piano, Drums',
         source: 'Live Recording',
         duration: 225, // 3:45

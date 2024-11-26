@@ -18,6 +18,7 @@ export interface SongData {
   lyrics: string;
   composer: string;
   writer: string;
+  producer: string;
   instrument: string;
   source: string;
   duration: number;

@@ -29,9 +29,8 @@ export function PlaylistPanelCredit({ currentSong }: PlaylistPanelCreditProps) {
         title="작곡가/작사가"
         content={`${currentSong.composer}/${currentSong.writer}`}
       />
+      <CreditListItem title="프로듀서" content={currentSong.producer} />
       <CreditListItem title="출처" content={currentSong.source} />
-      {/* <p className="text-sm">프로듀서</p>
-          <p className="text-xs text-gray-400">프로듀서</p> */}
     </div>
   );
 }
