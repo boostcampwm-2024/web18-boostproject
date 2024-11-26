@@ -12,6 +12,8 @@ import { Server, Socket } from 'socket.io';
 import { RoomRepository } from './room.repository';
 import { RandomNameUtil } from '@/common/randomname/random-name.util';
 import { RoomNotFoundException } from '@/common/exceptions/domain/room/room-not-found.exception';
+import { UserRoomInfoNotFoundException } from '@/common/exceptions/domain/room/user-room-info-not-found.exception';
+import { RoomService } from '@/room/room.service';
 
 @WebSocketGateway({
   namespace: 'rooms',
@@ -26,7 +28,10 @@ export class RoomGateway
   @WebSocketServer()
   server: Server;
 
-  constructor(private readonly roomRepository: RoomRepository) {}
+  constructor(
+    private readonly roomRepository: RoomRepository,
+    private readonly roomService: RoomService,
+  ) {}
 
   afterInit(server: Server) {
     console.log('WebSocket Gateway Initialized');
@@ -111,6 +116,33 @@ export class RoomGateway
       return {
         success: true,
         message: `Successfully send message: ${data.message}`,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
+  }
+
+  @SubscribeMessage('vote')
+  async handleFavoriteSongVote(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: { trackNumber: string },
+  ): Promise<object> {
+    try {
+      if (!client.handshake.query.roomId) {
+        throw new UserRoomInfoNotFoundException(client.id);
+      }
+
+      const roomId = client.handshake.query.roomId as string;
+      await this.roomService.updateVote(roomId, data.trackNumber);
+      const voteResult = await this.roomService.getVoteResult(roomId);
+      this.server.to(roomId).emit('voteUpdated', voteResult);
+
+      return {
+        success: true,
+        message: `Successfully vote: ${data.trackNumber}`,
       };
     } catch (error) {
       return {
