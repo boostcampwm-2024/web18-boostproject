@@ -15,8 +15,6 @@ import * as fs from 'fs/promises';
 import { MusicProcessingSevice } from '@/music/music.processor';
 import { AdminService } from './admin.service';
 import { Album } from '@/album/album.entity';
-import { AlbumRepository } from '@/album/album.repository';
-import { RoomService } from '@/room/room.service';
 import { AdminGuard } from './admin.guard';
 import { plainToInstance } from 'class-transformer';
 import { MissingSongFiles } from '@/common/exceptions/domain/song/missing-song-files.exception';
@@ -37,8 +35,6 @@ export class AdminController {
     private configService: ConfigService,
     private readonly adminService: AdminService,
     private readonly musicProcessingService: MusicProcessingSevice,
-    private readonly albumRepository: AlbumRepository,
-    private readonly roomService: RoomService,
     private readonly adminTransactionService: AdminTransactionService,
   ) {}
 
