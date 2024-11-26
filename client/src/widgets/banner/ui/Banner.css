@@ -1,0 +1,25 @@
+.banner-swiper .swiper-pagination {
+  background-color: #121212;
+  width: fit-content !important;
+  left: 50% !important;
+  transform: translateX(-50%);
+  padding: 0 6px 0 6px;
+  border-radius: 1rem;
+}
+
+.banner-swiper .swiper-wrapper .swiper-pagination {
+  background-color: red;
+  width: 200px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.banner-swiper .swiper-pagination-bullet {
+  background-color: #5a5a5a;
+  opacity: 0.8;
+}
+
+.banner-swiper .swiper-pagination-bullet.swiper-pagination-bullet-active {
+  background-color: #00ff99;
+  opacity: 1;
+}

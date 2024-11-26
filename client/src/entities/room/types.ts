@@ -11,3 +11,16 @@ export interface AlbumData {
   albumName: string;
   albumTags?: string;
 }
+
+/**
+ * 메인 페이지 배너 정보
+ */
+export interface bannerData {
+  albumId: string;
+  albumName: string;
+  albumTags?: string;
+  artist: string;
+  bannerImageUrl: string;
+  currentUserCount: number;
+  releaseDate: string;
+}

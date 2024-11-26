@@ -11,7 +11,6 @@ function RoomListContainer({
   albums?: AlbumData[];
   title: string;
 }) {
-  console.log(albums);
   return (
     <div>
       <p className="text-grayscale-300 text-sm mb-2">{title}</p>
