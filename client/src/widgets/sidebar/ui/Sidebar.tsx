@@ -1,5 +1,4 @@
 import { InearLogo } from '@/shared/icon/InearLogo';
-import EventImage from '@/assets/sidebar-event.png';
 import { RoomList } from './RoomList';
 import { Credit } from './Credit';
 import { Link } from 'react-router-dom';
