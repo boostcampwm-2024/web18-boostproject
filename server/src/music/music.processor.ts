@@ -5,7 +5,7 @@ import path, { join } from 'path';
 import * as fs from 'fs/promises';
 import * as fsSync from 'fs';
 import { ConfigService } from '@nestjs/config';
-import { SongDto } from '@/admin/dto/SongDto';
+import { SongDto } from '@/admin/dto/song.dto';
 
 interface SongMetadata extends SongDto {
   albumId: string;

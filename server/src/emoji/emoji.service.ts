@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { S3 } from 'aws-sdk';
-import { EmojiRequestDto } from './emoji-request-dto';
+import { EmojiRequestDto } from './dto/emoji-request.dto';
 
 @Injectable()
 export class EmojiService {

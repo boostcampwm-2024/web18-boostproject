@@ -1,12 +1,14 @@
 import {
   Body,
   Controller,
+  Get,
   Post,
+  Res,
   UploadedFiles,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { AlbumDto } from './dto/AlbumDto';
+import { AlbumDto } from './dto/album.dto';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import path from 'path';
 import * as fs from 'fs/promises';
@@ -18,6 +20,8 @@ import { RoomService } from '@/room/room.service';
 import { AdminGuard } from './admin.guard';
 import { plainToInstance } from 'class-transformer';
 import { MissingSongFiles } from '@/common/exceptions/domain/song/missing-song-files.exception';
+import { Response } from 'express';
+import { ConfigService } from '@nestjs/config';
 
 export interface UploadedFiles {
   albumCover?: Express.Multer.File;
@@ -28,6 +32,7 @@ export interface UploadedFiles {
 @Controller('admin')
 export class AdminController {
   constructor(
+    private configService: ConfigService,
     private readonly adminService: AdminService,
     private readonly musicProcessingService: MusicProcessingSevice,
     private readonly albumRepository: AlbumRepository,
@@ -35,12 +40,24 @@ export class AdminController {
   ) {}
 
   @Post('login')
-  async login(@Body() body: { adminKey: string }) {
-    return this.adminService.login(body.adminKey);
+  async login(
+    @Body() body: { adminKey: string },
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const result = await this.adminService.login(body.adminKey);
+
+    response.cookie('admin_token', result.token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+      maxAge: parseInt(this.configService.get('TOKEN_EXPIRATION')) * 1000,
+    });
+
+    return { message: 'Login successful' };
   }
 
   @UseGuards(AdminGuard)
-  @Post('verify-token')
+  @Get('verify-token')
   async verifyAdminToken() {
     return { valid: true };
   }
@@ -64,21 +81,17 @@ export class AdminController {
     }
 
     const album = await this.albumRepository.save(new Album(albumData));
-
     // 앨범 이미지 업로드 및 DB 저장
     await this.adminService.saveAlbumCoverAndBanner(files, album.id);
-
     //3. 노래 파일들 처리: 기존 processSongFiles 사용
     const processedSongs = await this.processSongFiles(
       files.songs,
       albumData,
       album.id,
     );
-
     await this.adminService.initializeStreamingSession(processedSongs, album);
     await this.adminService.saveSongs(processedSongs, album.id);
     await this.roomService.initializeRoom(album.id);
-
     return {
       albumId: album.id,
       message: 'Album songs updated to object storage successfully',

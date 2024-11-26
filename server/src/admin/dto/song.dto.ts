@@ -13,6 +13,9 @@ export class SongDto {
   lyrics?: string;
 
   @IsString()
+  producer: string;
+
+  @IsString()
   composer: string;
 
   @IsString()
@@ -27,6 +30,7 @@ export class SongDto {
   constructor(
     title: string,
     trackNumber: number,
+    producer: string,
     composer: string,
     writer: string,
     instrument: string,
@@ -35,6 +39,7 @@ export class SongDto {
   ) {
     this.title = title;
     this.trackNumber = trackNumber;
+    this.producer = producer;
     this.composer = composer;
     this.writer = writer;
     this.instrument = instrument;
