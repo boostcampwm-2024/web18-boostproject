@@ -101,12 +101,8 @@ export class AdminService {
       ACL: 'public-read',
     };
 
-    try {
-      const result = await this.s3.upload(uploadParams).promise();
-      return result.Location;
-    } catch (error) {
-      throw new Error(`Failed to upload file to S3: ${error.message}`);
-    }
+    const result = await this.s3.upload(uploadParams).promise();
+    return result.Location;
   }
 
   async saveSongs(songs: Song[], albumId: string) {

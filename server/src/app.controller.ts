@@ -1,27 +1,9 @@
-import { Controller, Get, Inject, Post } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { RedisClientType } from 'redis';
-import { REDIS_CLIENT } from '@/common/redis/redis.module';
 
-@ApiTags('기본')
+@ApiTags('건강 체크')
 @Controller()
 export class AppController {
-  constructor(
-    @Inject(REDIS_CLIENT) private readonly redisClient: RedisClientType,
-  ) {}
-
-  @ApiOperation({ summary: '기본' })
-  @Get('/redis')
-  async testRedis(): Promise<any> {
-    try {
-      await this.redisClient.set('inear', '인이어임다');
-      const value = await this.redisClient.get('inear');
-      return { success: true, value };
-    } catch (e) {
-      return { success: false, error: e.message };
-    }
-  }
-
   @ApiOperation({ summary: 'health check' })
   @Get('/health')
   healthCheck() {
