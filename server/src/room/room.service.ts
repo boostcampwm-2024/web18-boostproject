@@ -4,6 +4,7 @@ import { Room } from '@/room/room.entity';
 import { RoomRepository } from '@/room/room.repository';
 import { REDIS_CLIENT } from '@/common/redis/redis.module';
 import { RedisClientType } from 'redis';
+import { AlreadyVoteThisRoomException } from '@/common/exceptions/domain/vote/already-vote-this-room.exception';
 
 @Injectable()
 export class RoomService {
@@ -29,8 +30,14 @@ export class RoomService {
     );
   }
 
-  async updateVote(roomId: string, trackNumber: string) {
+  async updateVote(roomId: string, trackNumber: string, identifier: string) {
+    if (await this.redisClient.hExists(`room:${roomId}`, identifier)) {
+      throw new AlreadyVoteThisRoomException(roomId);
+    }
+
     await this.redisClient.hIncrBy(`room:${roomId}:votes`, trackNumber, 1);
+    await this.redisClient.hSet(`room:${roomId}`, identifier, 'true');
+    await this.redisClient.hExpire(`room:${roomId}`, identifier, 60 * 60 * 24);
   }
 
   async getVoteResult(roomId: string) {

@@ -14,6 +14,7 @@ import { RandomNameUtil } from '@/common/randomname/random-name.util';
 import { RoomNotFoundException } from '@/common/exceptions/domain/room/room-not-found.exception';
 import { UserRoomInfoNotFoundException } from '@/common/exceptions/domain/room/user-room-info-not-found.exception';
 import { RoomService } from '@/room/room.service';
+import * as crypto from 'crypto';
 
 @WebSocketGateway({
   namespace: 'rooms',
@@ -132,7 +133,11 @@ export class RoomGateway
       }
 
       const roomId = client.handshake.query.roomId as string;
-      await this.roomService.updateVote(roomId, data.trackNumber);
+      const identifier = crypto
+        .createHash('sha256')
+        .update(client.handshake.address)
+        .digest('hex');
+      await this.roomService.updateVote(roomId, data.trackNumber, identifier);
       await this.emitVoteUpdateToRoom(roomId);
 
       return {
