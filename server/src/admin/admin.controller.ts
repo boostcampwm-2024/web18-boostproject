@@ -43,27 +43,23 @@ export class AdminController {
     @UploadedFiles() files: UploadedFiles,
     @Body('albumData') albumDataString: string,
   ): Promise<any> {
-    try {
-      const albumData = plainToInstance(AlbumDto, JSON.parse(albumDataString));
-      const album = await this.albumRepository.save(new Album(albumData));
-      // 앨범 이미지 업로드 및 DB 저장
-      await this.adminService.saveAlbumCoverAndBanner(files, album.id);
-      //3. 노래 파일들 처리: 기존 processSongFiles 사용
-      const processedSongs = await this.processSongFiles(
-        files.songs,
-        albumData,
-        album.id,
-      );
-      await this.adminService.initializeStreamingSession(processedSongs, album);
-      await this.adminService.saveSongs(processedSongs, album.id);
-      await this.roomService.initializeRoom(album.id);
-      return {
-        albumId: album.id,
-        message: 'Album songs updated to object storage successfully',
-      };
-    } catch (e) {
-      console.error('❗', e);
-    }
+    const albumData = plainToInstance(AlbumDto, JSON.parse(albumDataString));
+    const album = await this.albumRepository.save(new Album(albumData));
+    // 앨범 이미지 업로드 및 DB 저장
+    await this.adminService.saveAlbumCoverAndBanner(files, album.id);
+    //3. 노래 파일들 처리: 기존 processSongFiles 사용
+    const processedSongs = await this.processSongFiles(
+      files.songs,
+      albumData,
+      album.id,
+    );
+    await this.adminService.initializeStreamingSession(processedSongs, album);
+    await this.adminService.saveSongs(processedSongs, album.id);
+    await this.roomService.initializeRoom(album.id);
+    return {
+      albumId: album.id,
+      message: 'Album songs updated to object storage successfully',
+    };
   }
 
   private async processSongFiles(
