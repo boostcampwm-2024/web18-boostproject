@@ -3,6 +3,7 @@ import {
   Controller,
   Post,
   UploadedFiles,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { AlbumDto } from './dto/AlbumDto';
@@ -14,6 +15,7 @@ import { AdminService } from './admin.service';
 import { Album } from '@/album/album.entity';
 import { AlbumRepository } from '@/album/album.repository';
 import { RoomService } from '@/room/room.service';
+import { AdminGuard } from './admin.guard';
 import { plainToInstance } from 'class-transformer';
 
 export interface UploadedFiles {
@@ -31,6 +33,18 @@ export class AdminController {
     private readonly roomService: RoomService,
   ) {}
 
+  @Post('login')
+  async login(@Body() body: { adminKey: string }) {
+    return this.adminService.login(body.adminKey);
+  }
+
+  @UseGuards(AdminGuard)
+  @Post('verify-token')
+  async verifyAdminToken() {
+    return { valid: true };
+  }
+
+  @UseGuards(AdminGuard)
   @Post('album')
   @UseInterceptors(
     FileFieldsInterceptor([

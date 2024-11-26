@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as AWS from 'aws-sdk';
 import { Song } from '@/song/song.entity';
@@ -8,6 +8,8 @@ import { AlbumRepository } from '@/album/album.repository';
 import { UploadedFiles } from '@/admin/admin.controller';
 import { Album } from '@/album/album.entity';
 import { AdminRedisRepository } from '@/admin/admin.redis.repository';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AdminService {
@@ -18,6 +20,7 @@ export class AdminService {
     private readonly songRepository: SongRepository,
     private readonly albumRepository: AlbumRepository,
     private readonly adminRedisRepository: AdminRedisRepository,
+    private jwtService: JwtService,
   ) {
     this.s3 = new AWS.S3({
       endpoint: new AWS.Endpoint('https://kr.object.ncloudstorage.com'),
@@ -27,6 +30,26 @@ export class AdminService {
         secretAccessKey: this.configService.get<string>('S3_SECRET_KEY'),
       },
     });
+  }
+
+  async login(adminKey: string) {
+    const correctHash = this.configService.get<string>('ADMIN_KEY');
+    const isValid = await bcrypt.compare(adminKey, correctHash);
+
+    if (!isValid) {
+      throw new UnauthorizedException('Invalid admin key');
+    }
+
+    const payload = {
+      role: 'admin',
+      iat: Math.floor(Date.now() / 1000),
+      exp: Math.floor(Date.now() / 1000) + 60 * 60,
+    };
+
+    return {
+      token: await this.jwtService.signAsync(payload),
+      expiresIn: 3600,
+    };
   }
 
   private async uploadImageFiles(
