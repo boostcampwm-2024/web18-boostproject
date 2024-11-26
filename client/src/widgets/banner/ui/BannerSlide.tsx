@@ -18,7 +18,7 @@ export function BannerSlide({ banner }: BannerSlideProps) {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/album/${banner.albumId}`);
+    navigate(`/streaming/${banner.albumId}`);
   };
 
   return (
