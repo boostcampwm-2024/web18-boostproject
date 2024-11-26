@@ -1,11 +1,8 @@
 import { Button } from '@/shared/ui';
 import { AlbumForm, SongForm } from '@/features/albumRegister';
 import { useAlbumForm } from '@/features/albumRegister/model/useAlbumForm';
-import { useStreamingRoom } from '@/shared/hook/useStreamingRoom';
 
 export function AdminPage() {
-  const { isConnected } = useStreamingRoom();
-
   const { handleSubmit, handleAddSong, songs, songFormRef, albumFormRef } =
     useAlbumForm();
 

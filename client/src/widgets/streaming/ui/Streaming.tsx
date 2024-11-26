@@ -134,7 +134,6 @@ export function Streaming() {
   //   getRoomInfo();
   // }, []);
   const [songIndex, setSongIndex] = useState(Number(roomInfo.trackOrder));
-  console.log(songIndex);
   return (
     <div className="overflow-hidden relative w-3/4 h-full">
       {roomInfo && (

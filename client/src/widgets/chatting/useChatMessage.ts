@@ -1,13 +1,17 @@
-import { useState, useEffect } from 'react';
-import { socket } from '@/shared/api/socket';
 import { MessageData } from '@/entities/message/types';
+import { useSocketStore } from '@/shared/store/useSocketStore';
+import { useEffect } from 'react';
+import { useChatMessageStore } from '@/shared/store/useChatMessageStore';
 
 export function useChatMessage() {
-  const [messages, setMessages] = useState<MessageData[]>([]);
+  const { messages, addMessage } = useChatMessageStore();
+  const { socket } = useSocketStore();
 
   useEffect(() => {
+    if (!socket) return;
+
     const handleBroadcast = (data: MessageData) => {
-      setMessages((prev) => [...prev, data]);
+      addMessage(data);
     };
 
     socket.on('broadcast', handleBroadcast);
@@ -15,7 +19,7 @@ export function useChatMessage() {
     return () => {
       socket.off('broadcast', handleBroadcast);
     };
-  }, []);
+  }, [socket, addMessage]);
 
   return { messages };
 }

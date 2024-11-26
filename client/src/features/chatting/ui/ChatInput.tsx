@@ -1,19 +1,24 @@
 import { SendIcon } from '@/shared/icon/SendIcon';
 import { sendMessage } from '../model/sendMessage';
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, memo } from 'react';
 import { useParams } from 'react-router-dom';
+import { useSocketStore } from '@/shared/store/useSocketStore';
 
-export function ChatInput() {
+export const ChatInput = memo(() => {
   const [message, setMessage] = useState('');
   const { roomId } = useParams<{ roomId: string }>();
+  const { socket } = useSocketStore();
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setMessage('');
-    if (!message.trim() || !roomId) return;
+
+    if (!message.trim() || !roomId || !socket?.connected) return;
+
     sendMessage(message.trim(), roomId);
+    setMessage('');
   };
 
+  // 소켓 연결 또는 메시지 변경 시에만 리렌더링
   return (
     <form onSubmit={handleSubmit}>
       <div className="flex flex-row">
@@ -24,10 +29,10 @@ export function ChatInput() {
           onChange={(e) => setMessage(e.target.value)}
           value={message}
         />
-        <button type="submit">
+        <button type="submit" disabled={!socket?.connected}>
           <SendIcon />
         </button>
       </div>
     </form>
   );
-}
+});

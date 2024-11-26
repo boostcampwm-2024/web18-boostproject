@@ -1,19 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSocketEvents } from './useSocketEvents';
-import { io } from 'socket.io-client';
+import { Socket } from 'socket.io-client';
+import { createSocket } from '../api/socket';
 
-const URL = '/rooms';
 export function useStreamingRoom() {
   const [isConnected, setIsConnected] = useState(false);
+  const [socket, setSocket] = useState<Socket | null>(null);
   const { roomId } = useParams();
-
-  const socket = io(URL, {
-    autoConnect: false,
-    query: {
-      roomId: roomId,
-    },
-  });
 
   const handleDisconnect = () => {
     setIsConnected(false);
@@ -29,24 +23,27 @@ export function useStreamingRoom() {
   };
 
   useEffect(() => {
-    if (!socket.connected) {
-      socket.connect();
+    if (!roomId) return;
+    const newSocket = createSocket(roomId);
+
+    if (!newSocket.connected) {
+      newSocket.connect();
     }
+    setSocket(newSocket);
 
     return () => {
-      socket.disconnect();
+      newSocket.disconnect();
     };
   }, []);
 
   useSocketEvents({
     socket,
     events: {
-      // connect: handleConnect,
       disconnect: handleDisconnect,
       connect_error: handleConnectError,
       joinedRoom: handleJoinRoom,
     },
   });
 
-  return { isConnected };
+  return { isConnected, socket };
 }
