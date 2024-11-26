@@ -44,9 +44,7 @@ export class RoomService {
     const songDurations = await this.roomRepository.findSongDuration(roomId);
     const songCount = JSON.parse(songDurations).length;
     for (let songIndex = 1; songIndex <= songCount; songIndex++) {
-      if (!voteResult[songIndex]) {
-        voteResult[songIndex] = '0';
-      }
+      voteResult[songIndex] = voteResult[songIndex] || '0';
     }
 
     return voteResult;
