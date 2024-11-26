@@ -34,6 +34,37 @@ export class RoomRepository {
     return `rooms:${roomId}:queue`;
   }
 
+  private roomSessionKey(roomId: string) {
+    return `rooms:${roomId}:session`;
+  }
+
+  private roomVoteKey(roomId: string) {
+    return `rooms:${roomId}:votes`;
+  }
+
+  private roomVoteUserKey(roomId: string) {
+    return `rooms:${roomId}:votes:users`;
+  }
+
+  async saveVoteUser(roomId: string, identifier: string) {
+    const key = this.roomVoteUserKey(roomId);
+
+    await this.redisClient.hSet(key, identifier, 'true');
+    await this.redisClient.hExpire(key, identifier, 60 * 60 * 24);
+  }
+
+  async existsRoomVoteUser(roomId: string, identifier: string) {
+    const key = this.roomVoteUserKey(roomId);
+
+    return this.redisClient.hExists(key, identifier);
+  }
+
+  async updateVoteByRoomAndIdentifier(roomId: string, trackNumber: string) {
+    const key = this.roomVoteKey(roomId);
+
+    await this.redisClient.hSet(key, trackNumber, 1);
+  }
+
   async createRoom(room: Room): Promise<void> {
     const roomKey = this.roomKey(room.id);
 
@@ -121,5 +152,17 @@ export class RoomRepository {
     const roomKey = this.roomKey(roomId);
     const currentUsers = await this.redisClient.hGet(roomKey, 'currentUsers');
     return parseInt(currentUsers || '0', 10);
+  }
+
+  async findAllRoomVotes(roomId: string) {
+    const key = this.roomVoteKey(roomId);
+
+    return this.redisClient.hGetAll(key);
+  }
+
+  async findSongDuration(roomId: string) {
+    const key = this.roomSessionKey(roomId);
+
+    return this.redisClient.hGet(key, 'songs');
   }
 }

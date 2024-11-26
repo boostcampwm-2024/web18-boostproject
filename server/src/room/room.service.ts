@@ -1,9 +1,7 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { MusicRepository } from '@/music/music.repository';
 import { Room } from '@/room/room.entity';
 import { RoomRepository } from '@/room/room.repository';
-import { REDIS_CLIENT } from '@/common/redis/redis.module';
-import { RedisClientType } from 'redis';
 import { AlreadyVoteThisRoomException } from '@/common/exceptions/domain/vote/already-vote-this-room.exception';
 
 @Injectable()
@@ -11,7 +9,6 @@ export class RoomService {
   constructor(
     private readonly roomRepository: RoomRepository,
     private readonly musicRepository: MusicRepository,
-    @Inject(REDIS_CLIENT) private readonly redisClient: RedisClientType,
   ) {}
 
   async getTrackOrder(roomId: string): Promise<string> {
@@ -31,31 +28,20 @@ export class RoomService {
   }
 
   async updateVote(roomId: string, trackNumber: string, identifier: string) {
-    if (
-      await this.redisClient.hExists(`room:${roomId}:votes:users`, identifier)
-    ) {
+    if (await this.roomRepository.existsRoomVoteUser(roomId, identifier)) {
       throw new AlreadyVoteThisRoomException(roomId);
     }
 
-    await this.redisClient.hIncrBy(`room:${roomId}:votes`, trackNumber, 1);
-    await this.redisClient.hSet(
-      `room:${roomId}:votes:users`,
-      identifier,
-      'true',
+    await this.roomRepository.updateVoteByRoomAndIdentifier(
+      roomId,
+      trackNumber,
     );
-    await this.redisClient.hExpire(
-      `room:${roomId}:votes:users`,
-      identifier,
-      60 * 60 * 24,
-    );
+    await this.roomRepository.saveVoteUser(roomId, identifier);
   }
 
   async getVoteResult(roomId: string) {
-    const voteResult = await this.redisClient.hGetAll(`room:${roomId}:votes`);
-    const songDurations = await this.redisClient.hGet(
-      `rooms:${roomId}:session`,
-      'songs',
-    );
+    const voteResult = await this.roomRepository.findAllRoomVotes(roomId);
+    const songDurations = await this.roomRepository.findSongDuration(roomId);
     const songCount = JSON.parse(songDurations).length;
     for (let songIndex = 1; songIndex <= songCount; songIndex++) {
       if (!voteResult[songIndex]) {
