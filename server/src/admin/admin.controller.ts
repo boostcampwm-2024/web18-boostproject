@@ -15,7 +15,7 @@ import { Album } from '@/album/album.entity';
 import { AlbumRepository } from '@/album/album.repository';
 import { RoomService } from '@/room/room.service';
 import { plainToInstance } from 'class-transformer';
-import { SongFileNotFoundException } from '@/common/exceptions/domain/song/song-file-not-found.exception';
+import { MissingSongFiles } from '@/common/exceptions/domain/song/missing-song-files.exception';
 
 export interface UploadedFiles {
   albumCover?: Express.Multer.File;
@@ -46,7 +46,7 @@ export class AdminController {
   ): Promise<any> {
     const albumData = plainToInstance(AlbumDto, JSON.parse(albumDataString));
     if (!files.songs) {
-      throw new SongFileNotFoundException();
+      throw new MissingSongFiles();
     }
 
     const album = await this.albumRepository.save(new Album(albumData));
