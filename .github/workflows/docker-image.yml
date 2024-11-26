@@ -40,6 +40,8 @@ jobs:
       - name: Build and tag client image
         run: |
           yarn --cwd ./client install
+          echo VITE_API_URL=${{ secrets.CLIENT_ENV_PRODUCTION }} > ./client/.env.production
+          echo VITE_API_URL=${{ secrets.CLIENT_ENV_DEVELOPMENT }} > ./client/.env.development
           yarn --cwd ./client build
           scp -r ./client/dist/ ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:/${{ secrets.SSH_USER }}/web18-inear-test/nginx/html/
 
