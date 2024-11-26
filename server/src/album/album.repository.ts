@@ -68,7 +68,7 @@ export class AlbumRepository {
         'release_date as releaseDate',
         'banner_url as bannerImageUrl',
       ])
-      .where('release_date > :currentTime', {
+      .where('DATE_ADD(release_date, INTERVAL total_duration SECOND) > :currentTime', {
         currentTime,
       })
       .andWhere('release_date <= DATE_ADD(:currentTime, INTERVAL 3 DAY)', {
