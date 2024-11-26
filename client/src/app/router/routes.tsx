@@ -4,6 +4,7 @@ import { Layout } from '@/Layout';
 import { AdminPage } from '@/pages/AdminPage';
 import { AlbumPage } from '@/pages/AlbumPage';
 import { AdminLoginPage } from '@/pages/AdminLoginPage';
+import { ProtectedRoute } from '@/components/ProtectedRoute';
 
 export const routes = [
   {
@@ -30,6 +31,10 @@ export const routes = [
   },
   {
     path: '/admin',
-    element: <AdminPage />,
+    element: (
+      <ProtectedRoute>
+        <AdminPage />
+      </ProtectedRoute>
+    ),
   },
 ];

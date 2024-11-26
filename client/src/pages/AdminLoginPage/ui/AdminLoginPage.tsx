@@ -13,7 +13,7 @@ export function AdminLoginPage() {
 
     try {
       const { data } = await axios.post('/api/admin/login', { adminKey });
-      localStorage.setItem('adminToken', data.token);
+      localStorage.setItem('authorization', `Bearer ${data.token}`);
       navigate('/admin');
     } catch (error) {
       console.error('Login error:', error);
