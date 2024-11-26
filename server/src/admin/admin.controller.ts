@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Post,
+  Res,
   UploadedFiles,
   UseGuards,
   UseInterceptors,
@@ -17,6 +18,8 @@ import { AlbumRepository } from '@/album/album.repository';
 import { RoomService } from '@/room/room.service';
 import { AdminGuard } from './admin.guard';
 import { plainToInstance } from 'class-transformer';
+import { Response } from 'express';
+import { ConfigService } from '@nestjs/config';
 
 export interface UploadedFiles {
   albumCover?: Express.Multer.File;
@@ -27,6 +30,7 @@ export interface UploadedFiles {
 @Controller('admin')
 export class AdminController {
   constructor(
+    private configService: ConfigService,
     private readonly adminService: AdminService,
     private readonly musicProcessingService: MusicProcessingSevice,
     private readonly albumRepository: AlbumRepository,
@@ -34,8 +38,20 @@ export class AdminController {
   ) {}
 
   @Post('login')
-  async login(@Body() body: { adminKey: string }) {
-    return this.adminService.login(body.adminKey);
+  async login(
+    @Body() body: { adminKey: string },
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const token = await this.adminService.login(body.adminKey);
+
+    response.cookie('admin_token', token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+      maxAge: parseInt(this.configService.get('TOKEN_EXPIRATION')) * 1000,
+    });
+
+    return { message: 'Login successful' };
   }
 
   @UseGuards(AdminGuard)
