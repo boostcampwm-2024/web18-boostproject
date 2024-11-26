@@ -5,8 +5,6 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Observable } from 'rxjs';
-import { Request } from 'express';
 
 @Injectable()
 export class AdminGuard implements CanActivate {
@@ -14,8 +12,8 @@ export class AdminGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
+    const token = request.cookies['admin_token'];
 
-    const token = this.extractTokenFromHeader(request);
     if (!token) {
       throw new UnauthorizedException('Client does not have token');
     }
@@ -31,13 +29,5 @@ export class AdminGuard implements CanActivate {
     } catch {
       throw new UnauthorizedException('Invalid token');
     }
-  }
-
-  private extractTokenFromHeader(request: Request): string {
-    if (!request.headers.authorization) {
-      return undefined;
-    }
-    const [check, token] = request.headers.authorization.split(' ');
-    return check === 'Bearer' ? token : undefined;
   }
 }

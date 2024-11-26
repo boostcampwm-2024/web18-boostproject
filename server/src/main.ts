@@ -6,6 +6,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import { ValidationPipe } from '@nestjs/common';
 import { GlobalExceptionFilter } from '@/common/exceptions/global-exception.filter';
+import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -15,6 +16,7 @@ async function bootstrap() {
   app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe());
+  app.use(cookieParser());
 
   const config = new DocumentBuilder()
     .setTitle('inear')

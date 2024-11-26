@@ -23,8 +23,8 @@ export class AdminService {
     private jwtService: JwtService,
   ) {
     this.s3 = new AWS.S3({
-      endpoint: new AWS.Endpoint('https://kr.object.ncloudstorage.com'),
-      region: 'kr-standard',
+      endpoint: this.configService.get<string>('S3_END_POINT'),
+      region: this.configService.get<string>('S3_REGION'),
       credentials: {
         accessKeyId: this.configService.get<string>('S3_ACCESS_KEY'),
         secretAccessKey: this.configService.get<string>('S3_SECRET_KEY'),
@@ -39,16 +39,18 @@ export class AdminService {
     if (!isValid) {
       throw new UnauthorizedException('Invalid admin key');
     }
+    const expiration = parseInt(this.configService.get('TOKEN_EXPIRATION'));
+    const now = Math.floor(Date.now() / 1000);
 
     const payload = {
       role: 'admin',
-      iat: Math.floor(Date.now() / 1000),
-      exp: Math.floor(Date.now() / 1000) + 60 * 60,
+      iat: now,
+      exp: now + expiration,
     };
 
     return {
       token: await this.jwtService.signAsync(payload),
-      expiresIn: 3600,
+      expiresIn: expiration,
     };
   }
 
