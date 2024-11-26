@@ -5,19 +5,19 @@ import { SongDetailContent } from './SongDetailContent';
 
 interface SongDetailProps {
   songs: SongData[];
-  streamingIndex: number;
+  songIndex: number;
 }
 
-export function SongDetail({ songs, streamingIndex }: SongDetailProps) {
+export function SongDetail({ songs, songIndex }: SongDetailProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [category, setCategory] = useState('lyrics');
 
   return (
     <div
       className={`absolute bottom-0 bg-grayscale-800 text-gray-100 w-full
-      ${isOpen ? 'h-[40vh]' : 'h-14'} 
+      ${isOpen ? 'h-60' : 'h-14'} 
       transition-all duration-300 ease-in-out z-50
-      rounded-t-lg`}
+      rounded-t-lg flex flex-col`}
     >
       <SongDetailHeader
         category={category}
@@ -30,7 +30,7 @@ export function SongDetail({ songs, streamingIndex }: SongDetailProps) {
           isOpen={isOpen}
           category={category}
           songs={songs}
-          streamingIndex={streamingIndex}
+          songIndex={songIndex}
         />
       )}
     </div>

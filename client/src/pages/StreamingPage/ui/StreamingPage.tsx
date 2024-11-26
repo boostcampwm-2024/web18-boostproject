@@ -1,14 +1,28 @@
 import { ChattingContainer } from '@/widgets/chatting';
 import { Vote } from '@/widgets/vote';
 import { Streaming } from '@/widgets/streaming';
-import { useStreamingRoom } from '@/shared/hook/useStreamingRoom';
 import { StreamingErrorPage } from '@/pages/StreamingErrorPage';
+import { useSocketStore } from '@/shared/store/useSocketStore';
+import { useParams } from 'react-router-dom';
+import { useEffect } from 'react';
 
 export function StreamingPage() {
-  // TODO: 연결 여부 전역 상태로 관리하기
-  // TODO: 소켓 이벤트들 handler로 만들어서 한번에 관리하기
-  // TODO: 방 입장과 퇴장 이벤트 따로 처리하기
-  const { isConnected } = useStreamingRoom();
+  const { roomId } = useParams();
+  const { isConnected, connect, reset } = useSocketStore();
+
+  useEffect(() => {
+    // 페이지 진입 시 소켓 초기화
+    reset();
+
+    if (roomId) {
+      connect(roomId);
+    }
+
+    // 페이지 벗어날 때 소켓 리셋
+    return () => {
+      reset();
+    };
+  }, [roomId]);
 
   if (!isConnected) {
     return <StreamingErrorPage />;

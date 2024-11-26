@@ -5,7 +5,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { SongSaveDto } from '@/song/songSave.dto';
+import { SongSaveDto } from '@/song/dto/song-save.dto';
 import { Album } from '@/album/album.entity';
 
 @Entity()
@@ -30,6 +30,9 @@ export class Song {
   lyrics: string;
 
   @Column({ type: 'varchar', length: 200, nullable: false })
+  producer: string;
+
+  @Column({ type: 'varchar', length: 200, nullable: false })
   composer: string;
 
   @Column({ type: 'varchar', length: 200, nullable: false })
@@ -50,6 +53,7 @@ export class Song {
     this.title = songDto.title;
     this.trackNumber = songDto.trackNumber;
     this.lyrics = songDto.lyrics;
+    this.producer = songDto.producer;
     this.composer = songDto.composer;
     this.writer = songDto.writer;
     this.instrument = songDto.instrument;

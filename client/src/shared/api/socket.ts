@@ -1,10 +1,13 @@
-import { io } from 'socket.io-client';
+import { io, Socket } from 'socket.io-client';
 
-const URL = '/rooms';
-
-export const socket = io(URL, {
-  autoConnect: false,
-  query: {
-    roomId: 'RANDOM_AHH_ALBUM_ID', // 실제 roomId로 교체
-  },
-});
+export const createSocket = (roomId: string): Socket => {
+  const URL = `${import.meta.env.VITE_API_URL}/rooms`;
+  console.log(URL);
+  return io(URL, {
+    autoConnect: false,
+    reconnectionAttempts: 3,
+    query: {
+      roomId,
+    },
+  });
+};

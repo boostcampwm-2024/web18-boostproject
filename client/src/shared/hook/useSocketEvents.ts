@@ -6,20 +6,20 @@ interface SocketEvents {
 }
 
 interface UseSocketEventsProps {
-  socket: Socket;
+  socket: Socket | null;
   events: SocketEvents;
 }
 
 export function useSocketEvents({ socket, events }: UseSocketEventsProps) {
   const registerEvents = useCallback(() => {
     Object.entries(events).forEach(([event, handler]) => {
-      socket.on(event, handler);
+      socket?.on(event, handler);
     });
   }, [socket, events]);
 
   const unregisterEvents = useCallback(() => {
     Object.entries(events).forEach(([event, handler]) => {
-      socket.off(event, handler);
+      socket?.off(event, handler);
     });
   }, [socket, events]);
 

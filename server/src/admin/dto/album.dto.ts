@@ -8,7 +8,7 @@ import {
   Min,
   ValidateNested,
 } from 'class-validator';
-import { SongDto } from './SongDto';
+import { SongDto } from './song.dto';
 import { Type } from 'class-transformer';
 
 export class AlbumDto {
@@ -38,6 +38,9 @@ export class AlbumDto {
 
   @IsString()
   tags: string;
+
+  @IsNumber()
+  totalDuration: number;
 
   @IsString()
   bannerUrl: string;
