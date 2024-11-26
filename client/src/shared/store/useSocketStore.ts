@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { Socket } from 'socket.io-client';
 import { createSocket } from '../api/socket';
+import { useChatMessageStore } from '../store/useChatMessageStore';
 
 interface SocketState {
   socket: Socket | null;
@@ -18,6 +19,7 @@ export const useSocketStore = create<SocketState>((set, get) => ({
 
   connect: (newRoomId: string) => {
     const { socket, roomId } = get();
+    const { clearMessages } = useChatMessageStore();
 
     // 이미 같은 방에 연결되어 있다면 무시
     if (roomId === newRoomId && socket?.connected) return;
@@ -26,6 +28,8 @@ export const useSocketStore = create<SocketState>((set, get) => ({
     if (socket) {
       socket.disconnect();
     }
+
+    clearMessages();
 
     const newSocket = createSocket(newRoomId);
 

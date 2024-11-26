@@ -1,4 +1,3 @@
-import { SwiperSlide } from 'swiper/react';
 import { bannerData } from '@/entities/room/types';
 import 'swiper/css';
 import 'swiper/css/pagination';
