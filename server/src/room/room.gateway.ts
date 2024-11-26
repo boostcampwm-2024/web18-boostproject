@@ -52,18 +52,14 @@ export class RoomGateway
       const currentUserCount =
         await this.roomRepository.getCurrentUsers(roomId);
       await client.join(roomId);
-      if (client.data.name === undefined) {
-        client.data.name = RandomNameUtil.generate();
-      }
+      client.data.name = client.data.name || RandomNameUtil.generate();
       client.emit('joinedRoom', {
         roomId: roomId,
         userId: clientId,
         timestamp: new Date(),
       });
-      this.server.to(roomId).emit('roomUsersUpdated', {
-        roomId,
-        userCount: currentUserCount,
-      });
+      this.emitUserCountUpdateToRoom(roomId, currentUserCount);
+      await this.emitVoteUpdateToRoom(roomId);
     } catch (error) {
       console.error('Error in handleConnection:', error);
       client.send('error', '방 참여에 실패하였습니다.');
@@ -137,8 +133,7 @@ export class RoomGateway
 
       const roomId = client.handshake.query.roomId as string;
       await this.roomService.updateVote(roomId, data.trackNumber);
-      const voteResult = await this.roomService.getVoteResult(roomId);
-      this.server.to(roomId).emit('voteUpdated', voteResult);
+      await this.emitVoteUpdateToRoom(roomId);
 
       return {
         success: true,
@@ -150,5 +145,17 @@ export class RoomGateway
         error: error.message,
       };
     }
+  }
+
+  emitUserCountUpdateToRoom(roomId: string, currentUserCount: number) {
+    this.server.to(roomId).emit('roomUsersUpdated', {
+      roomId,
+      userCount: currentUserCount,
+    });
+  }
+
+  async emitVoteUpdateToRoom(roomId: string) {
+    const voteResult = await this.roomService.getVoteResult(roomId);
+    this.server.to(roomId).emit('voteUpdated', voteResult);
   }
 }
