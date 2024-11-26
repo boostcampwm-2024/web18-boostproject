@@ -10,7 +10,7 @@ export class BaseException extends HttpException {
       status,
       message,
       error: HttpStatus[status],
-      timestamp: new Date().toISOString(),
+      time: new Date().toISOString(),
       details,
     };
     super(response, status);
