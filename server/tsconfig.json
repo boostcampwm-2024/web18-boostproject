@@ -26,7 +26,7 @@
     "**/output*.ts",
     "music/convert/**"
   ],
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "test/admin.integration.spec.ts"],
   "watchOptions": {
     "watchFile": "fixedPollingInterval"
   }
