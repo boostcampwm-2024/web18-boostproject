@@ -42,9 +42,9 @@ export class AdminController {
     @Body() body: { adminKey: string },
     @Res({ passthrough: true }) response: Response,
   ) {
-    const token = await this.adminService.login(body.adminKey);
+    const result = await this.adminService.login(body.adminKey);
 
-    response.cookie('admin_token', token, {
+    response.cookie('admin_token', result.token, {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
