@@ -38,10 +38,8 @@ export class MusicService {
     });
   }
 
-  async generateMusicFile(
-    albumId: string,
-    joinTimestamp: number,
-  ): Promise<string> {
+  async generateMusicFile(albumId: string): Promise<string> {
+    const joinTimestamp = Date.now();
     const songMetadata = await this.musicRepository.findSongByJoinTimestamp(
       albumId,
       joinTimestamp,

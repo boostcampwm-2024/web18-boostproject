@@ -9,7 +9,7 @@ export const useStreamingPlayer = (
   const audioRef = useRef<HTMLMediaElement>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const createStreamUrl = (roomId: string) =>
-    `${import.meta.env.VITE_API_URL}/api/music/${roomId}/playlist.m3u8?joinTimeStamp=1700000140000`;
+    `${import.meta.env.VITE_API_URL}/api/music/${roomId}/playlist.m3u8`;
   const initializeHls = (audio: HTMLMediaElement, streamUrl: string) => {
     const hls = new Hls(DEFAULT_STREAMING_CONFIG);
     hls.loadSource(streamUrl);

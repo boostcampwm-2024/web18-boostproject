@@ -17,21 +17,8 @@ export class MusicController {
 
   @Get(':albumId/playlist.m3u8')
   @Header('Content-Type', 'application/x-mpegURL')
-  async getMusicFile(
-    @Param('albumId') albumId: string,
-    @Query('joinTimeStamp') joinTimeStamp: string,
-  ) {
-    if (!joinTimeStamp) {
-      throw new HttpException(
-        'joinTimeStamp is required',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-
-    return await this.musicService.generateMusicFile(
-      albumId,
-      parseInt(joinTimeStamp, 10),
-    );
+  async getMusicFile(@Param('albumId') albumId: string) {
+    return await this.musicService.generateMusicFile(albumId);
   }
 
   @Get(':albumId/:songIndex/playlist:segmentId.ts')
