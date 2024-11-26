@@ -1,21 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { socket } from '@/shared/api/socket';
 import { useSocketEvents } from './useSocketEvents';
+import { Socket } from 'socket.io-client';
+import { createSocket } from '../api/socket';
 
 export function useStreamingRoom() {
   const [isConnected, setIsConnected] = useState(false);
+  const [socket, setSocket] = useState<Socket | null>(null);
   const { roomId } = useParams();
-
-  const handleConnect = () => {
-    setIsConnected(true);
-    if (roomId) {
-      socket.emit('joinRoom', { roomId }, (response: any) => {
-        console.log('방 입장 응답 : ', response);
-        setIsConnected(response.success);
-      });
-    }
-  };
 
   const handleDisconnect = () => {
     setIsConnected(false);
@@ -31,24 +23,27 @@ export function useStreamingRoom() {
   };
 
   useEffect(() => {
-    if (!socket.connected) {
-      socket.connect();
+    if (!roomId) return;
+    const newSocket = createSocket(roomId);
+
+    if (!newSocket.connected) {
+      newSocket.connect();
     }
+    setSocket(newSocket);
 
     return () => {
-      socket.disconnect();
+      newSocket.disconnect();
     };
   }, []);
 
   useSocketEvents({
     socket,
     events: {
-      connect: handleConnect,
       disconnect: handleDisconnect,
       connect_error: handleConnectError,
       joinedRoom: handleJoinRoom,
     },
   });
 
-  return { isConnected };
+  return { isConnected, socket };
 }

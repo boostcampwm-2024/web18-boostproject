@@ -2,12 +2,14 @@ import { useCallback, useRef, useState, useEffect } from 'react';
 import Hls from 'hls.js';
 import { DEFAULT_STREAMING_CONFIG } from './constants';
 
-export const useStreamingPlayer = (roomId: string) => {
+export const useStreamingPlayer = (
+  roomId: string,
+  setSongIndex: (value: number) => void,
+) => {
   const audioRef = useRef<HTMLMediaElement>(null);
   const [isLoaded, setIsLoaded] = useState(false);
-
   const createStreamUrl = (roomId: string) =>
-    `/api/music/${roomId}/playlist.m3u8?joinTimeStamp=1700000000000`;
+    `/api/music/${roomId}/playlist.m3u8?joinTimeStamp=1700000140000`;
 
   const initializeHls = (audio: HTMLMediaElement, streamUrl: string) => {
     const hls = new Hls(DEFAULT_STREAMING_CONFIG);
