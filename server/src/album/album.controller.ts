@@ -13,7 +13,7 @@ export class AlbumController {
   }
 
   @Get('sidebar')
-  async getSideBarInfos() {
+  async getSideBarInfos(): Promise<SideBarResponseDto> {
     return await this.albumService.getSideBarInfos();
   }
 }
