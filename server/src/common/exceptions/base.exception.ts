@@ -7,7 +7,7 @@ export class BaseException extends HttpException {
     details?: Record<string, any>,
   ) {
     const response = {
-      status,
+      statusCode: status,
       message,
       error: HttpStatus[status],
       time: new Date().toISOString(),

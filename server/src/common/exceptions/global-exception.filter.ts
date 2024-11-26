@@ -5,10 +5,8 @@ import {
   HttpException,
   HttpStatus,
   Logger,
-  NotFoundException,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { BaseException } from '@/common/exceptions/base.exception';
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
@@ -24,6 +22,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       return response.status(exception.getStatus()).json({
         time: new Date().toISOString(),
         ...this.getExceptionResponse(exception),
+        errorName: exception.name,
       });
     }
     // 예상치 못한 예외 처리
@@ -41,8 +40,8 @@ export class GlobalExceptionFilter implements ExceptionFilter {
   private getUnexpectedExceptionResponse(exception: any, response: Response) {
     return response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
       statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-      errorName: exception.constructor.name,
-      errorCode: exception.code,
+      error: exception.constructor.name,
+      errorName: exception.code,
       message: exception.message,
       time: exception.time,
     });
