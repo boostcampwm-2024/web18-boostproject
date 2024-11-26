@@ -1,10 +1,11 @@
 import { Swiper } from 'swiper/react';
-import { BannerSlide } from './BannerSlide';
 import { Pagination, Autoplay } from 'swiper/modules';
 import { bannerData } from '@/entities/room/types';
+import { SwiperSlide } from 'swiper/react';
 import './Banner.css';
 import 'swiper/css';
 import 'swiper/css/pagination';
+import { BannerSlide } from './BannerSlide';
 
 interface BannerProps {
   bannerList: bannerData[];
@@ -26,7 +27,9 @@ export function Banner({ bannerList }: BannerProps) {
         }}
       >
         {bannerList.map((banner) => (
-          <BannerSlide key={banner.albumId} banner={banner} />
+          <SwiperSlide key={banner.albumId}>
+            <BannerSlide banner={banner} />
+          </SwiperSlide>
         ))}
       </Swiper>
     </div>

@@ -3,6 +3,8 @@ import { publicAPI } from '@/shared/api/publicAPI';
 import { useEffect, useState } from 'react';
 import { bannerData } from '@/entities/room/types';
 import { Banner } from '@/widgets/banner';
+import 'swiper/css';
+import 'swiper/css/pagination';
 
 export function MainPage() {
   const [bannerList, setBannerList] = useState<bannerData[]>([]);

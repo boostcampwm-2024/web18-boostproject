@@ -1,7 +1,4 @@
-import { SwiperSlide } from 'swiper/react';
 import { bannerData } from '@/entities/room/types';
-import 'swiper/css';
-import 'swiper/css/pagination';
 import { useNavigate } from 'react-router-dom';
 
 interface BannerSlideProps {
@@ -22,7 +19,7 @@ export function BannerSlide({ banner }: BannerSlideProps) {
   };
 
   return (
-    <SwiperSlide className="relative" onClick={handleClick}>
+    <div className="relative" onClick={handleClick}>
       <img
         src={banner.bannerImageUrl}
         alt={`스트리밍 진행 중인 ${banner.albumName} 이미지`}
@@ -46,6 +43,6 @@ export function BannerSlide({ banner }: BannerSlideProps) {
           </p>
         </div>
       </div>
-    </SwiperSlide>
+    </div>
   );
 }
