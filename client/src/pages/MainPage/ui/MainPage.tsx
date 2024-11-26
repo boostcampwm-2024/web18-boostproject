@@ -14,12 +14,6 @@ export function MainPage() {
         .getAlbumBanner()
         .then((res) => res)
         .catch((err) => console.log(err));
-      console.log(
-        res.result.bannerLists.filter(
-          (banner: bannerData) => banner.bannerImageUrl,
-        ),
-      );
-      console.log(res.result.bannerLists);
       setBannerList(
         res.result.bannerLists.filter(
           (banner: bannerData) => banner.bannerImageUrl,
