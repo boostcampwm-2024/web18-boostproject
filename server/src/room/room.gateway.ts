@@ -16,9 +16,9 @@ import { UserRoomInfoNotFoundException } from '@/common/exceptions/domain/room/u
 import { RoomService } from '@/room/room.service';
 import * as crypto from 'crypto';
 import { UseFilters } from '@nestjs/common';
-import { WsExceptionFilter } from '@/common/exceptions/ws-exception.filter';
+import { CustomWsExceptionFilter } from '@/common/exceptions/ws-exception.filter';
 
-@UseFilters(WsExceptionFilter)
+@UseFilters(CustomWsExceptionFilter)
 @WebSocketGateway({
   namespace: 'rooms',
   cors: {

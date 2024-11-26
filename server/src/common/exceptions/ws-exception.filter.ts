@@ -1,7 +1,7 @@
-import { ArgumentsHost, Catch } from '@nestjs/common';
+import { ArgumentsHost, Catch, WsExceptionFilter } from '@nestjs/common';
 
 @Catch()
-export class WsExceptionFilter implements WsExceptionFilter {
+export class CustomWsExceptionFilter implements WsExceptionFilter {
   catch(exception: any, host: ArgumentsHost) {
     const client = host.switchToWs().getClient();
 
