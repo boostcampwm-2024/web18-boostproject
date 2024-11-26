@@ -1,7 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 import { AlbumService } from './album.service';
-import { MainBannerResponseDto } from './dto/main-banner-response';
-import { SideBarResponseDto } from './dto/side-bar-response';
+import { MainBannerResponseDto } from './dto/main-banner-response.dto';
+import { SideBarResponseDto } from './dto/side-bar-response.dto';
 
 @Controller('album')
 export class AlbumController {

@@ -4,8 +4,8 @@ import { AlbumRedisRepository } from './album.redis.repository';
 import {
   MainBannerResponse,
   MainBannerResponseDto,
-} from './dto/main-banner-response';
-import { SideBarResponseDto } from './dto/side-bar-response';
+} from './dto/main-banner-response.dto';
+import { SideBarResponseDto } from './dto/side-bar-response.dto';
 
 @Injectable()
 export class AlbumService {

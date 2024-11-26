@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
-import { AlbumDto } from '@/admin/dto/AlbumDto';
+import { AlbumDto } from '@/admin/dto/album.dto';
 
 @Entity()
 export class Album {

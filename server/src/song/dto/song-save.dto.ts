@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
-import { SongDto } from '@/admin/dto/SongDto';
+import { SongDto } from '@/admin/dto/song.dto';
 
 export class SongSaveDto extends SongDto {
   @IsString()

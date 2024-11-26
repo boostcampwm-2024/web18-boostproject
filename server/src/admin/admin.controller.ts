@@ -5,7 +5,7 @@ import {
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
-import { AlbumDto } from './dto/AlbumDto';
+import { AlbumDto } from './dto/album.dto';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import path from 'path';
 import * as fs from 'fs/promises';

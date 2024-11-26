@@ -5,7 +5,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { SongSaveDto } from '@/song/songSave.dto';
+import { SongSaveDto } from '@/song/dto/song-save.dto';
 import { Album } from '@/album/album.entity';
 
 @Entity()
