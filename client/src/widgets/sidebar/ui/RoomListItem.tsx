@@ -7,7 +7,7 @@ interface RoomListItemProps {
 export function RoomListItem({ album }: RoomListItemProps) {
   const navigate = useNavigate();
   const tagString = album.albumTags
-    ? `#${album.albumTags.split(',').join(' #')}`
+    ? `#${album.albumTags.split(', ').join(' #')}`
     : '태그 없음';
 
   const handleClick = () => {
