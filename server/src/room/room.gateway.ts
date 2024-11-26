@@ -160,7 +160,22 @@ export class RoomGateway
   }
 
   async emitVoteUpdateToRoom(roomId: string) {
-    const voteResult = await this.roomService.getVoteResult(roomId);
+    const voteResult: { [key: string]: string } =
+      await this.roomService.getVoteResult(roomId);
+
+    const totalVote = this.getTotalVote(voteResult);
+
+    Object.entries(voteResult).map(([key, value]) => {
+      voteResult[key] = `${((Number(value) / totalVote) * 100).toFixed(2)}%`;
+    });
+
     this.server.to(roomId).emit('voteUpdated', voteResult);
+  }
+
+  private getTotalVote(voteResult: { [key: string]: string }): number {
+    return Object.values(voteResult).reduce(
+      (acc, value) => acc + Number(value),
+      0,
+    );
   }
 }
