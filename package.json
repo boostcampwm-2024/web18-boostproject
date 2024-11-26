@@ -20,7 +20,8 @@
     "lint:client": "eslint client/",
     "lint:server:fix": "eslint server/ --fix",
     "lint:client:fix": "eslint client/ --fix",
-    "format": "prettier --write \"src/**/*.ts\""
+    "format": "prettier --write \"src/**/*.ts\"",
+    "test:server": "cd server && yarn test"
   },
   "packageManager": "yarn@4.5.1",
   "devDependencies": {
