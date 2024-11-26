@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { MusicRepository } from '@/music/music.repository';
 import { Room } from '@/room/room.entity';
 import { RoomRepository } from '@/room/room.repository';
+import { AlreadyVoteThisRoomException } from '@/common/exceptions/domain/vote/already-vote-this-room.exception';
 
 @Injectable()
 export class RoomService {
@@ -24,5 +25,28 @@ export class RoomService {
       // new Room({ id: albumId, createdAt: new Date() }),
       new Room({ id: albumId, createdAt: new Date(1700000000000) }),
     );
+  }
+
+  async updateVote(roomId: string, trackNumber: string, identifier: string) {
+    if (await this.roomRepository.existsRoomVoteUser(roomId, identifier)) {
+      throw new AlreadyVoteThisRoomException(roomId);
+    }
+
+    await this.roomRepository.updateVoteByRoomAndIdentifier(
+      roomId,
+      trackNumber,
+    );
+    await this.roomRepository.saveVoteUser(roomId, identifier);
+  }
+
+  async getVoteResult(roomId: string) {
+    const voteResult = await this.roomRepository.findAllRoomVotes(roomId);
+    const songDurations = await this.roomRepository.findSongDuration(roomId);
+    const songCount = JSON.parse(songDurations).length;
+    for (let songIndex = 1; songIndex <= songCount; songIndex++) {
+      voteResult[songIndex] = voteResult[songIndex] || '0';
+    }
+
+    return voteResult;
   }
 }
