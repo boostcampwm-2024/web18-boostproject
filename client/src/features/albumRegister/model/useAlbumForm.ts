@@ -1,7 +1,6 @@
 import { useCallback, useState, useRef } from 'react';
 import { CreateAlbumRequest, Song } from './types';
-import axios from 'axios';
-import { albumAPI } from '@/shared/api/axios';
+import { albumAPI } from '@/shared/api/adminAPI';
 
 const REQUIRED_SONG_FIELDS = [
   'title',

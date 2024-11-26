@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { RoomListItem } from './RoomListItem';
 import './StreamingList.css';
-
+import { publicAPI } from '@/shared/api/publicAPI';
 interface RoomData {
   roomId: string;
   album: string;
@@ -43,8 +43,14 @@ export function RoomList() {
   const [roomList, setRoomList] = useState<RoomData[]>([]);
 
   useEffect(() => {
-    // fetch room list
-    setRoomList(dummyRoomList);
+    publicAPI
+      .getAlbumSidebar()
+      .then((data) => {
+        setRoomList(data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }, []);
 
   return (

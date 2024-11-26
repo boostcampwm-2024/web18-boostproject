@@ -1,10 +1,10 @@
 import axios from 'axios';
 
-const adminApi = axios.create({
-  baseURL: '/api',
+const adminInstance = axios.create({
+  baseURL: `${import.meta.env.VITE_API_URL}/api`,
 });
 
-adminApi.interceptors.request.use((config) => {
+adminInstance.interceptors.request.use((config) => {
   const token = localStorage.getItem('authorization');
   if (token) {
     config.headers.Authorization = token.startsWith('Bearer ')
@@ -16,7 +16,7 @@ adminApi.interceptors.request.use((config) => {
 
 export const albumAPI = {
   createAlbum: async (formData: FormData) => {
-    return adminApi.post('/admin/album', formData, {
+    return adminInstance.post('/admin/album', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
