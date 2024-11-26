@@ -1,6 +1,6 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { EmojiService } from './emoji.service';
-import { EmojiRequestDto } from './emoji-request-dto';
+import { EmojiRequestDto } from './dto/emoji-request.dto';
 
 @Controller('emoji')
 export class EmojiController {

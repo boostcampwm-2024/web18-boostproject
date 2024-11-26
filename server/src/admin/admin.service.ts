@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as AWS from 'aws-sdk';
 import { Song } from '@/song/song.entity';
-import { SongSaveDto } from '@/song/songSave.dto';
+import { SongSaveDto } from '@/song/dto/song-save.dto';
 import { SongRepository } from '@/song/song.repository';
 import { AlbumRepository } from '@/album/album.repository';
 import { UploadedFiles } from '@/admin/admin.controller';
@@ -151,5 +151,8 @@ export class AdminService {
       releaseTimestamp,
       songDurations,
     );
+
+    const totalDuration = songDurations.reduce((acc, cur) => acc + cur, 0);
+    await this.albumRepository.saveTotalDuration(album.id, totalDuration);
   }
 }
