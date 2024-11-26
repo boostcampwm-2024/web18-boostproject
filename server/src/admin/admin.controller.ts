@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Post,
   Res,
   UploadedFiles,
@@ -55,7 +56,7 @@ export class AdminController {
   }
 
   @UseGuards(AdminGuard)
-  @Post('verify-token')
+  @Get('verify-token')
   async verifyAdminToken() {
     return { valid: true };
   }

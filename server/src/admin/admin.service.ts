@@ -39,16 +39,18 @@ export class AdminService {
     if (!isValid) {
       throw new UnauthorizedException('Invalid admin key');
     }
+    const expiration = parseInt(this.configService.get('TOKEN_EXPIRATION'));
+    const now = Math.floor(Date.now() / 1000);
 
     const payload = {
       role: 'admin',
-      iat: Math.floor(Date.now() / 1000),
-      exp: Math.floor(Date.now() / 1000) + 60 * 60,
+      iat: now,
+      exp: now + expiration,
     };
 
     return {
       token: await this.jwtService.signAsync(payload),
-      expiresIn: 3600,
+      expiresIn: expiration,
     };
   }
 
