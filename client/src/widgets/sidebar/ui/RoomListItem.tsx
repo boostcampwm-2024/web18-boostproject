@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 
-interface StreamingListItemProps {
+interface RoomListItemProps {
   room: {
     roomId: string;
     album: string;
@@ -10,7 +10,7 @@ interface StreamingListItemProps {
   };
 }
 
-export function StreamingListItem({ room }: StreamingListItemProps) {
+export function RoomListItem({ room }: RoomListItemProps) {
   const navigate = useNavigate();
   const tagString = `#${room.tags.join(' #')}`;
 
