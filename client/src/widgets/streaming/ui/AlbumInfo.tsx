@@ -8,16 +8,25 @@ import { useStreamingPlayer } from '@/features/albumStreaming/lib/useStreamingPl
 
 interface AlbumInfoProps {
   roomInfo: RoomResponse;
+  songIndex: number;
+  setSongIndex: (value: number) => void;
 }
 
-export function AlbumInfo({ roomInfo }: AlbumInfoProps) {
+export function AlbumInfo({
+  roomInfo,
+  songIndex,
+  setSongIndex,
+}: AlbumInfoProps) {
   const { roomId } = useParams<{ roomId: string }>();
   if (!roomId) return;
-  const { audioRef, isLoaded, playStream } = useStreamingPlayer(roomId);
+  const { audioRef, isLoaded, playStream } = useStreamingPlayer(
+    roomId,
+    setSongIndex,
+  );
 
-  if (!roomInfo.success) {
-    return <StreamingErrorPage />;
-  }
+  // if (!roomInfo.success) {
+  //   return <StreamingErrorPage />;
+  // }
 
   return (
     <div className="flex flex-col items-center relative text-grayscale-100">
@@ -54,15 +63,12 @@ export function AlbumInfo({ roomInfo }: AlbumInfoProps) {
         <div className="absolute bottom-0 w-full">
           <AudioController
             audioRef={audioRef}
-            songDuration={
-              roomInfo.songResponseList[Number(roomInfo.trackOrder) - 1]
-                .duration
-            }
+            songDuration={roomInfo.songResponseList[songIndex - 1].duration}
           />
         </div>
       </div>
       <p className="mt-4 text-2xl font-bold">
-        {roomInfo.songResponseList[Number(roomInfo.trackOrder) - 1].title}
+        {roomInfo.songResponseList[songIndex - 1].title}
       </p>
     </div>
   );

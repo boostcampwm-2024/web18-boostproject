@@ -1,0 +1,11 @@
+.playlist-scrollbar::-webkit-scrollbar {
+  width: 0px;
+}
+
+.credit-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.credit-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #2a2a2a;
+}

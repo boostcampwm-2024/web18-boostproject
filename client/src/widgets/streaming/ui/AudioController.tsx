@@ -10,7 +10,7 @@ export const AudioController = ({
   songDuration,
 }: AudioControllerProps) => {
   const [progress, setProgress] = useState(0);
-  console.log(songDuration);
+  // console.log(songDuration);
 
   useEffect(() => {
     const audio = audioRef.current;

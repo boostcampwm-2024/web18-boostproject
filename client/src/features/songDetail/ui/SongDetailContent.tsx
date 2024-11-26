@@ -7,24 +7,24 @@ interface SongDetailContentProps {
   isOpen: boolean;
   category: string;
   songs: SongData[];
-  streamingIndex: number;
+  songIndex: number;
 }
 
 export function SongDetailContent({
   isOpen,
   category,
   songs,
-  streamingIndex,
+  songIndex,
 }: SongDetailContentProps) {
   return (
     <div
-      className={`px-6 py-4 h-64 transition-opacity duration-200 ease-in-out
+      className={`transition-opacity duration-200 ease-in-out overflow-hidden
     ${isOpen ? 'opacity-100' : 'opacity-0'}`}
     >
       {category === CATEGORIES.LYRICS ? (
-        <LyricsPanel lyrics={songs[streamingIndex - 1].lyrics} />
+        <LyricsPanel lyrics={songs[songIndex - 1].lyrics} />
       ) : (
-        <PlaylistPanel />
+        <PlaylistPanel songs={songs} songIndex={songIndex} />
       )}
     </div>
   );

@@ -9,7 +9,7 @@
     "client": "yarn workspace client",
     "server": "yarn workspace server",
     "dev:client": "cd client && yarn dev",
-    "dev:server": "cd server && cross-env nest start --watch",
+    "dev:server": "cd server && yarn dev",
     "dev": "concurrently \"yarn dev:client\" \"yarn dev:server\"",
     "build:client": "cd client && yarn build",
     "build:server": "cd server && yarn build",
