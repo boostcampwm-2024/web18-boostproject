@@ -1,7 +1,6 @@
 import { useCallback, useState, useRef } from 'react';
 import { CreateAlbumRequest, Song } from './types';
-import axios from 'axios';
-import { albumAPI } from '@/shared/api/axios';
+import { albumAPI } from '@/shared/api/adminAPI';
 
 const REQUIRED_SONG_FIELDS = [
   'title',
@@ -16,8 +15,6 @@ const REQUIRED_SONG_FIELDS = [
 const SONG_FIELDS = [...REQUIRED_SONG_FIELDS, 'lyrics'] as const;
 
 const ALBUM_FIELDS = ['title', 'artist', 'albumTag', 'releaseDate'] as const;
-
-//const API_URL = 'http://localhost:3000/api/admin/album';
 
 function validateForm(formData: FormData, fields: readonly string[]): boolean {
   return fields.every((field) => {
