@@ -30,18 +30,18 @@ export function BannerSlide({ banner }: BannerSlideProps) {
       />
       <div className="absolute top-0 left-0 text-grayscale-100 z-10 w-1/4 min-h-full p-4 flex flex-col justify-between">
         <div>
-          <div className="flex flex-row gap-2 text-xs mb-1">
+          <div className="flex flex-row gap-2 text-sm mb-1">
             <p className="font-bold bg-red-500 px-1">LIVE</p>
             <p className="text-red-600">{banner.currentUserCount} 명</p>
           </div>
-          <p className="text-gray-400 text-sm break-words">
+          <p className="text-gray-400 break-words">
             #{banner.albumTags?.split(',').join(' #')}
           </p>
-          <p className="font-black text-lg w-44">{banner.albumName}</p>
+          <p className="font-black text-3xl w-44">{banner.albumName}</p>
         </div>
         <div>
-          <p className="font-bold">{banner.artist}</p>
-          <p className="text-gray-400 text-xs">
+          <p className="font-bold text-2xl">{banner.artist}</p>
+          <p className="text-gray-400 text-sm">
             {splitDate(banner.releaseDate)} 예정
           </p>
         </div>
