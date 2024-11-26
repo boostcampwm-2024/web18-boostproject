@@ -15,13 +15,13 @@ import * as fs from 'fs/promises';
 import { MusicProcessingSevice } from '@/music/music.processor';
 import { AdminService } from './admin.service';
 import { Album } from '@/album/album.entity';
-import { AlbumRepository } from '@/album/album.repository';
-import { RoomService } from '@/room/room.service';
 import { AdminGuard } from './admin.guard';
 import { plainToInstance } from 'class-transformer';
 import { MissingSongFiles } from '@/common/exceptions/domain/song/missing-song-files.exception';
 import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
+import { AdminTransactionService } from './admin.transaction.service';
+import { AlbumCreationFailedException } from '@/common/exceptions/domain/album/album-creation-fail.exception';
 
 export interface UploadedFiles {
   albumCover?: Express.Multer.File;
@@ -35,8 +35,7 @@ export class AdminController {
     private configService: ConfigService,
     private readonly adminService: AdminService,
     private readonly musicProcessingService: MusicProcessingSevice,
-    private readonly albumRepository: AlbumRepository,
-    private readonly roomService: RoomService,
+    private readonly adminTransactionService: AdminTransactionService,
   ) {}
 
   @Post('login')
@@ -79,19 +78,22 @@ export class AdminController {
     if (!files.songs) {
       throw new MissingSongFiles();
     }
+    const album = await this.adminTransactionService.saveInitialAlbum(
+      new Album(albumData),
+    );
 
-    const album = await this.albumRepository.save(new Album(albumData));
-    // 앨범 이미지 업로드 및 DB 저장
-    await this.adminService.saveAlbumCoverAndBanner(files, album.id);
-    //3. 노래 파일들 처리: 기존 processSongFiles 사용
     const processedSongs = await this.processSongFiles(
       files.songs,
       albumData,
       album.id,
     );
-    await this.adminService.initializeStreamingSession(processedSongs, album);
-    await this.adminService.saveSongs(processedSongs, album.id);
-    await this.roomService.initializeRoom(album.id);
+
+    await this.adminTransactionService
+      .saveRemainingData(album, processedSongs, files)
+      .catch(async () => {
+        await this.adminTransactionService.deleteCreatedAlbum(album.id);
+        throw new AlbumCreationFailedException();
+      });
     return {
       albumId: album.id,
       message: 'Album songs updated to object storage successfully',

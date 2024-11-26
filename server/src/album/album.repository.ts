@@ -40,6 +40,10 @@ export class AlbumRepository {
     });
   }
 
+  async delete(albumId: string) {
+    await this.repository.delete({ id: albumId });
+  }
+
   async saveTotalDuration(albumId: string, totalDuration: number) {
     const album = await this.repository.findOne({ where: { id: albumId } });
     if (!album) {
