@@ -12,18 +12,14 @@ export class RoomService {
   ) {}
 
   async getTrackOrder(roomId: string): Promise<string> {
-    // return await this.musicRepository
-    //   .findSongByJoinTimestamp(roomId, Date.now())
-    //   .then((data) => data.id);
     return await this.musicRepository
-      .findSongByJoinTimestamp(roomId, 1700000000000)
+      .findSongByJoinTimestamp(roomId, Date.now())
       .then((data) => data.id);
   }
 
   async initializeRoom(albumId: string) {
     await this.roomRepository.createRoom(
-      // new Room({ id: albumId, createdAt: new Date() }),
-      new Room({ id: albumId, createdAt: new Date(1700000000000) }),
+      new Room({ id: albumId, createdAt: new Date() }),
     );
   }
 

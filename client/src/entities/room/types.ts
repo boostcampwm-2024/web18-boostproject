@@ -24,3 +24,19 @@ export interface bannerData {
   currentUserCount: number;
   releaseDate: string;
 }
+
+/**
+ * 메인 페이지 최근 스트리밍 앨범 정보
+ */
+
+export interface EndedAlbumListResponse {
+  endedAlbums: EndedAlbumData[];
+}
+
+export interface EndedAlbumData {
+  albumId: string;
+  albumName: string;
+  artist: string;
+  albumTags?: string;
+  jacketUrl?: string;
+}

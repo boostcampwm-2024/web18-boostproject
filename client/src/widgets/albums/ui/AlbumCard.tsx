@@ -6,7 +6,7 @@ export function AlbumCard({ album }: { album: Album }) {
       <img
         src={album.coverImage}
         alt={`${album.title} 앨범 커버`}
-        className="mb-3"
+        className="mb-3 w-[200px] h-[200px] object-cover"
       />
       <p className="text-xl font-semibold mb-1">{album.title}</p>
       <p className="mb-2">{album.artist}</p>
