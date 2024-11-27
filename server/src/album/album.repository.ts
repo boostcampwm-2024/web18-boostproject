@@ -119,6 +119,32 @@ export class AlbumRepository {
 
     return plainToInstance(GetSideBarInfosTuple, upComingAlbumInfos);
   }
+
+  // 스트리밍 종료 시간 < 현재 시간, 종료된지 7일 이내인 앨범 최근 끝난 것부터 정렬
+  async getEndedAlbumsInfos(
+    currentTime: Date,
+  ): Promise<GetEndedAlbumInfosTuple[]> {
+    const endedAlbumInfos = await this.dataSource
+      .createQueryBuilder()
+      .from(Album, 'album')
+      .select([
+        'id as albumId',
+        'title as albumName',
+        'artist',
+        'tags as albumTags',
+      ])
+      .where(
+        'DATE_ADD(release_date, INTERVAL total_duration SECOND) < :currentTime',
+        { currentTime },
+      )
+      .andWhere(
+        'DATE_ADD(DATE_ADD(release_date, INTERVAL total_duration SECOND), INTERVAL 7 DAY) > :currentTime',
+      )
+      .orderBy('DATE_ADD(release_date, INTERVAL total_duration SECOND)', 'DESC')
+      .getRawMany();
+
+    return plainToInstance(GetEndedAlbumInfosTuple, endedAlbumInfos);
+  }
 }
 
 export class GetAlbumBannerInfosTuple {
@@ -133,5 +159,12 @@ export class GetAlbumBannerInfosTuple {
 export class GetSideBarInfosTuple {
   albumId: string;
   albumName: string;
+  albumTags: string;
+}
+
+export class GetEndedAlbumInfosTuple {
+  albumId: string;
+  albumName: string;
+  artist: string;
   albumTags: string;
 }
