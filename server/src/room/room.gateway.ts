@@ -189,7 +189,7 @@ export class RoomGateway
     const totalVote = this.getTotalVote(voteResult);
 
     Object.entries(voteResult).map(([key, value]) => {
-      voteResult[key] = `${((Number(value) / totalVote) * 100).toFixed(2)}%`;
+      voteResult[key] = `${((Number(value) / totalVote) * 100).toFixed(0)}%`;
     });
 
     this.server
