@@ -13,7 +13,7 @@ export function Streaming() {
 
   const getRoomInfo = async () => {
     if (!roomId) return;
-    const res = await publicAPI
+    const res: RoomResponse = await publicAPI
       .getRoomInfo(roomId)
       .then((res) => res)
       .catch((err) => console.log(err));
