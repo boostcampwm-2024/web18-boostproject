@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { AlbumRepository } from './album.repository';
 import { AlbumRedisRepository } from './album.redis.repository';
 import {
-  MainBannerResponse,
+  MainBannerDto,
   MainBannerResponseDto,
 } from './dto/main-banner-response.dto';
 import { SideBarResponseDto } from './dto/side-bar-response.dto';
@@ -24,7 +24,7 @@ export class AlbumService {
       albumBannerInfos.map(async (album) => {
         const currentUserCount =
           await this.albumRedisRepository.getCurrentUsers(album.albumId);
-        return MainBannerResponse.from(album, currentUserCount);
+        return MainBannerDto.from(album, currentUserCount);
       }),
     );
     return new MainBannerResponseDto(banners);

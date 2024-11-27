@@ -4,6 +4,12 @@ import { Album } from '@/album/album.entity';
 import { DataSource, Repository } from 'typeorm';
 import { plainToInstance } from 'class-transformer';
 import { Song } from '@/song/song.entity';
+import {
+  AlbumDetailDto,
+  AlbumDetailSongDto,
+} from './dto/album-detail-response.dto';
+import { EndedAlbumDto } from './dto/ended-album-response.dto';
+import { SideBarDto } from './dto/side-bar-response.dto';
 
 @Injectable()
 export class AlbumRepository {
@@ -100,9 +106,7 @@ export class AlbumRepository {
   }
 
   // 스트리밍 시작 시간 <= currentTIme < 스트리밍 끝나는 시간
-  async getRecentSideBarInfos(
-    currentTime: Date,
-  ): Promise<GetSideBarInfosTuple[]> {
+  async getRecentSideBarInfos(currentTime: Date): Promise<SideBarDto[]> {
     const recentSideBarInfos = await this.dataSource
       .createQueryBuilder()
       .from(Album, 'album')
@@ -118,13 +122,11 @@ export class AlbumRepository {
       )
       .getRawMany();
 
-    return plainToInstance(GetSideBarInfosTuple, recentSideBarInfos);
+    return plainToInstance(SideBarDto, recentSideBarInfos);
   }
 
   // 스트리밍 끝나는 시간 < currentTime <= 현재시간으로 부터 6시간 뒤
-  async getUpComingSideBarInfos(
-    currentTime: Date,
-  ): Promise<GetSideBarInfosTuple[]> {
+  async getUpComingSideBarInfos(currentTime: Date): Promise<SideBarDto[]> {
     const upComingAlbumInfos = await this.dataSource
       .createQueryBuilder()
       .from(Album, 'album')
@@ -137,13 +139,11 @@ export class AlbumRepository {
       })
       .getRawMany();
 
-    return plainToInstance(GetSideBarInfosTuple, upComingAlbumInfos);
+    return plainToInstance(SideBarDto, upComingAlbumInfos);
   }
 
   // 스트리밍 종료 시간 < 현재 시간, 종료된지 7일 이내인 앨범 최근 끝난 것부터 정렬
-  async getEndedAlbumsInfos(
-    currentTime: Date,
-  ): Promise<GetEndedAlbumInfosTuple[]> {
+  async getEndedAlbumsInfos(currentTime: Date): Promise<EndedAlbumDto[]> {
     const endedAlbumInfos = await this.dataSource
       .createQueryBuilder()
       .from(Album, 'album')
@@ -164,12 +164,10 @@ export class AlbumRepository {
       .orderBy('DATE_ADD(release_date, INTERVAL total_duration SECOND)', 'DESC')
       .getRawMany();
 
-    return plainToInstance(GetEndedAlbumInfosTuple, endedAlbumInfos);
+    return plainToInstance(EndedAlbumDto, endedAlbumInfos);
   }
 
-  async getAlbumDetailInfos(
-    albumId: string,
-  ): Promise<GetAlbumDetailInfosTuple> {
+  async getAlbumDetailInfos(albumId: string): Promise<AlbumDetailDto> {
     const albumDetailInfos = await this.dataSource
       .createQueryBuilder()
       .from(Album, 'album')
@@ -182,12 +180,12 @@ export class AlbumRepository {
       .where('id = :albumId', { albumId })
       .getRawOne();
 
-    return plainToInstance(GetAlbumDetailInfosTuple, albumDetailInfos);
+    return plainToInstance(AlbumDetailDto, albumDetailInfos);
   }
 
   async getAlbumDetailSongInfos(
     albumId: string,
-  ): Promise<GetAlbumDetailSongInfosTuple[]> {
+  ): Promise<AlbumDetailSongDto[]> {
     const albumDetailSongInfos = await this.dataSource
       .createQueryBuilder()
       .from(Song, 'song')
@@ -195,7 +193,7 @@ export class AlbumRepository {
       .where('album_id = :albumId', { albumId })
       .getRawMany();
 
-    return plainToInstance(GetAlbumDetailSongInfosTuple, albumDetailSongInfos);
+    return plainToInstance(AlbumDetailSongDto, albumDetailSongInfos);
   }
 }
 
@@ -206,30 +204,4 @@ export class GetAlbumBannerInfosTuple {
   artist: string;
   releaseDate: Date;
   bannerImageUrl: string;
-}
-
-export class GetSideBarInfosTuple {
-  albumId: string;
-  albumName: string;
-  albumTags: string;
-}
-
-export class GetEndedAlbumInfosTuple {
-  albumId: string;
-  albumName: string;
-  artist: string;
-  albumTags: string;
-  jacketUrl: string;
-}
-
-export class GetAlbumDetailInfosTuple {
-  albumId: string;
-  albumName: string;
-  artist: string;
-  jacketUrl: string;
-}
-
-export class GetAlbumDetailSongInfosTuple {
-  songName: string;
-  songDuration: number;
 }

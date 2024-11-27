@@ -2,12 +2,12 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class AlbumDetailResponseDto {
   result: {
-    albumDetails: AlbumDetailResponse;
-    songDetails: AlbumDetailSongResponse[];
+    albumDetails: AlbumDetailDto;
+    songDetails: AlbumDetailSongDto[];
   };
   constructor(
-    albumDetails: AlbumDetailResponse,
-    songDetails: AlbumDetailSongResponse[],
+    albumDetails: AlbumDetailDto,
+    songDetails: AlbumDetailSongDto[],
   ) {
     this.result = {
       albumDetails,
@@ -16,7 +16,7 @@ export class AlbumDetailResponseDto {
   }
 }
 
-export class AlbumDetailResponse {
+export class AlbumDetailDto {
   @ApiProperty()
   albumId: string;
   @ApiProperty()
@@ -27,7 +27,7 @@ export class AlbumDetailResponse {
   jacketUrl: string;
 }
 
-export class AlbumDetailSongResponse {
+export class AlbumDetailSongDto {
   @ApiProperty()
   songName: string;
   @ApiProperty()
