@@ -36,6 +36,7 @@ export function AlbumInfo({
         playsInline
         controlsList="nodownload"
       />
+      <div className="fixed top-0 right-[400px] w-6 h-6 bg-red-400"></div>
       <div className="text-center mb-20 w-full">
         <p className="text-gray-300 mb-4">
           {roomInfo.albumResponse.tags
