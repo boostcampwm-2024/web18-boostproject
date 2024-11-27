@@ -3,17 +3,18 @@ import { Vote } from '@/widgets/vote';
 import { Streaming } from '@/widgets/streaming';
 import { StreamingErrorPage } from '@/pages/StreamingErrorPage';
 import { useSocketStore } from '@/shared/store/useSocketStore';
+import { useChatMessageStore } from '@/shared/store/useChatMessageStore';
 import { useParams } from 'react-router-dom';
 import { useEffect } from 'react';
 
 export function StreamingPage() {
   const { roomId } = useParams();
   const { isConnected, connect, reset } = useSocketStore();
-
+  const { clearMessages } = useChatMessageStore();
   useEffect(() => {
     // 페이지 진입 시 소켓 초기화
     reset();
-
+    clearMessages();
     if (roomId) {
       connect(roomId);
     }
