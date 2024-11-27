@@ -24,7 +24,8 @@
     "dist",
     "music/**/*.ts",
     "**/output*.ts",
-    "music/convert/**"
+    "music/convert/**",
+    "test/music/**"
   ],
   "include": ["src/**/*", "test/**/*"],
   "watchOptions": {

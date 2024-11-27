@@ -43,6 +43,8 @@ lerna-debug.log*
 .env.production.local
 .env.local
 
+test/music
+
 # temp directory
 .temp
 .tmp
