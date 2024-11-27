@@ -32,7 +32,7 @@ export class RoomService {
       roomId,
       trackNumber,
     );
-    await this.roomRepository.saveVoteUser(roomId, identifier);
+    await this.roomRepository.saveVoteUser(roomId, identifier, trackNumber);
   }
 
   async getVoteResult(roomId: string) {

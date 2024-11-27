@@ -42,19 +42,18 @@ export class RoomRepository {
     return `rooms:${roomId}:votes`;
   }
 
-  private roomVoteUserKey(roomId: string) {
-    return `rooms:${roomId}:votes:users`;
+  private roomVoteUserKey(roomId: string, identifier: string) {
+    return `rooms:${roomId}:votes:${identifier}`;
   }
 
-  async saveVoteUser(roomId: string, identifier: string) {
-    const key = this.roomVoteUserKey(roomId);
-
-    await this.redisClient.hSet(key, identifier, 'true');
-    await this.redisClient.hExpire(key, identifier, 60 * 60 * 24);
+  async saveVoteUser(roomId: string, identifier: string, trackNumber: string) {
+    const key = this.roomVoteUserKey(roomId, identifier);
+    await this.redisClient.set(key, trackNumber);
+    await this.redisClient.expire(key, 60 * 60 * 24);
   }
 
   async existsRoomVoteUser(roomId: string, identifier: string) {
-    const key = this.roomVoteUserKey(roomId);
+    const key = this.roomVoteUserKey(roomId, identifier);
 
     return this.redisClient.hExists(key, identifier);
   }
