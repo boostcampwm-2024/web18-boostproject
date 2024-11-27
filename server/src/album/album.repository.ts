@@ -3,6 +3,7 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { Album } from '@/album/album.entity';
 import { DataSource, Repository } from 'typeorm';
 import { plainToInstance } from 'class-transformer';
+import { Song } from '@/song/song.entity';
 
 @Injectable()
 export class AlbumRepository {
@@ -165,6 +166,37 @@ export class AlbumRepository {
 
     return plainToInstance(GetEndedAlbumInfosTuple, endedAlbumInfos);
   }
+
+  async getAlbumDetailInfos(
+    albumId: string,
+  ): Promise<GetAlbumDetailInfosTuple> {
+    const albumDetailInfos = await this.dataSource
+      .createQueryBuilder()
+      .from(Album, 'album')
+      .select([
+        'album.id as albumId',
+        'album.title as albumName',
+        'artist',
+        'jacket_url as jacketUrl',
+      ])
+      .where('id = :albumId', { albumId })
+      .getRawOne();
+
+    return plainToInstance(GetAlbumDetailInfosTuple, albumDetailInfos);
+  }
+
+  async getAlbumDetailSongInfos(
+    albumId: string,
+  ): Promise<GetAlbumDetailSongInfosTuple[]> {
+    const albumDetailSongInfos = await this.dataSource
+      .createQueryBuilder()
+      .from(Song, 'song')
+      .select(['song.title as songName', 'song.duration as songDuration'])
+      .where('album_id = :albumId', { albumId })
+      .getRawMany();
+
+    return plainToInstance(GetAlbumDetailSongInfosTuple, albumDetailSongInfos);
+  }
 }
 
 export class GetAlbumBannerInfosTuple {
@@ -188,4 +220,16 @@ export class GetEndedAlbumInfosTuple {
   artist: string;
   albumTags: string;
   jacketUrl: string;
+}
+
+export class GetAlbumDetailInfosTuple {
+  albumId: string;
+  albumName: string;
+  artist: string;
+  jacketUrl: string;
+}
+
+export class GetAlbumDetailSongInfosTuple {
+  songName: string;
+  songDuration: number;
 }

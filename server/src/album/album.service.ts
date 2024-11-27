@@ -7,6 +7,7 @@ import {
 } from './dto/main-banner-response.dto';
 import { SideBarResponseDto } from './dto/side-bar-response.dto';
 import { EndedAlbumResponseDto } from './dto/ended-album-response.dto';
+import { AlbumDetailResponseDto } from './dto/album-detail-response.dto';
 
 @Injectable()
 export class AlbumService {
@@ -44,5 +45,12 @@ export class AlbumService {
     const recentAlbums = await this.albumRepository.getEndedAlbumsInfos(date);
 
     return new EndedAlbumResponseDto(recentAlbums);
+  }
+
+  async getAlbumDetail(albumId: string): Promise<AlbumDetailResponseDto> {
+    const albumDetail = await this.albumRepository.getAlbumDetailInfos(albumId);
+    const albumSongDetail =
+      await this.albumRepository.getAlbumDetailSongInfos(albumId);
+    return new AlbumDetailResponseDto(albumDetail, albumSongDetail);
   }
 }
