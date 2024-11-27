@@ -62,4 +62,10 @@ export class RoomService {
 
     return voteResult;
   }
+
+  calcPercentage(value: string, total: number) {
+    return value == '0'
+      ? '0%'
+      : `${((Number(value) / total) * 100).toFixed(0)}%`;
+  }
 }
