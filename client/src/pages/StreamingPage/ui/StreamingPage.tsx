@@ -9,7 +9,7 @@ import { useEffect } from 'react';
 
 export function StreamingPage() {
   const { roomId } = useParams();
-  const { isConnected, connect, reset } = useSocketStore();
+  const { isConnected, connect, reset, userCount } = useSocketStore();
   const { clearMessages } = useChatMessageStore();
   useEffect(() => {
     // 페이지 진입 시 소켓 초기화
@@ -48,7 +48,7 @@ export function StreamingPage() {
                 clipRule="evenodd"
               />
             </svg>
-            <span className="text-lg">100명</span>
+            <span className="text-lg">{userCount}명</span>
           </div>
         </div>
         <Vote />
