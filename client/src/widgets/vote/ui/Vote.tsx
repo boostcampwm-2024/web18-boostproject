@@ -15,6 +15,8 @@ export function Vote({ songs }: { songs: SongData[] }) {
     socket.emit('vote', { trackNumber });
   };
 
+  console.log(voteData);
+
   return (
     <div className="absolute top-[5.5rem] left-0 right-0 bg-grayscale-700  z-10 mx-8 rounded-lg">
       <div
@@ -34,28 +36,25 @@ export function Vote({ songs }: { songs: SongData[] }) {
       <div
         className={`overflow-y-scroll transition-all duration-200 ${isOpen ? 'max-h-40' : 'max-h-0'} px-4`}
       >
-        {Object.values(voteData).map((item, index) => (
+        {Object.values(voteData.votes).map((item, index) => (
           <div
-            className="vote relative h-full my-3 flex w-full justify-between overflow-x-hidden hover:bg-grayscale-600 rounded-lg cursor-pointer"
+            className={`vote select-none relative h-full my-3 flex w-full justify-between overflow-x-hidden rounded-lg  ${voteData.trackNumber === String(index + 1) ? 'hover bg-brand text-grayscale-900' : 'hover:bg-grayscale-600 cursor-pointer'}`}
             onClick={() => handleVoteClick(String(index + 1))}
           >
             <div>
               <div
-                className={`votebg absolute bg-grayscale-800 text-grayscale-300 text-shadow h-full rounded-md z-0`}
+                className={`votebg absolute ${voteData.trackNumber === String(index + 1) ? '' : 'bg-grayscale-800'} text-grayscale-300 text-shadow h-full rounded-md z-0`}
                 style={{ width: `${item}` }}
               ></div>
               <p
                 key={index}
-                className={`relative mb-1 cursor-pointer px-3 py-3 rounded-md z-10`}
+                className={`relative mb-1 px-3 py-3 rounded-md z-10`}
               >
                 {songs[index].title}
               </p>
             </div>
             <div className={'w-10 w-20'}>
-              <p
-                key={index}
-                className={`mb-1 cursor-pointer px-3 py-3 rounded-md z-10`}
-              >
+              <p key={index} className={`mb-1 px-3 py-3 rounded-md z-10`}>
                 {item}
               </p>
             </div>

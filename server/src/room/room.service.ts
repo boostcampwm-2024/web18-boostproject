@@ -3,6 +3,7 @@ import { MusicRepository } from '@/music/music.repository';
 import { Room } from '@/room/room.entity';
 import { RoomRepository } from '@/room/room.repository';
 import { AlreadyVoteThisRoomException } from '@/common/exceptions/domain/vote/already-vote-this-room.exception';
+import crypto from 'crypto';
 
 @Injectable()
 export class RoomService {
@@ -24,12 +25,8 @@ export class RoomService {
   }
 
   async updateVote(roomId: string, trackNumber: string, identifier: string) {
-    console.log(roomId, identifier);
-    const alreadyVotedNumber = await this.roomRepository.getRoomVoteUser(
-      roomId,
-      identifier,
-    );
-    console.log(alreadyVotedNumber);
+    const alreadyVotedNumber = await this.getRoomVoteUser(roomId, identifier);
+
     if (alreadyVotedNumber) {
       await this.roomRepository.updateVoteByRoomAndIdentifier(
         roomId,
@@ -45,6 +42,14 @@ export class RoomService {
     );
 
     await this.roomRepository.saveVoteUser(roomId, identifier, trackNumber);
+  }
+
+  async getRoomVoteUser(roomId: string, identifier: string) {
+    return this.roomRepository.getRoomVoteUser(roomId, identifier);
+  }
+
+  generateIdentifier(address: string) {
+    return crypto.createHash('sha256').update(address).digest('hex');
   }
 
   async getVoteResult(roomId: string) {

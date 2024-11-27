@@ -1,6 +1,6 @@
 import { useSocketStore } from '@/shared/store/useSocketStore';
 import { useEffect } from 'react';
-import { useVoteStore } from '@/shared/store/useVoteStore.ts';
+import { useVoteStore, VoteType } from '@/shared/store/useVoteStore.ts';
 
 export function useVote() {
   const { voteData, updateVote } = useVoteStore();
@@ -9,7 +9,7 @@ export function useVote() {
   useEffect(() => {
     if (!socket) return;
 
-    const handleVoteUpdate = (data: Record<string, string>) => {
+    const handleVoteUpdate = (data: VoteType) => {
       updateVote(data);
     };
 

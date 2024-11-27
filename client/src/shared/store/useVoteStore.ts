@@ -1,12 +1,14 @@
 import { create } from 'zustand';
 
+export type VoteType = { votes: Record<string, string>; trackNumber: string };
+
 interface VoteState {
-  voteData: Record<string, string>;
-  updateVote: (voteData: Record<string, string>) => void;
+  voteData: VoteType;
+  updateVote: (voteData: VoteType) => void;
 }
 
 export const useVoteStore = create<VoteState>((set) => ({
-  voteData: {},
+  voteData: { votes: {}, trackNumber: '' },
   updateVote: (voteData) =>
     set((state) => ({ voteData: { ...state.voteData, ...voteData } })),
 }));
