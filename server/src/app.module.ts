@@ -19,6 +19,8 @@ import { MusicRepository } from '@/music/music.repository';
 import { RoomModule } from '@/room/room.module';
 import { SchedulerService } from './common/scheduler/scheduler.service';
 import { ScheduleModule } from '@nestjs/schedule';
+import { Comment } from './comment/comment.entity';
+import { CommentModule } from './comment/comment.module';
 
 @Module({
   imports: [
@@ -32,6 +34,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     AlbumModule,
     SongModule,
     RoomModule,
+    CommentModule,
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.DB_HOST,
@@ -39,7 +42,7 @@ import { ScheduleModule } from '@nestjs/schedule';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      entities: [Album, Song],
+      entities: [Album, Song, Comment],
     }),
   ],
   controllers: [AppController],
