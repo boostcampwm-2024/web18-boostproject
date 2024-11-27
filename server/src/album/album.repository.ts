@@ -53,6 +53,22 @@ export class AlbumRepository {
     await this.save(album);
   }
 
+  async updateReleaseDate(albumId: string, minutes: number): Promise<void> {
+    const album = await this.findById(albumId);
+    if (!album) {
+      throw new NotFoundException(`Album ${albumId} not found`);
+    }
+
+    await this.repository
+      .createQueryBuilder()
+      .update(Album)
+      .set({
+        releaseDate: () => `DATE_ADD(release_date, INTERVAL ${minutes} MINUTE)`,
+      })
+      .where('id = :albumId', { albumId })
+      .execute();
+  }
+
   // 3일 이내 앨범 표시
   async getAlbumBannerInfos(
     currentTime: Date,
@@ -68,9 +84,12 @@ export class AlbumRepository {
         'release_date as releaseDate',
         'banner_url as bannerImageUrl',
       ])
-      .where('DATE_ADD(release_date, INTERVAL total_duration SECOND) > :currentTime', {
-        currentTime,
-      })
+      .where(
+        'DATE_ADD(release_date, INTERVAL total_duration SECOND) > :currentTime',
+        {
+          currentTime,
+        },
+      )
       .andWhere('release_date <= DATE_ADD(:currentTime, INTERVAL 3 DAY)', {
         currentTime,
       })
