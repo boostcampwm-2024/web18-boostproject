@@ -151,6 +151,7 @@ export class AlbumRepository {
         'title as albumName',
         'artist',
         'tags as albumTags',
+        'jacket_url as jacketUrl',
       ])
       .where(
         'DATE_ADD(release_date, INTERVAL total_duration SECOND) < :currentTime',
@@ -186,4 +187,5 @@ export class GetEndedAlbumInfosTuple {
   albumName: string;
   artist: string;
   albumTags: string;
+  jacketUrl: string;
 }

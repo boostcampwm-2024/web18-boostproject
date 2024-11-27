@@ -22,4 +22,6 @@ export class EndedAlbumResponse {
   artist: string;
   @ApiProperty()
   albumTags: string;
+  @ApiProperty()
+  jacketUrl: string;
 }

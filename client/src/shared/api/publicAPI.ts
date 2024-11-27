@@ -89,4 +89,12 @@ export const publicAPI = {
       throw error;
     }
   },
+  getAlbumEnded: async () => {
+    try {
+      const { data } = await publicInstance.get('/album/ended');
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  },
 };
