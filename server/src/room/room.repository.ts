@@ -61,7 +61,7 @@ export class RoomRepository {
   async updateVoteByRoomAndIdentifier(roomId: string, trackNumber: string) {
     const key = this.roomVoteKey(roomId);
 
-    await this.redisClient.hSet(key, trackNumber, 1);
+    await this.redisClient.hIncrBy(key, trackNumber, 1);
   }
 
   async createRoom(room: Room): Promise<void> {
