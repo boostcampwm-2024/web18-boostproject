@@ -15,7 +15,10 @@ import { RoomNotFoundException } from '@/common/exceptions/domain/room/room-not-
 import { UserRoomInfoNotFoundException } from '@/common/exceptions/domain/room/user-room-info-not-found.exception';
 import { RoomService } from '@/room/room.service';
 import * as crypto from 'crypto';
+import { UseFilters } from '@nestjs/common';
+import { CustomWsExceptionFilter } from '@/common/exceptions/ws-exception.filter';
 
+@UseFilters(CustomWsExceptionFilter)
 @WebSocketGateway({
   namespace: 'rooms',
   cors: {
@@ -69,33 +72,38 @@ export class RoomGateway
 
   async handleDisconnect(client: Socket) {
     console.log(`Client disconnected: ${client.id}`);
-    const roomId = client.handshake.query.roomId as string;
-    const room = await this.roomRepository.findRoom(roomId);
+    try {
+      const roomId = client.handshake.query.roomId as string;
+      const room = await this.roomRepository.findRoom(roomId);
 
-    if (!room) {
-      throw new RoomNotFoundException();
+      if (!room) {
+        throw new RoomNotFoundException();
+      }
+
+      const clientId = client.id;
+      await this.roomRepository.leaveRoom(client.id, roomId);
+
+      const currentUserCount =
+        await this.roomRepository.getCurrentUsers(roomId);
+      await client.leave(roomId);
+
+      client.emit('leavedRoom', {
+        roomId,
+        userId: clientId,
+        timestamp: new Date(),
+      });
+      this.server.to(roomId).emit('roomUsersUpdated', {
+        roomId,
+        userCount: currentUserCount,
+      });
+
+      return {
+        success: true,
+        message: `Successfully left room ${roomId}`,
+      };
+    } catch (error) {
+      console.error('Error in handleDisconnectConnection:', error);
     }
-
-    const clientId = client.id;
-    await this.roomRepository.leaveRoom(client.id, roomId);
-
-    const currentUserCount = await this.roomRepository.getCurrentUsers(roomId);
-    await client.leave(roomId);
-
-    client.emit('leavedRoom', {
-      roomId,
-      userId: clientId,
-      timestamp: new Date(),
-    });
-    this.server.to(roomId).emit('roomUsersUpdated', {
-      roomId,
-      userCount: currentUserCount,
-    });
-
-    return {
-      success: true,
-      message: `Successfully left room ${roomId}`,
-    };
   }
 
   @SubscribeMessage('message')
