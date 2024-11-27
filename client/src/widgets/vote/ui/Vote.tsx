@@ -35,7 +35,10 @@ export function Vote({ songs }: { songs: SongData[] }) {
         className={`overflow-y-scroll transition-all duration-200 ${isOpen ? 'max-h-40' : 'max-h-0'} px-4`}
       >
         {Object.values(voteData).map((item, index) => (
-          <div className="vote relative h-full my-3 flex w-full justify-between overflow-x-hidden hover:bg-grayscale-600 rounded-lg cursor-pointer">
+          <div
+            className="vote relative h-full my-3 flex w-full justify-between overflow-x-hidden hover:bg-grayscale-600 rounded-lg cursor-pointer"
+            onClick={() => handleVoteClick(String(index + 1))}
+          >
             <div>
               <div
                 className={`votebg absolute bg-grayscale-800 text-grayscale-300 text-shadow h-full rounded-md z-0`}
@@ -44,7 +47,6 @@ export function Vote({ songs }: { songs: SongData[] }) {
               <p
                 key={index}
                 className={`relative mb-1 cursor-pointer px-3 py-3 rounded-md z-10`}
-                onClick={() => handleVoteClick(String(index + 1))}
               >
                 {songs[index].title}
               </p>
@@ -53,7 +55,6 @@ export function Vote({ songs }: { songs: SongData[] }) {
               <p
                 key={index}
                 className={`mb-1 cursor-pointer px-3 py-3 rounded-md z-10`}
-                onClick={() => handleVoteClick(String(index + 1))}
               >
                 {item}
               </p>
