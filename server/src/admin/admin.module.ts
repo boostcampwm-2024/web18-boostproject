@@ -12,6 +12,7 @@ import { RoomModule } from '@/room/room.module';
 import { AlbumModule } from '@/album/album.module';
 import { SongModule } from '@/song/song.module';
 import { JwtModule } from '@nestjs/jwt';
+import { AdminTransactionService } from './admin.transaction.service';
 
 @Module({
   imports: [
@@ -30,7 +31,7 @@ import { JwtModule } from '@nestjs/jwt';
     }),
   ],
   controllers: [AdminController],
-  providers: [AdminService, AdminRedisRepository],
+  providers: [AdminService, AdminRedisRepository, AdminTransactionService],
   exports: [AdminService],
 })
 export class AdminModule {}

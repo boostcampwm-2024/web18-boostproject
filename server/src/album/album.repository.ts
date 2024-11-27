@@ -40,6 +40,10 @@ export class AlbumRepository {
     });
   }
 
+  async delete(albumId: string) {
+    await this.repository.delete({ id: albumId });
+  }
+
   async saveTotalDuration(albumId: string, totalDuration: number) {
     const album = await this.repository.findOne({ where: { id: albumId } });
     if (!album) {
@@ -47,6 +51,22 @@ export class AlbumRepository {
     }
     album.setTotalDuration(totalDuration);
     await this.save(album);
+  }
+
+  async updateReleaseDate(albumId: string, minutes: number): Promise<void> {
+    const album = await this.findById(albumId);
+    if (!album) {
+      throw new NotFoundException(`Album ${albumId} not found`);
+    }
+
+    await this.repository
+      .createQueryBuilder()
+      .update(Album)
+      .set({
+        releaseDate: () => `DATE_ADD(release_date, INTERVAL ${minutes} MINUTE)`,
+      })
+      .where('id = :albumId', { albumId })
+      .execute();
   }
 
   // 3일 이내 앨범 표시
@@ -64,9 +84,12 @@ export class AlbumRepository {
         'release_date as releaseDate',
         'banner_url as bannerImageUrl',
       ])
-      .where('release_date > :currentTime', {
-        currentTime,
-      })
+      .where(
+        'DATE_ADD(release_date, INTERVAL total_duration SECOND) > :currentTime',
+        {
+          currentTime,
+        },
+      )
       .andWhere('release_date <= DATE_ADD(:currentTime, INTERVAL 3 DAY)', {
         currentTime,
       })
@@ -115,6 +138,33 @@ export class AlbumRepository {
 
     return plainToInstance(GetSideBarInfosTuple, upComingAlbumInfos);
   }
+
+  // 스트리밍 종료 시간 < 현재 시간, 종료된지 7일 이내인 앨범 최근 끝난 것부터 정렬
+  async getEndedAlbumsInfos(
+    currentTime: Date,
+  ): Promise<GetEndedAlbumInfosTuple[]> {
+    const endedAlbumInfos = await this.dataSource
+      .createQueryBuilder()
+      .from(Album, 'album')
+      .select([
+        'id as albumId',
+        'title as albumName',
+        'artist',
+        'tags as albumTags',
+        'jacket_url as jacketUrl',
+      ])
+      .where(
+        'DATE_ADD(release_date, INTERVAL total_duration SECOND) < :currentTime',
+        { currentTime },
+      )
+      .andWhere(
+        'DATE_ADD(DATE_ADD(release_date, INTERVAL total_duration SECOND), INTERVAL 7 DAY) > :currentTime',
+      )
+      .orderBy('DATE_ADD(release_date, INTERVAL total_duration SECOND)', 'DESC')
+      .getRawMany();
+
+    return plainToInstance(GetEndedAlbumInfosTuple, endedAlbumInfos);
+  }
 }
 
 export class GetAlbumBannerInfosTuple {
@@ -130,4 +180,12 @@ export class GetSideBarInfosTuple {
   albumId: string;
   albumName: string;
   albumTags: string;
+}
+
+export class GetEndedAlbumInfosTuple {
+  albumId: string;
+  albumName: string;
+  artist: string;
+  albumTags: string;
+  jacketUrl: string;
 }

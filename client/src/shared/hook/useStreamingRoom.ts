@@ -4,6 +4,12 @@ import { useSocketEvents } from './useSocketEvents';
 import { Socket } from 'socket.io-client';
 import { createSocket } from '../api/socket';
 
+/**
+ * [현재 미사용]
+ * 소켓 연결과 스트리밍 전체 연결 확인 후에 삭제할 예정
+ * @returns
+ */
+
 export function useStreamingRoom() {
   const [isConnected, setIsConnected] = useState(false);
   const [socket, setSocket] = useState<Socket | null>(null);

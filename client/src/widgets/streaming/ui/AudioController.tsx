@@ -29,7 +29,7 @@ export const AudioController = ({
     return () => {
       audio.removeEventListener('timeupdate', updateProgress);
     };
-  }, []);
+  }, [songDuration]);
 
   return (
     <div className="absolute bottom-0 z-40 w-full flex items-center space-x-2">

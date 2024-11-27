@@ -3,17 +3,22 @@ import { Vote } from '@/widgets/vote';
 import { Streaming } from '@/widgets/streaming';
 import { StreamingErrorPage } from '@/pages/StreamingErrorPage';
 import { useSocketStore } from '@/shared/store/useSocketStore';
+import { useChatMessageStore } from '@/shared/store/useChatMessageStore';
 import { useParams } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { RoomResponse } from '@/entities/album/types';
+import { publicAPI } from '@/shared/api/publicAPI';
 
 export function StreamingPage() {
-  const { roomId } = useParams();
-  const { isConnected, connect, reset } = useSocketStore();
-
+  const { isConnected, connect, reset, userCount } = useSocketStore();
+  const { clearMessages } = useChatMessageStore();
+  const { roomId } = useParams<{ roomId: string }>();
+  const [roomInfo, setRoomInfo] = useState<RoomResponse | null>(null);
+  const [songIndex, setSongIndex] = useState<number>(0);
   useEffect(() => {
     // 페이지 진입 시 소켓 초기화
     reset();
-
+    clearMessages();
     if (roomId) {
       connect(roomId);
     }
@@ -24,15 +29,53 @@ export function StreamingPage() {
     };
   }, [roomId]);
 
+  const getRoomInfo = async () => {
+    if (!roomId) return;
+    const res: RoomResponse = await publicAPI
+      .getRoomInfo(roomId)
+      .then((res) => res)
+      .catch((err) => console.log(err));
+    console.log(res);
+    setRoomInfo(res);
+    setSongIndex(Number(res.trackOrder));
+  };
+  useEffect(() => {
+    getRoomInfo();
+  }, []);
+
   if (!isConnected) {
     return <StreamingErrorPage />;
   }
 
   return (
     <div className="flex flex-row h-screen">
-      <Streaming />
+      {roomInfo && songIndex && (
+        <Streaming
+          roomInfo={roomInfo}
+          songIndex={songIndex}
+          setSongIndex={setSongIndex}
+        />
+      )}
+
       <div className="bg-grayscale-900 w-1/4 text-grayscale-100 px-8 pt-10 pb-8 flex flex-col relative">
-        <div className="text-2xl font-bold mb-4">채팅</div>
+        <div className="flex justify-between items-center mb-4">
+          <div className="text-2xl font-bold">채팅</div>
+          <div className="flex items-center gap-2">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                clipRule="evenodd"
+              />
+            </svg>
+            <span className="text-lg">{userCount}명</span>
+          </div>
+        </div>
         <Vote />
         <ChattingContainer />
       </div>
