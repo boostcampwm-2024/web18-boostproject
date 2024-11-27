@@ -1,19 +1,19 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class EndedAlbumResponseDto {
-  @ApiProperty({ type: () => EndedAlbumResponse, isArray: true })
+  @ApiProperty({ type: () => EndedAlbumDto, isArray: true })
   result: {
-    endedAlbums: EndedAlbumResponse[];
+    endedAlbums: EndedAlbumDto[];
   };
 
-  constructor(endedAlbums: EndedAlbumResponse[]) {
+  constructor(endedAlbums: EndedAlbumDto[]) {
     this.result = {
       endedAlbums,
     };
   }
 }
 
-export class EndedAlbumResponse {
+export class EndedAlbumDto {
   @ApiProperty()
   albumId: string;
   @ApiProperty()

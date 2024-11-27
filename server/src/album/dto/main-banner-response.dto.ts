@@ -2,19 +2,19 @@ import { ApiProperty } from '@nestjs/swagger';
 import { GetAlbumBannerInfosTuple } from '../album.repository';
 
 export class MainBannerResponseDto {
-  @ApiProperty({ type: () => MainBannerResponse, isArray: true })
+  @ApiProperty({ type: () => MainBannerDto, isArray: true })
   result: {
-    bannerLists: MainBannerResponse[];
+    bannerLists: MainBannerDto[];
   };
 
-  constructor(bannerLists: MainBannerResponse[]) {
+  constructor(bannerLists: MainBannerDto[]) {
     this.result = {
       bannerLists,
     };
   }
 }
 
-export class MainBannerResponse {
+export class MainBannerDto {
   @ApiProperty()
   albumId: string;
   @ApiProperty()
@@ -48,7 +48,7 @@ export class MainBannerResponse {
     this.currentUserCount = currentUserCount;
   }
   static from(album: GetAlbumBannerInfosTuple, currentUserCount: number) {
-    return new MainBannerResponse(
+    return new MainBannerDto(
       album.albumId,
       album.albumName,
       album.albumTags,

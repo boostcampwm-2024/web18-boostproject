@@ -1,17 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { GetSideBarInfosTuple } from '../album.repository';
 
 export class SideBarResponseDto {
-  @ApiProperty({ type: () => SideBarResponse, isArray: true })
+  @ApiProperty({ type: () => SideBarDto, isArray: true })
   result: {
-    streamingAlbums: SideBarResponse[];
-    upComingAlbums: SideBarResponse[];
+    streamingAlbums: SideBarDto[];
+    upComingAlbums: SideBarDto[];
   };
 
-  constructor(
-    streamingAlbums: SideBarResponse[],
-    upComingAlbums: SideBarResponse[],
-  ) {
+  constructor(streamingAlbums: SideBarDto[], upComingAlbums: SideBarDto[]) {
     this.result = {
       streamingAlbums,
       upComingAlbums,
@@ -19,7 +15,7 @@ export class SideBarResponseDto {
   }
 }
 
-export class SideBarResponse {
+export class SideBarDto {
   @ApiProperty()
   albumId: string;
   @ApiProperty()
@@ -32,7 +28,7 @@ export class SideBarResponse {
     this.albumName = albumName;
     this.albumTags = albumTags;
   }
-  static from(album: GetSideBarInfosTuple) {
-    return new SideBarResponse(album.albumId, album.albumName, album.albumTags);
+  static from(album: SideBarDto) {
+    return new SideBarDto(album.albumId, album.albumName, album.albumTags);
   }
 }
