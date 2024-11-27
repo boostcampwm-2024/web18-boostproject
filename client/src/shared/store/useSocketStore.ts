@@ -7,15 +7,18 @@ interface SocketState {
   socket: Socket | null;
   isConnected: boolean;
   roomId: string | null;
+  userCount: number;
   connect: (roomId: string) => void;
   disconnect: () => void;
   reset: () => void;
+  setUserCount: (count: number) => void;
 }
 
 export const useSocketStore = create<SocketState>((set, get) => ({
   socket: null,
   isConnected: false,
   roomId: null,
+  userCount: 0,
 
   connect: (newRoomId: string) => {
     const { socket, roomId } = get();
@@ -46,8 +49,17 @@ export const useSocketStore = create<SocketState>((set, get) => ({
       }),
     );
 
+    newSocket.on(
+      'roomUsersUpdated',
+      (data: { roomId: string; userCount: number }) => {
+        set({ userCount: data.userCount });
+      },
+    );
+
     newSocket.connect();
   },
+
+  setUserCount: (count: number) => set({ userCount: count }),
 
   disconnect: () => {
     const { socket } = get();
