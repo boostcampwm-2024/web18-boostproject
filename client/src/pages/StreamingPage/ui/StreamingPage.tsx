@@ -15,6 +15,18 @@ export function StreamingPage() {
   const { roomId } = useParams<{ roomId: string }>();
   const [roomInfo, setRoomInfo] = useState<RoomResponse | null>(null);
   const [songIndex, setSongIndex] = useState<number>(0);
+
+  const getRoomInfo = async () => {
+    if (!roomId) return;
+    const res: RoomResponse = await publicAPI
+      .getRoomInfo(roomId)
+      .then((res) => res)
+      .catch((err) => console.log(err));
+    console.log(res);
+    setRoomInfo(res);
+    setSongIndex(Number(res.trackOrder));
+  };
+
   useEffect(() => {
     // 페이지 진입 시 소켓 초기화
     reset();
@@ -29,16 +41,6 @@ export function StreamingPage() {
     };
   }, [roomId]);
 
-  const getRoomInfo = async () => {
-    if (!roomId) return;
-    const res: RoomResponse = await publicAPI
-      .getRoomInfo(roomId)
-      .then((res) => res)
-      .catch((err) => console.log(err));
-    console.log(res);
-    setRoomInfo(res);
-    setSongIndex(Number(res.trackOrder));
-  };
   useEffect(() => {
     getRoomInfo();
   }, []);
@@ -57,7 +59,7 @@ export function StreamingPage() {
         />
       )}
 
-      <div className="bg-grayscale-900 w-1/4 text-grayscale-100 px-8 pt-10 pb-8 flex flex-col relative">
+      <div className="bg-grayscale-900 flex-shrink-0 w-[340px] text-grayscale-100 px-8 pt-10 pb-8 flex flex-col relative">
         <div className="flex justify-between items-center mb-4">
           <div className="text-2xl font-bold">채팅</div>
           <div className="flex items-center gap-2">

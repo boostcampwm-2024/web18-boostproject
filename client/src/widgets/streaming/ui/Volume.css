@@ -1,0 +1,26 @@
+.volume-range {
+  overflow: hidden;
+  height: 6px;
+  -webkit-appearance: none;
+  background: #f3f3f3;
+  transition: width 0.3s ease-in-out;
+}
+
+.volume-range:focus {
+  outline: none;
+}
+
+.volume-range::-webkit-slider-runnable-track {
+  cursor: pointer;
+  /* border: 2px solid #ff96ab; */
+}
+
+.volume-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 8px;
+  height: 8px;
+  background: #00af69;
+  /* box-shadow: 1px 1px 7px #d16a6e; */
+  cursor: pointer;
+  box-shadow: -100vw 0 0 100vw #00e589;
+}

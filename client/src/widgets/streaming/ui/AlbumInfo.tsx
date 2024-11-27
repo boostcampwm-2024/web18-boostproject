@@ -4,7 +4,10 @@ import { PlayIcon } from '@/shared/icon/PlayIcon';
 import { RoomResponse } from '@/entities/album/types';
 import SampleAlbumCover from '@/assets/sample-album-cover-1.png';
 import { useStreamingPlayer } from '@/features/albumStreaming/lib/useStreamingPlayer';
-
+import { StreamingErrorPage } from '@/pages/StreamingErrorPage';
+import { Volume } from '@/shared/icon/Volume';
+import { useState, useEffect } from 'react';
+import './Volume.css';
 interface AlbumInfoProps {
   roomInfo: RoomResponse;
   songIndex: number;
@@ -17,24 +20,63 @@ export function AlbumInfo({
   setSongIndex,
 }: AlbumInfoProps) {
   const { roomId } = useParams<{ roomId: string }>();
+  const [volume, setVolume] = useState<number>(0.5);
+  const [isVolumeOpen, setIsVolumeOpen] = useState<boolean>(false);
   if (!roomId) return;
   const { audioRef, isLoaded, playStream } = useStreamingPlayer(
     roomId,
     setSongIndex,
   );
 
-  // if (!roomInfo.success) {
-  //   return <StreamingErrorPage />;
-  // }
+  if (!roomInfo.success) {
+    return <StreamingErrorPage />;
+  }
+
+  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newVolume = Number(e.target.value) / 100;
+    setVolume(newVolume);
+
+    if (audioRef.current) {
+      audioRef.current.volume = newVolume;
+    }
+  };
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = volume;
+    }
+    console.log('volume', volume);
+  }, [audioRef.current, isLoaded]);
 
   return (
     <div className="flex flex-col items-center relative text-grayscale-100">
-      <audio ref={audioRef} controls controlsList="nodownload" />
+      <audio
+        ref={audioRef}
+        controls
+        autoPlay
+        playsInline
+        controlsList="nodownload"
+      />
+      <div
+        className={`fixed top-6 right-[364px] bg-grayscale-500 p-2 rounded-full flex flex-row items-center`}
+      >
+        <input
+          type="range"
+          min="0"
+          max="100"
+          value={volume * 100}
+          onChange={handleVolumeChange}
+          className={`volume-range ${isVolumeOpen ? 'w-36 ml-2 mr-2' : 'w-0'}`}
+        />
+        <div onClick={() => setIsVolumeOpen(!isVolumeOpen)}>
+          <Volume />
+        </div>
+      </div>
       <div className="text-center mb-20 w-full">
         <p className="text-gray-300 mb-4">
           {roomInfo.albumResponse.tags
             ? `#${roomInfo.albumResponse.tags.split(', ').join(' #')}`
-            : '태그 없습니다'}
+            : ''}
         </p>
         <p className="text-3xl font-bold mb-4">
           {roomInfo.albumResponse.title}
