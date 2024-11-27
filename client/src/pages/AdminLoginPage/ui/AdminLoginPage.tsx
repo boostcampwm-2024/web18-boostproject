@@ -13,7 +13,7 @@ export function AdminLoginPage() {
 
     try {
       await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/admin/login`,
+        `http://localhost:3000/api/admin/login`,
         { adminKey },
         { withCredentials: true },
       );

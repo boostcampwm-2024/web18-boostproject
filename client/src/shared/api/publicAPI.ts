@@ -21,7 +21,7 @@ enum ErrorType {
 }
 
 const publicInstance: AxiosInstance = axios.create({
-  baseURL: `${import.meta.env.VITE_API_URL}/api`,
+  baseURL: `http://localhost:3000/api`,
 });
 
 publicInstance.interceptors.response.use(

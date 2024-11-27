@@ -9,12 +9,9 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/admin/verify-token`,
-          {
-            withCredentials: true,
-          },
-        );
+        await axios.get(`http://localhost:3000/api/admin/verify-token`, {
+          withCredentials: true,
+        });
         setIsAuthenticated(true);
       } catch (error) {
         setIsAuthenticated(false);
