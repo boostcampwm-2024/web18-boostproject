@@ -4,7 +4,7 @@ import { PlayIcon } from '@/shared/icon/PlayIcon';
 import { RoomResponse } from '@/entities/album/types';
 import SampleAlbumCover from '@/assets/sample-album-cover-1.png';
 import { useStreamingPlayer } from '@/features/albumStreaming/lib/useStreamingPlayer';
-
+import { StreamingErrorPage } from '@/pages/StreamingErrorPage';
 interface AlbumInfoProps {
   roomInfo: RoomResponse;
   songIndex: number;
@@ -23,13 +23,19 @@ export function AlbumInfo({
     setSongIndex,
   );
 
-  // if (!roomInfo.success) {
-  //   return <StreamingErrorPage />;
-  // }
+  if (!roomInfo.success) {
+    return <StreamingErrorPage />;
+  }
 
   return (
     <div className="flex flex-col items-center relative text-grayscale-100">
-      <audio ref={audioRef} controls controlsList="nodownload" />
+      <audio
+        ref={audioRef}
+        controls
+        autoPlay
+        playsInline
+        controlsList="nodownload"
+      />
       <div className="text-center mb-20 w-full">
         <p className="text-gray-300 mb-4">
           {roomInfo.albumResponse.tags

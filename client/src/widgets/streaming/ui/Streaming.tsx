@@ -16,7 +16,7 @@ export function Streaming({
   setSongIndex,
 }: StreamingProps) {
   return (
-    <div className="overflow-hidden relative w-3/4 h-full">
+    <div className="overflow-hidden relative w-full h-full">
       <AlbumBackground
         coverImage={roomInfo?.albumResponse?.jacketUrl ?? SampleAlbumCover}
       />
