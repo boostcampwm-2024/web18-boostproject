@@ -68,9 +68,12 @@ export class AlbumRepository {
         'release_date as releaseDate',
         'banner_url as bannerImageUrl',
       ])
-      .where('DATE_ADD(release_date, INTERVAL total_duration SECOND) > :currentTime', {
-        currentTime,
-      })
+      .where(
+        'DATE_ADD(release_date, INTERVAL total_duration SECOND) > :currentTime',
+        {
+          currentTime,
+        },
+      )
       .andWhere('release_date <= DATE_ADD(:currentTime, INTERVAL 3 DAY)', {
         currentTime,
       })
@@ -132,6 +135,7 @@ export class AlbumRepository {
         'title as albumName',
         'artist',
         'tags as albumTags',
+        'jacket_url as jacketUrl',
       ])
       .where(
         'DATE_ADD(release_date, INTERVAL total_duration SECOND) < :currentTime',
@@ -167,4 +171,5 @@ export class GetEndedAlbumInfosTuple {
   albumName: string;
   artist: string;
   albumTags: string;
+  jacketUrl: string;
 }
