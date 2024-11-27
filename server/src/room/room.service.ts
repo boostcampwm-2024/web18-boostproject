@@ -24,14 +24,26 @@ export class RoomService {
   }
 
   async updateVote(roomId: string, trackNumber: string, identifier: string) {
-    if (await this.roomRepository.existsRoomVoteUser(roomId, identifier)) {
-      throw new AlreadyVoteThisRoomException(roomId);
+    console.log(roomId, identifier);
+    const alreadyVotedNumber = await this.roomRepository.getRoomVoteUser(
+      roomId,
+      identifier,
+    );
+    console.log(alreadyVotedNumber);
+    if (alreadyVotedNumber) {
+      await this.roomRepository.updateVoteByRoomAndIdentifier(
+        roomId,
+        alreadyVotedNumber,
+        -1,
+      );
     }
 
     await this.roomRepository.updateVoteByRoomAndIdentifier(
       roomId,
       trackNumber,
+      1,
     );
+
     await this.roomRepository.saveVoteUser(roomId, identifier, trackNumber);
   }
 

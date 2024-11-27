@@ -52,16 +52,20 @@ export class RoomRepository {
     await this.redisClient.expire(key, 60 * 60 * 24);
   }
 
-  async existsRoomVoteUser(roomId: string, identifier: string) {
+  async getRoomVoteUser(roomId: string, identifier: string) {
     const key = this.roomVoteUserKey(roomId, identifier);
 
-    return this.redisClient.hExists(key, identifier);
+    return this.redisClient.get(key);
   }
 
-  async updateVoteByRoomAndIdentifier(roomId: string, trackNumber: string) {
+  async updateVoteByRoomAndIdentifier(
+    roomId: string,
+    trackNumber: string,
+    updateAmount: number,
+  ) {
     const key = this.roomVoteKey(roomId);
 
-    await this.redisClient.hIncrBy(key, trackNumber, 1);
+    await this.redisClient.hIncrBy(key, trackNumber, updateAmount);
   }
 
   async createRoom(room: Room): Promise<void> {
