@@ -89,4 +89,12 @@ export const publicAPI = {
       throw error;
     }
   },
+  getRoomInfo: async (roomId: string) => {
+    try {
+      const { data } = await publicInstance.get(`/room/${roomId}`);
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  },
 };

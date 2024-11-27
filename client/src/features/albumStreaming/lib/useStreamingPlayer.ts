@@ -4,7 +4,7 @@ import { DEFAULT_STREAMING_CONFIG } from './constants';
 
 export const useStreamingPlayer = (
   roomId: string,
-  setSongIndex: (value: number) => void,
+  setSongIndex: (value: React.SetStateAction<number>) => void,
 ) => {
   const audioRef = useRef<HTMLMediaElement>(null);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -42,6 +42,7 @@ export const useStreamingPlayer = (
 
     const handleEnded = () => {
       setIsLoaded(false);
+      setSongIndex((prev) => prev + 1);
       playStream();
     };
     audio.addEventListener('ended', handleEnded);

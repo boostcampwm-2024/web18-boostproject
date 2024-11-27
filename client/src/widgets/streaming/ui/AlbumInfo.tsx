@@ -3,13 +3,12 @@ import { AudioController } from '@/widgets/streaming/ui/AudioController';
 import { PlayIcon } from '@/shared/icon/PlayIcon';
 import { RoomResponse } from '@/entities/album/types';
 import SampleAlbumCover from '@/assets/sample-album-cover-1.png';
-import { StreamingErrorPage } from '@/pages/StreamingErrorPage';
 import { useStreamingPlayer } from '@/features/albumStreaming/lib/useStreamingPlayer';
 
 interface AlbumInfoProps {
   roomInfo: RoomResponse;
   songIndex: number;
-  setSongIndex: (value: number) => void;
+  setSongIndex: (value: React.SetStateAction<number>) => void;
 }
 
 export function AlbumInfo({
