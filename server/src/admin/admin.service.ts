@@ -1,13 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as AWS from 'aws-sdk';
 import { Song } from '@/song/song.entity';
-import { SongSaveDto } from '@/song/songSave.dto';
+import { SongSaveDto } from '@/song/dto/song-save.dto';
 import { SongRepository } from '@/song/song.repository';
 import { AlbumRepository } from '@/album/album.repository';
 import { UploadedFiles } from '@/admin/admin.controller';
 import { Album } from '@/album/album.entity';
 import { AdminRedisRepository } from '@/admin/admin.redis.repository';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AdminService {
@@ -18,15 +20,38 @@ export class AdminService {
     private readonly songRepository: SongRepository,
     private readonly albumRepository: AlbumRepository,
     private readonly adminRedisRepository: AdminRedisRepository,
+    private jwtService: JwtService,
   ) {
     this.s3 = new AWS.S3({
-      endpoint: new AWS.Endpoint('https://kr.object.ncloudstorage.com'),
-      region: 'kr-standard',
+      endpoint: this.configService.get<string>('S3_END_POINT'),
+      region: this.configService.get<string>('S3_REGION'),
       credentials: {
         accessKeyId: this.configService.get<string>('S3_ACCESS_KEY'),
         secretAccessKey: this.configService.get<string>('S3_SECRET_KEY'),
       },
     });
+  }
+
+  async login(adminKey: string) {
+    const correctHash = this.configService.get<string>('ADMIN_KEY');
+    const isValid = await bcrypt.compare(adminKey, correctHash);
+
+    if (!isValid) {
+      throw new UnauthorizedException('Invalid admin key');
+    }
+    const expiration = parseInt(this.configService.get('TOKEN_EXPIRATION'));
+    const now = Math.floor(Date.now() / 1000);
+
+    const payload = {
+      role: 'admin',
+      iat: now,
+      exp: now + expiration,
+    };
+
+    return {
+      token: await this.jwtService.signAsync(payload),
+      expiresIn: expiration,
+    };
   }
 
   private async uploadImageFiles(
@@ -78,12 +103,8 @@ export class AdminService {
       ACL: 'public-read',
     };
 
-    try {
-      const result = await this.s3.upload(uploadParams).promise();
-      return result.Location;
-    } catch (error) {
-      throw new Error(`Failed to upload file to S3: ${error.message}`);
-    }
+    const result = await this.s3.upload(uploadParams).promise();
+    return result.Location;
   }
 
   async saveSongs(songs: Song[], albumId: string) {
@@ -132,5 +153,8 @@ export class AdminService {
       releaseTimestamp,
       songDurations,
     );
+
+    const totalDuration = songDurations.reduce((acc, cur) => acc + cur, 0);
+    await this.albumRepository.saveTotalDuration(album.id, totalDuration);
   }
 }

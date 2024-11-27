@@ -11,7 +11,14 @@ import {
 import { Server, Socket } from 'socket.io';
 import { RoomRepository } from './room.repository';
 import { RandomNameUtil } from '@/common/randomname/random-name.util';
+import { RoomNotFoundException } from '@/common/exceptions/domain/room/room-not-found.exception';
+import { UserRoomInfoNotFoundException } from '@/common/exceptions/domain/room/user-room-info-not-found.exception';
+import { RoomService } from '@/room/room.service';
+import * as crypto from 'crypto';
+import { UseFilters } from '@nestjs/common';
+import { CustomWsExceptionFilter } from '@/common/exceptions/ws-exception.filter';
 
+@UseFilters(CustomWsExceptionFilter)
 @WebSocketGateway({
   namespace: 'rooms',
   cors: {
@@ -25,7 +32,10 @@ export class RoomGateway
   @WebSocketServer()
   server: Server;
 
-  constructor(private readonly roomRepository: RoomRepository) {}
+  constructor(
+    private readonly roomRepository: RoomRepository,
+    private readonly roomService: RoomService,
+  ) {}
 
   afterInit(server: Server) {
     console.log('WebSocket Gateway Initialized');
@@ -37,7 +47,7 @@ export class RoomGateway
       const roomId = client.handshake.query.roomId as string;
       const room = await this.roomRepository.findRoom(roomId);
       if (!room) {
-        throw new Error('Room not found');
+        throw new RoomNotFoundException();
       }
 
       const clientId = client.id;
@@ -46,18 +56,14 @@ export class RoomGateway
       const currentUserCount =
         await this.roomRepository.getCurrentUsers(roomId);
       await client.join(roomId);
-      if (client.data.name === undefined) {
-        client.data.name = RandomNameUtil.generate();
-      }
+      client.data.name = client.data.name || RandomNameUtil.generate();
       client.emit('joinedRoom', {
         roomId: roomId,
         userId: clientId,
         timestamp: new Date(),
       });
-      this.server.to(roomId).emit('roomUsersUpdated', {
-        roomId,
-        userCount: currentUserCount,
-      });
+      this.emitUserCountUpdateToRoom(roomId, currentUserCount);
+      await this.emitVoteUpdateToRoom(roomId);
     } catch (error) {
       console.error('Error in handleConnection:', error);
       client.send('error', '방 참여에 실패하였습니다.');
@@ -71,7 +77,7 @@ export class RoomGateway
       const room = await this.roomRepository.findRoom(roomId);
 
       if (!room) {
-        throw new Error('Room not found');
+        throw new RoomNotFoundException();
       }
 
       const clientId = client.id;
@@ -95,11 +101,8 @@ export class RoomGateway
         success: true,
         message: `Successfully left room ${roomId}`,
       };
-    } catch (e) {
-      return {
-        success: false,
-        message: e.message,
-      };
+    } catch (error) {
+      console.error('Error in handleDisconnectConnection:', error);
     }
   }
 
@@ -125,5 +128,62 @@ export class RoomGateway
         error: error.message,
       };
     }
+  }
+
+  @SubscribeMessage('vote')
+  async handleFavoriteSongVote(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: { trackNumber: string },
+  ): Promise<object> {
+    try {
+      if (!client.handshake.query.roomId) {
+        throw new UserRoomInfoNotFoundException(client.id);
+      }
+
+      const roomId = client.handshake.query.roomId as string;
+      const identifier = crypto
+        .createHash('sha256')
+        .update(client.handshake.address)
+        .digest('hex');
+      await this.roomService.updateVote(roomId, data.trackNumber, identifier);
+      await this.emitVoteUpdateToRoom(roomId);
+
+      return {
+        success: true,
+        message: `Successfully vote: ${data.trackNumber}`,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message,
+      };
+    }
+  }
+
+  emitUserCountUpdateToRoom(roomId: string, currentUserCount: number) {
+    this.server.to(roomId).emit('roomUsersUpdated', {
+      roomId,
+      userCount: currentUserCount,
+    });
+  }
+
+  async emitVoteUpdateToRoom(roomId: string) {
+    const voteResult: { [key: string]: string } =
+      await this.roomService.getVoteResult(roomId);
+
+    const totalVote = this.getTotalVote(voteResult);
+
+    Object.entries(voteResult).map(([key, value]) => {
+      voteResult[key] = `${((Number(value) / totalVote) * 100).toFixed(2)}%`;
+    });
+
+    this.server.to(roomId).emit('voteUpdated', voteResult);
+  }
+
+  private getTotalVote(voteResult: { [key: string]: string }): number {
+    return Object.values(voteResult).reduce(
+      (acc, value) => acc + Number(value),
+      0,
+    );
   }
 }

@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { Socket } from 'socket.io-client';
 import { createSocket } from '../api/socket';
+import { useChatMessageStore } from '../store/useChatMessageStore';
 
 interface SocketState {
   socket: Socket | null;

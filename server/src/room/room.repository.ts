@@ -3,6 +3,10 @@ import { Inject, Injectable } from '@nestjs/common';
 import { RedisClientType } from 'redis';
 import { Room } from './room.entity';
 import { ROOM_STATUS } from '@/room/room.constant';
+import { RoomNotFoundException } from '@/common/exceptions/domain/room/room-not-found.exception';
+import { RoomIsFullException } from '@/common/exceptions/domain/room/room-is-full.exception';
+import { RoomInactiveException } from '@/common/exceptions/domain/room/room-inactive.exception';
+import { UserNotInRoomException } from '@/common/exceptions/domain/room/user-not-in-room.exception';
 
 export interface RoomInfo {
   currentUsers: number;
@@ -30,6 +34,37 @@ export class RoomRepository {
     return `rooms:${roomId}:queue`;
   }
 
+  private roomSessionKey(roomId: string) {
+    return `rooms:${roomId}:session`;
+  }
+
+  private roomVoteKey(roomId: string) {
+    return `rooms:${roomId}:votes`;
+  }
+
+  private roomVoteUserKey(roomId: string) {
+    return `rooms:${roomId}:votes:users`;
+  }
+
+  async saveVoteUser(roomId: string, identifier: string) {
+    const key = this.roomVoteUserKey(roomId);
+
+    await this.redisClient.hSet(key, identifier, 'true');
+    await this.redisClient.hExpire(key, identifier, 60 * 60 * 24);
+  }
+
+  async existsRoomVoteUser(roomId: string, identifier: string) {
+    const key = this.roomVoteUserKey(roomId);
+
+    return this.redisClient.hExists(key, identifier);
+  }
+
+  async updateVoteByRoomAndIdentifier(roomId: string, trackNumber: string) {
+    const key = this.roomVoteKey(roomId);
+
+    await this.redisClient.hSet(key, trackNumber, 1);
+  }
+
   async createRoom(room: Room): Promise<void> {
     const roomKey = this.roomKey(room.id);
 
@@ -50,12 +85,12 @@ export class RoomRepository {
 
     const exists = await this.redisClient.exists(roomKey);
     if (!exists) {
-      throw new Error('Room not found');
+      throw new RoomNotFoundException();
     }
 
     const isMember = await this.redisClient.sIsMember(roomUsersKey, userId);
     if (!isMember) {
-      throw new Error('User is not in the room');
+      throw new UserNotInRoomException(roomId, userId);
     }
 
     const multi = this.redisClient.multi();
@@ -86,7 +121,7 @@ export class RoomRepository {
 
   async validateRoom(roomKey: string): Promise<void> {
     const exists = await this.redisClient.exists(roomKey);
-    if (!exists) throw new Error('Room not found');
+    if (!exists) throw new RoomNotFoundException();
 
     const [isActive, currentUsers, maxCapacity] = await Promise.all([
       this.redisClient.hGet(roomKey, 'isActive'),
@@ -95,10 +130,10 @@ export class RoomRepository {
     ]);
 
     if (!isActive || isActive === ROOM_STATUS.INACTIVE) {
-      throw new Error('Room is inactive');
+      throw new RoomInactiveException(roomKey);
     }
     if (Number(currentUsers) >= Number(maxCapacity)) {
-      throw new Error('Room is full');
+      throw new RoomIsFullException(roomKey, parseInt(maxCapacity));
     }
   }
 
@@ -117,5 +152,17 @@ export class RoomRepository {
     const roomKey = this.roomKey(roomId);
     const currentUsers = await this.redisClient.hGet(roomKey, 'currentUsers');
     return parseInt(currentUsers || '0', 10);
+  }
+
+  async findAllRoomVotes(roomId: string) {
+    const key = this.roomVoteKey(roomId);
+
+    return this.redisClient.hGetAll(key);
+  }
+
+  async findSongDuration(roomId: string) {
+    const key = this.roomSessionKey(roomId);
+
+    return this.redisClient.hGet(key, 'songs');
   }
 }

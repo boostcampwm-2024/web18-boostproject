@@ -1,6 +1,5 @@
 import { InearLogo } from '@/shared/icon/InearLogo';
-import EventImage from '@/assets/sidebar-event.png';
-import StreamingList from './StreamingList';
+import { RoomList } from './RoomList';
 import { Credit } from './Credit';
 import { Link } from 'react-router-dom';
 export function Sidebar() {
@@ -10,12 +9,7 @@ export function Sidebar() {
         <InearLogo />
       </Link>
       <div className="flex flex-col items-center">
-        <img
-          src={EventImage}
-          alt="곧 스트리밍이 시작되는 앨범 사진"
-          className="w-[192px] h-[192px]"
-        />
-        <StreamingList />
+        <RoomList />
         <Credit />
       </div>
     </nav>

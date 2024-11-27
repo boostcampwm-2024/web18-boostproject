@@ -11,6 +11,8 @@ import { Album } from '@/album/album.entity';
 import { RoomModule } from '@/room/room.module';
 import { AlbumModule } from '@/album/album.module';
 import { SongModule } from '@/song/song.module';
+import { JwtModule } from '@nestjs/jwt';
+import { AdminTransactionService } from './admin.transaction.service';
 
 @Module({
   imports: [
@@ -24,9 +26,12 @@ import { SongModule } from '@/song/song.module';
     RoomModule,
     SongModule,
     TypeOrmModule.forFeature([Album, Song]),
+    JwtModule.register({
+      secret: process.env.JWT_SECRET || 'temporary-secret-key',
+    }),
   ],
   controllers: [AdminController],
-  providers: [AdminService, AdminRedisRepository],
+  providers: [AdminService, AdminRedisRepository, AdminTransactionService],
   exports: [AdminService],
 })
 export class AdminModule {}

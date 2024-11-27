@@ -12,8 +12,11 @@ export function AdminLoginPage() {
     e.preventDefault();
 
     try {
-      const { data } = await axios.post('/api/admin/login', { adminKey });
-      localStorage.setItem('adminToken', data.token);
+      await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/admin/login`,
+        { adminKey },
+        { withCredentials: true },
+      );
       navigate('/admin');
     } catch (error) {
       console.error('Login error:', error);

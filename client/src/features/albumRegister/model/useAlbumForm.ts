@@ -1,6 +1,6 @@
 import { useCallback, useState, useRef } from 'react';
 import { CreateAlbumRequest, Song } from './types';
-import axios from 'axios';
+import { albumAPI } from '@/shared/api/adminAPI';
 
 const REQUIRED_SONG_FIELDS = [
   'title',
@@ -15,8 +15,6 @@ const REQUIRED_SONG_FIELDS = [
 const SONG_FIELDS = [...REQUIRED_SONG_FIELDS, 'lyrics'] as const;
 
 const ALBUM_FIELDS = ['title', 'artist', 'albumTag', 'releaseDate'] as const;
-
-const API_URL = '/api/admin/album';
 
 function validateForm(formData: FormData, fields: readonly string[]): boolean {
   return fields.every((field) => {
@@ -70,19 +68,13 @@ function createSubmitFormData(
 }
 
 async function submitAlbumForm(submitFormData: FormData) {
-  await axios
-    .post(API_URL, submitFormData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    })
-    .then((response) => {
-      console.log(response);
-    })
-    .catch((error) => {
-      console.error('[ERROR] 앨범 등록 실패:', error);
-      throw error;
-    });
+  try {
+    const response = await albumAPI.createAlbum(submitFormData);
+    console.log(response);
+  } catch (error) {
+    console.error('[ERROR] 앨범 등록 실패:', error);
+    throw error;
+  }
 }
 
 export function useAlbumForm() {

@@ -18,6 +18,8 @@ server/.yarn
 
 server/music*
 
+package-lock.json
+
 # Runtime data
 pids
 *.pid
