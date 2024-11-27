@@ -78,7 +78,7 @@ export function StreamingPage() {
             <span className="text-lg">{userCount}명</span>
           </div>
         </div>
-        <Vote />
+        <Vote songs={roomInfo?.songResponseList} />
         <ChattingContainer />
       </div>
     </div>

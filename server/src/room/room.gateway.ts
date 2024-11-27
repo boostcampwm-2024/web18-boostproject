@@ -50,6 +50,12 @@ export class RoomGateway
         throw new RoomNotFoundException();
       }
 
+      if (!client.data.identifier) {
+        client.data.identifier = this.roomService.generateIdentifier(
+          client.handshake.address,
+        );
+      }
+
       const clientId = client.id;
       await this.roomRepository.joinRoom(clientId, roomId);
 
@@ -63,7 +69,11 @@ export class RoomGateway
         timestamp: new Date(),
       });
       this.emitUserCountUpdateToRoom(roomId, currentUserCount);
-      await this.emitVoteUpdateToRoom(roomId);
+      const votedTrackNumber = await this.roomService.getRoomVoteUser(
+        roomId,
+        client.data.identifier,
+      );
+      await this.emitVoteUpdateToRoom(roomId, votedTrackNumber);
     } catch (error) {
       console.error('Error in handleConnection:', error);
       client.send('error', '방 참여에 실패하였습니다.');
@@ -141,12 +151,17 @@ export class RoomGateway
       }
 
       const roomId = client.handshake.query.roomId as string;
-      const identifier = crypto
-        .createHash('sha256')
-        .update(client.handshake.address)
-        .digest('hex');
-      await this.roomService.updateVote(roomId, data.trackNumber, identifier);
-      await this.emitVoteUpdateToRoom(roomId);
+      if (!client.data.identifier) {
+        client.data.identifier = this.roomService.generateIdentifier(
+          client.handshake.address,
+        );
+      }
+      await this.roomService.updateVote(
+        roomId,
+        data.trackNumber,
+        client.data.identifier,
+      );
+      await this.emitVoteUpdateToRoom(roomId, data.trackNumber);
 
       return {
         success: true,
@@ -167,17 +182,20 @@ export class RoomGateway
     });
   }
 
-  async emitVoteUpdateToRoom(roomId: string) {
+  async emitVoteUpdateToRoom(roomId: string, trackNumber: string) {
     const voteResult: { [key: string]: string } =
       await this.roomService.getVoteResult(roomId);
 
     const totalVote = this.getTotalVote(voteResult);
 
     Object.entries(voteResult).map(([key, value]) => {
-      voteResult[key] = `${((Number(value) / totalVote) * 100).toFixed(2)}%`;
+      console.log(value);
+      voteResult[key] = this.roomService.calcPercentage(value, totalVote);
     });
 
-    this.server.to(roomId).emit('voteUpdated', voteResult);
+    this.server
+      .to(roomId)
+      .emit('voteUpdated', { votes: voteResult, trackNumber });
   }
 
   private getTotalVote(voteResult: { [key: string]: string }): number {

@@ -42,27 +42,30 @@ export class RoomRepository {
     return `rooms:${roomId}:votes`;
   }
 
-  private roomVoteUserKey(roomId: string) {
-    return `rooms:${roomId}:votes:users`;
+  private roomVoteUserKey(roomId: string, identifier: string) {
+    return `rooms:${roomId}:votes:${identifier}`;
   }
 
-  async saveVoteUser(roomId: string, identifier: string) {
-    const key = this.roomVoteUserKey(roomId);
-
-    await this.redisClient.hSet(key, identifier, 'true');
-    await this.redisClient.hExpire(key, identifier, 60 * 60 * 24);
+  async saveVoteUser(roomId: string, identifier: string, trackNumber: string) {
+    const key = this.roomVoteUserKey(roomId, identifier);
+    await this.redisClient.set(key, trackNumber);
+    await this.redisClient.expire(key, 60 * 60 * 24);
   }
 
-  async existsRoomVoteUser(roomId: string, identifier: string) {
-    const key = this.roomVoteUserKey(roomId);
+  async getRoomVoteUser(roomId: string, identifier: string) {
+    const key = this.roomVoteUserKey(roomId, identifier);
 
-    return this.redisClient.hExists(key, identifier);
+    return this.redisClient.get(key);
   }
 
-  async updateVoteByRoomAndIdentifier(roomId: string, trackNumber: string) {
+  async updateVoteByRoomAndIdentifier(
+    roomId: string,
+    trackNumber: string,
+    updateAmount: number,
+  ) {
     const key = this.roomVoteKey(roomId);
 
-    await this.redisClient.hSet(key, trackNumber, 1);
+    await this.redisClient.hIncrBy(key, trackNumber, updateAmount);
   }
 
   async createRoom(room: Room): Promise<void> {

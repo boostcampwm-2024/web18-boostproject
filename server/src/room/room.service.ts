@@ -3,6 +3,7 @@ import { MusicRepository } from '@/music/music.repository';
 import { Room } from '@/room/room.entity';
 import { RoomRepository } from '@/room/room.repository';
 import { AlreadyVoteThisRoomException } from '@/common/exceptions/domain/vote/already-vote-this-room.exception';
+import crypto from 'crypto';
 
 @Injectable()
 export class RoomService {
@@ -24,15 +25,31 @@ export class RoomService {
   }
 
   async updateVote(roomId: string, trackNumber: string, identifier: string) {
-    if (await this.roomRepository.existsRoomVoteUser(roomId, identifier)) {
-      throw new AlreadyVoteThisRoomException(roomId);
+    const alreadyVotedNumber = await this.getRoomVoteUser(roomId, identifier);
+
+    if (alreadyVotedNumber) {
+      await this.roomRepository.updateVoteByRoomAndIdentifier(
+        roomId,
+        alreadyVotedNumber,
+        -1,
+      );
     }
 
     await this.roomRepository.updateVoteByRoomAndIdentifier(
       roomId,
       trackNumber,
+      1,
     );
-    await this.roomRepository.saveVoteUser(roomId, identifier);
+
+    await this.roomRepository.saveVoteUser(roomId, identifier, trackNumber);
+  }
+
+  async getRoomVoteUser(roomId: string, identifier: string) {
+    return this.roomRepository.getRoomVoteUser(roomId, identifier);
+  }
+
+  generateIdentifier(address: string) {
+    return crypto.createHash('sha256').update(address).digest('hex');
   }
 
   async getVoteResult(roomId: string) {
@@ -44,5 +61,11 @@ export class RoomService {
     }
 
     return voteResult;
+  }
+
+  calcPercentage(value: string, total: number) {
+    return value === '0' || total === 0
+      ? '0%'
+      : `${((Number(value) / total) * 100).toFixed(0)}%`;
   }
 }
