@@ -17,10 +17,13 @@ import { Song } from '@/song/song.entity';
 import { SongModule } from '@/song/song.module';
 import { MusicRepository } from '@/music/music.repository';
 import { RoomModule } from '@/room/room.module';
+import { SchedulerService } from './common/scheduler/scheduler.service';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
     CommonModule,
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot(),
     RedisModule,
     MusicModule,
@@ -40,6 +43,6 @@ import { RoomModule } from '@/room/room.module';
     }),
   ],
   controllers: [AppController],
-  providers: [Logger, AppService, MusicRepository],
+  providers: [Logger, AppService, MusicRepository, SchedulerService],
 })
 export class AppModule {}
