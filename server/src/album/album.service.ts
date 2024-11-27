@@ -30,7 +30,7 @@ export class AlbumService {
     return new MainBannerResponseDto(banners);
   }
 
-  async getSideBarInfos() {
+  async getSideBarInfos(): Promise<SideBarResponseDto> {
     const date = new Date();
     const recentSideBarAlbums =
       await this.albumRepository.getRecentSideBarInfos(date);
@@ -40,7 +40,7 @@ export class AlbumService {
     return new SideBarResponseDto(recentSideBarAlbums, upComingAlbums);
   }
 
-  async getEndedAlbums() {
+  async getEndedAlbums(): Promise<EndedAlbumResponseDto> {
     const date = new Date();
     const recentAlbums = await this.albumRepository.getEndedAlbumsInfos(date);
 
