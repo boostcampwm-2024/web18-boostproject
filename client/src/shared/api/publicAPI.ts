@@ -89,6 +89,13 @@ export const publicAPI = {
       throw error;
     }
   },
+  getRoomInfo: async (roomId: string) => {
+    try {
+      const { data } = await publicInstance.get(`/room/${roomId}`);
+      } catch (error) {
+      throw error;
+    }
+   },
   getAlbumEnded: async () => {
     try {
       const { data } = await publicInstance.get('/album/ended');
