@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CommentRepository } from './comment.repository';
 import { Comment } from './comment.entity';
+import { AlbumCommentResponseDto } from './dto/album-comment-response.dto';
 
 @Injectable()
 export class CommentService {
@@ -11,5 +12,10 @@ export class CommentService {
       albumId,
       content,
     });
+  }
+
+  async getAlbumComments(albumId: string): Promise<AlbumCommentResponseDto> {
+    const comments = await this.commentRepository.getCommentInfos(albumId);
+    return new AlbumCommentResponseDto(comments);
   }
 }

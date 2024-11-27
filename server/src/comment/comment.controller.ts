@@ -1,6 +1,7 @@
-import { Body, Controller, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { CommentService } from './comment.service';
 import { ApiBody, ApiOperation, ApiParam } from '@nestjs/swagger';
+import { AlbumCommentResponseDto } from './dto/album-comment-response.dto';
 
 @Controller('comment')
 export class CommentController {
@@ -25,5 +26,14 @@ export class CommentController {
       success: true,
       commentResponse,
     };
+  }
+
+  @ApiOperation({ summary: '댓글 불러오기' })
+  @ApiParam({ name: 'albumId', required: true, description: '앨범 id' })
+  @Get('/album/:albumId')
+  async getAlbumComments(
+    @Param('albumId') albumId: string,
+  ): Promise<AlbumCommentResponseDto> {
+    return await this.commentService.getAlbumComments(albumId);
   }
 }
