@@ -18,8 +18,8 @@ export function Streaming() {
       .then((res) => res)
       .catch((err) => console.log(err));
     console.log(res);
-    setRoomInfo(res.result);
-    setSongIndex(Number(res.result.trackOrder));
+    setRoomInfo(res);
+    setSongIndex(Number(res.trackOrder));
   };
   useEffect(() => {
     getRoomInfo();

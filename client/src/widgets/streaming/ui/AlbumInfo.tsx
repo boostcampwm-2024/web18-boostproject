@@ -32,7 +32,9 @@ export function AlbumInfo({
       <audio ref={audioRef} controls controlsList="nodownload" />
       <div className="text-center mb-20 w-full">
         <p className="text-gray-300 mb-4">
-          #{roomInfo.albumResponse.tags.split(', ').join(' #')}
+          {roomInfo.albumResponse.tags
+            ? `#${roomInfo.albumResponse.tags.split(', ').join(' #')}`
+            : '태그 없습니다'}
         </p>
         <p className="text-3xl font-bold mb-4">
           {roomInfo.albumResponse.title}
