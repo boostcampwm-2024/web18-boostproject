@@ -1,3 +1,4 @@
+import { RoomNotFoundException } from '@/common/exceptions/domain/room/room-not-found.exception';
 import { REDIS_CLIENT } from '@/common/redis/redis.module';
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { RedisClientType } from 'redis';
@@ -28,7 +29,7 @@ export class MusicRepository {
     const exists = await this.redisClient.exists(albumKey);
 
     if (!exists) {
-      throw new NotFoundException(`Room session ${albumId} not found`);
+      throw new RoomNotFoundException();
     }
 
     const [releaseTimestampStr, songStr] = await Promise.all([
