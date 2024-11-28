@@ -24,28 +24,32 @@ export class SchedulerService {
       `SCHEDULAR EXECUTED TO UPDATE TIME, Current time (KST): ${currentTime.toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })}`,
     );
     try {
+      await this.albumRepository.updateReleaseDate(this.ROOM_ID, this.MINUTES);
+      const updatedMySQLTime = await this.albumRepository.getReleaseDate(
+        this.ROOM_ID,
+      );
+
       const sessionKey = `rooms:${this.ROOM_ID}:session`;
-      const releaseTimestamp = await this.redisClient.hGet(
+      const redisTimestamp = await this.redisClient.hGet(
         sessionKey,
         'releaseTimestamp',
       );
-      if (releaseTimestamp) {
-        const newTimestamp =
-          parseInt(releaseTimestamp) + this.MINUTES * 60 * 1000;
-        await this.redisClient.hSet(
-          sessionKey,
-          'releaseTimestamp',
-          newTimestamp.toString(),
-        );
-        console.log(
-          `Updated Redis releaseTimestamp to: ${new Date(newTimestamp).toISOString()}`,
-        );
 
-        await this.albumRepository.updateReleaseDate(
-          this.ROOM_ID,
-          this.MINUTES,
-        );
-        console.log(`Updated Album releaseDate by ${this.MINUTES} minutes`);
+      if (redisTimestamp) {
+        const redisTime = parseInt(redisTimestamp);
+        const mysqlTime = updatedMySQLTime.getTime();
+        console.log('Updated MySQL time: ', updatedMySQLTime);
+
+        if (redisTime !== mysqlTime) {
+          await this.redisClient.hSet(
+            sessionKey,
+            'releaseTimestamp',
+            mysqlTime.toString(),
+          );
+          console.log(
+            `Updated Redis releaseTimestamp to match MySQL: ${new Date(mysqlTime).toISOString()}`,
+          );
+        }
       }
     } catch (error) {
       console.error('Redis, MySQL 시간 업데이트 실패', error);
