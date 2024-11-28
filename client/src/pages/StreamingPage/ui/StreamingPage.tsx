@@ -42,17 +42,23 @@ export function StreamingPage() {
     };
   }, [roomId]);
 
-  if (!isConnected) {
-    return <StreamingErrorPage />;
-  }
+  // if (!isConnected) {
+  //   return (
+  //     <StreamingErrorPage message={'시스템 오류로 방에 입장할 수 없습니다'} />
+  //   );
+  // }
 
   return (
     <div className="flex flex-row h-screen">
-      {roomInfo && songIndex && (
+      {roomInfo && songIndex ? (
         <Streaming
           roomInfo={roomInfo}
           songIndex={songIndex}
           setSongIndex={setSongIndex}
+        />
+      ) : (
+        <StreamingErrorPage
+          message={'존재하지 않거나 이미 스트리밍이 종료된 방입니다'}
         />
       )}
       <div className="bg-grayscale-900 flex-shrink-0 w-[340px] text-grayscale-100 px-8 pt-10 pb-8 flex flex-col relative">
