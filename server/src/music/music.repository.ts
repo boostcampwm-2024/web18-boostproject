@@ -1,5 +1,8 @@
+import { AlbumNotFoundByTimestampException } from '@/common/exceptions/domain/album/album-not-found-by-timestamp.exception';
+import { AlbumNotFoundException } from '@/common/exceptions/domain/album/album-not-found.exception';
+import { RoomNotFoundException } from '@/common/exceptions/domain/room/room-not-found.exception';
 import { REDIS_CLIENT } from '@/common/redis/redis.module';
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { RedisClientType } from 'redis';
 
 interface RoomSession {
@@ -28,7 +31,7 @@ export class MusicRepository {
     const exists = await this.redisClient.exists(albumKey);
 
     if (!exists) {
-      throw new NotFoundException(`Room session ${albumId} not found`);
+      throw new RoomNotFoundException();
     }
 
     const [releaseTimestampStr, songStr] = await Promise.all([
@@ -36,7 +39,7 @@ export class MusicRepository {
       this.redisClient.hGet(albumKey, 'songs'),
     ]);
     if (!releaseTimestampStr || !songStr) {
-      throw new NotFoundException(`Album ${albumId} not found`);
+      throw new AlbumNotFoundException(albumId);
     }
 
     return {
@@ -65,6 +68,6 @@ export class MusicRepository {
       }
       currentTime = songEndTime;
     }
-    throw new NotFoundException('No song found for the given timestamp');
+    throw new AlbumNotFoundByTimestampException(albumId, joinTimestamp);
   }
 }
