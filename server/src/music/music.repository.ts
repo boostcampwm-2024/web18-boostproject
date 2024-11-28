@@ -2,7 +2,7 @@ import { AlbumNotFoundByTimestampException } from '@/common/exceptions/domain/al
 import { AlbumNotFoundException } from '@/common/exceptions/domain/album/album-not-found.exception';
 import { RoomNotFoundException } from '@/common/exceptions/domain/room/room-not-found.exception';
 import { REDIS_CLIENT } from '@/common/redis/redis.module';
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { RedisClientType } from 'redis';
 
 interface RoomSession {
