@@ -51,8 +51,6 @@ export class MusicProcessingSevice {
     await fs.mkdir(outputDir, { recursive: true });
 
     const duration = await this.getAudioDuration(inputPath);
-    console.log(duration);
-
     await this.convertToHLS(inputPath, outputDir);
 
     const s3DirectoryName = `converted/${songMetaData.albumId}/${songMetaData.trackNumber}`;

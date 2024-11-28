@@ -108,10 +108,13 @@ export class AdminService {
   }
 
   async saveSongs(songs: Song[], albumId: string) {
-    songs.forEach((song) => {
-      const songDto = new SongSaveDto({ ...song, albumId: albumId });
-      this.songRepository.save(new Song(songDto));
-    });
+    console.log('Songs to save:', songs);
+    await Promise.all(
+      songs.map(async (song) => {
+        const songDto = new SongSaveDto({ ...song, albumId: albumId });
+        return await this.songRepository.save(new Song(songDto));
+      }),
+    );
   }
 
   async saveAlbumCoverAndBanner(files: UploadedFiles, albumId: string) {

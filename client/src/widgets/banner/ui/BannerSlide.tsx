@@ -2,9 +2,16 @@ import { bannerData } from '@/entities/room/types';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import { useNavigate } from 'react-router-dom';
+import { TIMEZONE_OFFSET } from '../types';
 
 interface BannerSlideProps {
   banner: bannerData;
+}
+
+function convertToKTC(dateString: string) {
+  const date = new Date(dateString);
+  date.setHours(date.getHours() + TIMEZONE_OFFSET.KST);
+  return date.toISOString();
 }
 
 function splitDate(date: string) {
@@ -41,7 +48,7 @@ export function BannerSlide({ banner }: BannerSlideProps) {
         <div>
           <p className="font-bold text-2xl">{banner.artist}</p>
           <p className="text-gray-400 text-sm">
-            {splitDate(banner.releaseDate)} 예정
+            {splitDate(convertToKTC(banner.releaseDate))} 시작
           </p>
         </div>
       </div>
