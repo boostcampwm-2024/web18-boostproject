@@ -12,11 +12,9 @@ export function Vote({ songs }: { songs: SongData[] }) {
 
   const handleVoteClick = (trackNumber: string) => {
     if (!socket) return;
+    console.log(voteData);
     socket.emit('vote', { trackNumber });
   };
-
-  console.log(voteData);
-
   return (
     <div className="absolute top-[5.5rem] w-[276px] right-0 bg-grayscale-700 text-grayscale-100  z-10 mx-8 rounded-lg">
       <div
@@ -34,7 +32,7 @@ export function Vote({ songs }: { songs: SongData[] }) {
         </div>
       </div>
       <div
-        className={`overflow-y-scroll transition-all duration-200 ${isOpen ? 'max-h-40' : 'max-h-0'} px-4`}
+        className={`overflow-y-scroll transition-all duration-200 ${isOpen ? 'max-h-40 block' : 'max-h-0 hidden'} px-4`}
       >
         {Object.values(voteData.votes).map((item, index) => (
           <div

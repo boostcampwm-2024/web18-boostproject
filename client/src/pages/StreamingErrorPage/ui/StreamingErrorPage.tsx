@@ -12,7 +12,6 @@ class APIError extends Error {
 }
 
 export function StreamingErrorPage({ message }: { message?: string }) {
-  console.log('as;lkdfj;asldkfjas;ldkf');
   return (
     <div className="flex flex-row h-screen text-grayscale-100 justify-center items-center w-full"></div>
   );
