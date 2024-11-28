@@ -7,11 +7,20 @@ export const useStreamingPlayer = (
   setSongIndex: (value: React.SetStateAction<number>) => void,
 ) => {
   const audioRef = useRef<HTMLMediaElement>(null);
+  const hlsRef = useRef<Hls | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
+  const destroyHls = useCallback(() => {
+    if (hlsRef.current) {
+      hlsRef.current.destroy();
+      hlsRef.current = null;
+    }
+  }, []);
   const createStreamUrl = (roomId: string) =>
     `${import.meta.env.VITE_API_URL}/api/music/${roomId}/playlist.m3u8`;
   const initializeHls = (audio: HTMLMediaElement, streamUrl: string) => {
+    destroyHls();
     const hls = new Hls(DEFAULT_STREAMING_CONFIG);
+    hlsRef.current = hls;
     hls.loadSource(streamUrl);
     hls.attachMedia(audio);
 
