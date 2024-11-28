@@ -55,8 +55,8 @@ export const useStreamingPlayer = (
 
     const handleEnded = () => {
       setIsLoaded(false);
-      if (totalSongs >= songIndex + 1) {
-        console.log('end');
+      if (totalSongs <= songIndex + 1) {
+        setSongIndex(0);
         navigate(`/`);
         return;
       }
