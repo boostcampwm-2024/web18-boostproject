@@ -42,7 +42,6 @@ export class RoomGateway
 
   async handleConnection(client: Socket) {
     console.log(`Client connected: ${client.id}`);
-    console.log(client);
     try {
       const roomId = client.handshake.query.roomId as string;
       const room = await this.roomRepository.findRoom(roomId);
@@ -124,7 +123,7 @@ export class RoomGateway
       const identifier = this.roomService.generateIdentifier(
         (client.handshake.headers['x-forwarded-for'] as string) || client.id,
       );
-      console.log('messge : ' + identifier);
+      console.log('message : ' + identifier);
 
       const clientIdForDisplay = identifier.substring(0, 4);
       this.server.to(data.roomId).emit('broadcast', {
