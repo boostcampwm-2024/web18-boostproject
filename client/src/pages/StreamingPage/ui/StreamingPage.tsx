@@ -16,13 +16,11 @@ export function StreamingPage() {
   const [roomInfo, setRoomInfo] = useState<RoomResponse | null>(null);
   const [songIndex, setSongIndex] = useState<number>(0);
 
-  const getRoomInfo = async () => {
-    if (!roomId) return;
+  const getRoomInfo = async (roomId: string) => {
     const res: RoomResponse = await publicAPI
       .getRoomInfo(roomId)
       .then((res) => res)
       .catch((err) => console.log(err));
-    console.log(res);
     setRoomInfo(res);
     setSongIndex(Number(res.trackOrder));
   };
@@ -31,7 +29,9 @@ export function StreamingPage() {
     // 페이지 진입 시 소켓 초기화
     reset();
     clearMessages();
+
     if (roomId) {
+      getRoomInfo(roomId);
       connect(roomId);
     }
 
@@ -40,10 +40,6 @@ export function StreamingPage() {
       reset();
     };
   }, [roomId]);
-
-  useEffect(() => {
-    getRoomInfo();
-  }, []);
 
   if (!isConnected) {
     return <StreamingErrorPage />;
@@ -78,7 +74,7 @@ export function StreamingPage() {
             <span className="text-lg">{userCount}명</span>
           </div>
         </div>
-        <Vote songs={roomInfo?.songResponseList} />
+        {roomInfo && <Vote songs={roomInfo.songResponseList} />}
         <ChattingContainer />
       </div>
     </div>
