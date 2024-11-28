@@ -18,7 +18,7 @@ export function Vote({ songs }: { songs: SongData[] }) {
   console.log(voteData);
 
   return (
-    <div className="absolute top-[5.5rem] left-0 right-0 bg-grayscale-700  z-10 mx-8 rounded-lg">
+    <div className="absolute top-[5.5rem] w-[276px] right-0 bg-grayscale-700 text-grayscale-100  z-10 mx-8 rounded-lg">
       <div
         className="flex flex-row items-center justify-between px-5 py-3 rounded-lg cursor-pointer hover:bg-grayscale-600"
         onClick={() => setIsOpen(!isOpen)}

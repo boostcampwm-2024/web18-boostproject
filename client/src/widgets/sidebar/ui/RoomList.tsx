@@ -27,7 +27,7 @@ function RoomListContainer({
 }
 
 export function RoomList() {
-  const { data: roomList, isLoading, isError } = useSidebarAlbum();
+  const { data: roomList, isLoading, isError, error } = useSidebarAlbum();
 
   return (
     <div className="p-8 pt-6 w-full flex flex-col gap-8">

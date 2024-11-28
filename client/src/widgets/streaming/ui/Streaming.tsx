@@ -27,7 +27,10 @@ export function Streaming({
             songIndex={songIndex}
             setSongIndex={setSongIndex}
           />
-          <SongDetail songs={roomInfo.songResponseList} songIndex={songIndex} />
+          <SongDetail
+            songs={roomInfo?.songResponseList}
+            songIndex={songIndex}
+          />
         </div>
       </div>
     </div>

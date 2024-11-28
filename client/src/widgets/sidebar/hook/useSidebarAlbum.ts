@@ -7,5 +7,6 @@ export const useSidebarAlbum = () => {
       const response = await publicAPI.getAlbumSidebar();
       return response.result;
     },
+    refetchOnWindowFocus: true,
   });
 };

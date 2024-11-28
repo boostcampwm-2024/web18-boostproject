@@ -106,12 +106,12 @@ export function AlbumInfo({
         <div className="absolute bottom-0 w-full">
           <AudioController
             audioRef={audioRef}
-            songDuration={roomInfo.songResponseList[songIndex - 1].duration}
+            songDuration={roomInfo.songResponseList[songIndex - 1]?.duration}
           />
         </div>
       </div>
       <p className="mt-4 text-2xl font-bold">
-        {roomInfo.songResponseList[songIndex - 1].title}
+        {roomInfo.songResponseList[songIndex - 1]?.title}
       </p>
     </div>
   );
