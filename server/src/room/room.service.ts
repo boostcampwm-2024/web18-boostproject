@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { MusicRepository } from '@/music/music.repository';
 import { Room } from '@/room/room.entity';
 import { RoomRepository } from '@/room/room.repository';
-import { AlreadyVoteThisRoomException } from '@/common/exceptions/domain/vote/already-vote-this-room.exception';
 import crypto from 'crypto';
 
 @Injectable()
