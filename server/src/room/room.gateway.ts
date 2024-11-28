@@ -71,7 +71,11 @@ export class RoomGateway
         roomId,
         identifier,
       );
-      await this.emitVoteUpdateToRoom(roomId, votedTrackNumber);
+      const voteResult = await this.roomService.emitVoteUpdateToRoom(roomId);
+      client.emit('voteShow', {
+        votes: voteResult,
+        trackNumber: votedTrackNumber,
+      });
     } catch (error) {
       console.error('Error in handleConnection:', error);
       client.send('error', '방 참여에 실패하였습니다.');
@@ -160,7 +164,12 @@ export class RoomGateway
       console.log('vote : ' + identifier);
 
       await this.roomService.updateVote(roomId, data.trackNumber, identifier);
-      await this.emitVoteUpdateToRoom(roomId, data.trackNumber);
+      const voteResult = await this.roomService.emitVoteUpdateToRoom(roomId);
+      client.emit('voteShow', {
+        votes: voteResult,
+        trackNumber: data.trackNumber,
+      });
+      this.server.to(roomId).emit('voteUpdated', { votes: voteResult });
 
       return {
         success: true,
@@ -179,27 +188,5 @@ export class RoomGateway
       roomId,
       userCount: currentUserCount,
     });
-  }
-
-  async emitVoteUpdateToRoom(roomId: string, trackNumber: string) {
-    const voteResult: { [key: string]: string } =
-      await this.roomService.getVoteResult(roomId);
-
-    const totalVote = this.getTotalVote(voteResult);
-
-    Object.entries(voteResult).map(([key, value]) => {
-      voteResult[key] = this.roomService.calcPercentage(value, totalVote);
-    });
-
-    this.server
-      .to(roomId)
-      .emit('voteUpdated', { votes: voteResult, trackNumber });
-  }
-
-  private getTotalVote(voteResult: { [key: string]: string }): number {
-    return Object.values(voteResult).reduce(
-      (acc, value) => acc + Number(value),
-      0,
-    );
   }
 }
