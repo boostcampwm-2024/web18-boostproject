@@ -50,8 +50,9 @@ export class RoomGateway
       }
 
       const identifier = this.roomService.generateIdentifier(
-        client.handshake.headers['x-forwarded-for'] as string,
+        (client.handshake.headers['x-forwarded-for'] as string) || client.id,
       );
+      console.log('connect : ' + identifier);
 
       const clientId = client.id;
       await this.roomRepository.joinRoom(clientId, roomId);
@@ -120,8 +121,9 @@ export class RoomGateway
   ): Promise<object> {
     try {
       const identifier = this.roomService.generateIdentifier(
-        client.handshake.headers['x-forwarded-for'] as string,
+        (client.handshake.headers['x-forwarded-for'] as string) || client.id,
       );
+      console.log('messge : ' + identifier);
 
       const clientIdForDisplay = identifier.substring(0, 4);
       this.server.to(data.roomId).emit('broadcast', {
@@ -153,8 +155,9 @@ export class RoomGateway
 
       const roomId = client.handshake.query.roomId as string;
       const identifier = this.roomService.generateIdentifier(
-        client.handshake.headers['x-forwarded-for'] as string,
+        (client.handshake.headers['x-forwarded-for'] as string) || client.id,
       );
+      console.log('vote : ' + identifier);
 
       await this.roomService.updateVote(roomId, data.trackNumber, identifier);
       await this.emitVoteUpdateToRoom(roomId, data.trackNumber);
@@ -185,7 +188,6 @@ export class RoomGateway
     const totalVote = this.getTotalVote(voteResult);
 
     Object.entries(voteResult).map(([key, value]) => {
-      console.log(value);
       voteResult[key] = this.roomService.calcPercentage(value, totalVote);
     });
 
