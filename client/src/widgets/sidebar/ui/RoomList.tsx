@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react';
 import { RoomListItem } from './RoomListItem';
 import './StreamingList.css';
-import { publicAPI } from '@/shared/api/publicAPI';
-import { SidebarListResponse, AlbumData } from '@/entities/room/types';
+import { AlbumData } from '@/entities/room/types';
+import { useSidebarAlbum } from '@/widgets/sidebar/hook/useSidebarAlbum';
 
 function RoomListContainer({
   albums,
@@ -28,19 +27,7 @@ function RoomListContainer({
 }
 
 export function RoomList() {
-  const [roomList, setRoomList] = useState<SidebarListResponse>();
-
-  useEffect(() => {
-    const getAlbumSidebar = async () => {
-      const res = await publicAPI
-        .getAlbumSidebar()
-        .then((res) => res)
-        .catch((err) => console.log(err));
-      setRoomList(res.result);
-    };
-
-    getAlbumSidebar();
-  }, []);
+  const { data: roomList, isLoading, isError, error } = useSidebarAlbum();
 
   return (
     <div className="p-8 pt-6 w-full flex flex-col gap-8">

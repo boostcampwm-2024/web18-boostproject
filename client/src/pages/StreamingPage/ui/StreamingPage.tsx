@@ -1,30 +1,58 @@
 import { ChattingContainer } from '@/widgets/chatting';
 import { Vote } from '@/widgets/vote';
 import { Streaming } from '@/widgets/streaming';
-import { StreamingErrorPage } from '@/pages/StreamingErrorPage';
 import { useSocketStore } from '@/shared/store/useSocketStore';
 import { useChatMessageStore } from '@/shared/store/useChatMessageStore';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { RoomResponse } from '@/entities/album/types';
 import { publicAPI } from '@/shared/api/publicAPI';
 import { Person } from '@/shared/icon/Person';
+import { NetworkBoundary } from '@/NetworkBoundary';
+import { useQuery } from '@tanstack/react-query';
+
+function StreamingContainer() {
+  const { roomId } = useParams<{ roomId: string }>();
+  const [songIndex, setSongIndex] = useState<number>(0);
+
+  const {
+    data: roomInfo,
+    error,
+    isError,
+  } = useQuery({
+    queryKey: ['room', roomId],
+    queryFn: () => publicAPI.getRoomInfo(roomId!),
+  });
+
+  useEffect(() => {
+    if (roomInfo) {
+      setSongIndex(Number(roomInfo.trackOrder));
+    }
+  }, [roomInfo]);
+
+  if (isError) {
+    throw error;
+  }
+
+  if (!roomInfo) {
+    return null;
+  }
+
+  return (
+    <div className="w-full">
+      <Streaming
+        roomInfo={roomInfo}
+        songIndex={songIndex}
+        setSongIndex={setSongIndex}
+      />
+      {roomInfo && <Vote songs={roomInfo.songResponseList} />}
+    </div>
+  );
+}
 
 export function StreamingPage() {
   const { isConnected, connect, reset, userCount } = useSocketStore();
   const { clearMessages } = useChatMessageStore();
   const { roomId } = useParams<{ roomId: string }>();
-  const [roomInfo, setRoomInfo] = useState<RoomResponse | null>(null);
-  const [songIndex, setSongIndex] = useState<number>(0);
-
-  const getRoomInfo = async (roomId: string) => {
-    const res: RoomResponse = await publicAPI
-      .getRoomInfo(roomId)
-      .then((res) => res)
-      .catch((err) => console.log(err));
-    setRoomInfo(res);
-    setSongIndex(Number(res.trackOrder));
-  };
 
   useEffect(() => {
     // 페이지 진입 시 소켓 초기화
@@ -32,7 +60,6 @@ export function StreamingPage() {
     clearMessages();
 
     if (roomId) {
-      getRoomInfo(roomId);
       connect(roomId);
     }
 
@@ -42,20 +69,14 @@ export function StreamingPage() {
     };
   }, [roomId]);
 
-  if (!isConnected) {
-    return <StreamingErrorPage />;
-  }
-
   return (
     <div className="flex flex-row h-screen">
-      {roomInfo && songIndex && (
-        <Streaming
-          roomInfo={roomInfo}
-          songIndex={songIndex}
-          setSongIndex={setSongIndex}
-        />
-      )}
-      <div className="bg-grayscale-900 flex-shrink-0 w-[340px] text-grayscale-100 px-8 pt-10 pb-8 flex flex-col relative">
+      <div className="flex-grow min-w-[calc(100%-340px)]">
+        <NetworkBoundary key={roomId}>
+          <StreamingContainer />
+        </NetworkBoundary>
+      </div>
+      <div className="h-screen bg-grayscale-900 flex-shrink-0 w-[340px] text-grayscale-100 px-8 pt-10 pb-8 flex flex-col">
         <div className="flex justify-between items-center mb-4">
           <div className="text-2xl font-bold">채팅</div>
           <div className="flex items-center gap-2">
@@ -63,7 +84,6 @@ export function StreamingPage() {
             <span className="text-lg">{userCount}명</span>
           </div>
         </div>
-        {roomInfo && <Vote songs={roomInfo.songResponseList} />}
         <ChattingContainer />
       </div>
     </div>
