@@ -42,7 +42,8 @@ export class RoomGateway
   }
 
   async handleConnection(client: Socket) {
-    console.log(`Client connected: ${client}`);
+    console.log(`Client connected: ${client.id}`);
+    console.log(client);
     try {
       const roomId = client.handshake.query.roomId as string;
       const room = await this.roomRepository.findRoom(roomId);
