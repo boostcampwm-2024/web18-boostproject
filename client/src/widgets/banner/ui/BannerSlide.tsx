@@ -2,6 +2,7 @@ import { bannerData } from '@/entities/room/types';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import { useNavigate } from 'react-router-dom';
+import { TIMEZONE_OFFSET } from '../types';
 
 interface BannerSlideProps {
   banner: bannerData;
@@ -9,7 +10,7 @@ interface BannerSlideProps {
 
 function convertToKTC(dateString: string) {
   const date = new Date(dateString);
-  date.setHours(date.getHours() + 9);
+  date.setHours(date.getHours() + TIMEZONE_OFFSET.KST);
   return date.toISOString();
 }
 
