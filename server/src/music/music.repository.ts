@@ -1,3 +1,4 @@
+import { AlbumNotFoundException } from '@/common/exceptions/domain/album/album-not-found.exception';
 import { RoomNotFoundException } from '@/common/exceptions/domain/room/room-not-found.exception';
 import { REDIS_CLIENT } from '@/common/redis/redis.module';
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
@@ -37,7 +38,7 @@ export class MusicRepository {
       this.redisClient.hGet(albumKey, 'songs'),
     ]);
     if (!releaseTimestampStr || !songStr) {
-      throw new NotFoundException(`Album ${albumId} not found`);
+      throw new AlbumNotFoundException(albumId);
     }
 
     return {
