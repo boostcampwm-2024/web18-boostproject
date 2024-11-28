@@ -7,6 +7,12 @@ interface BannerSlideProps {
   banner: bannerData;
 }
 
+function convertToKTC(dateString: string) {
+  const date = new Date(dateString);
+  date.setHours(date.getHours() + 9);
+  return date.toISOString();
+}
+
 function splitDate(date: string) {
   const [dateString, timeString] = date.split('T');
   const [_, month, day] = dateString.split('-');
@@ -41,7 +47,7 @@ export function BannerSlide({ banner }: BannerSlideProps) {
         <div>
           <p className="font-bold text-2xl">{banner.artist}</p>
           <p className="text-gray-400 text-sm">
-            {splitDate(banner.releaseDate)} 예정
+            {splitDate(convertToKTC(banner.releaseDate))} 시작
           </p>
         </div>
       </div>
