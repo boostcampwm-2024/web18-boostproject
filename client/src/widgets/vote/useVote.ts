@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { useVoteStore, VoteType } from '@/shared/store/useVoteStore.ts';
 
 export function useVote() {
-  const { voteData, updateVote } = useVoteStore();
+  const { voteData, showVote, updateVote } = useVoteStore();
   const { socket } = useSocketStore();
 
   useEffect(() => {
@@ -13,10 +13,16 @@ export function useVote() {
       updateVote(data);
     };
 
+    const handleVoteShow = (data: VoteType) => {
+      showVote(data);
+    };
+
     socket.on('voteUpdated', handleVoteUpdate);
+    socket.on('voteShow', handleVoteShow);
 
     return () => {
       socket.off('voteUpdated', handleVoteUpdate);
+      socket.off('voteShow', handleVoteShow);
     };
   }, [socket, updateVote]);
 

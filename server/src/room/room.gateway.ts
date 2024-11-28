@@ -14,7 +14,6 @@ import { RandomNameUtil } from '@/common/randomname/random-name.util';
 import { RoomNotFoundException } from '@/common/exceptions/domain/room/room-not-found.exception';
 import { UserRoomInfoNotFoundException } from '@/common/exceptions/domain/room/user-room-info-not-found.exception';
 import { RoomService } from '@/room/room.service';
-import * as crypto from 'crypto';
 import { UseFilters } from '@nestjs/common';
 import { CustomWsExceptionFilter } from '@/common/exceptions/ws-exception.filter';
 
@@ -50,11 +49,10 @@ export class RoomGateway
         throw new RoomNotFoundException();
       }
 
-      if (!client.data.identifier) {
-        client.data.identifier = this.roomService.generateIdentifier(
-          client.handshake.address,
-        );
-      }
+      const identifier = this.roomService.generateIdentifier(
+        (client.handshake.headers['x-forwarded-for'] as string) || client.id,
+      );
+      console.log('connect : ' + identifier);
 
       const clientId = client.id;
       await this.roomRepository.joinRoom(clientId, roomId);
@@ -71,9 +69,13 @@ export class RoomGateway
       this.emitUserCountUpdateToRoom(roomId, currentUserCount);
       const votedTrackNumber = await this.roomService.getRoomVoteUser(
         roomId,
-        client.data.identifier,
+        identifier,
       );
-      await this.emitVoteUpdateToRoom(roomId, votedTrackNumber);
+      const voteResult = await this.roomService.emitVoteUpdateToRoom(roomId);
+      client.emit('voteShow', {
+        votes: voteResult,
+        trackNumber: votedTrackNumber,
+      });
     } catch (error) {
       console.error('Error in handleConnection:', error);
       client.send('error', '방 참여에 실패하였습니다.');
@@ -122,7 +124,12 @@ export class RoomGateway
     @MessageBody() data: { roomId: string; message: string },
   ): Promise<object> {
     try {
-      const clientIdForDisplay = client.id.substring(0, 4);
+      const identifier = this.roomService.generateIdentifier(
+        (client.handshake.headers['x-forwarded-for'] as string) || client.id,
+      );
+      console.log('message : ' + identifier);
+
+      const clientIdForDisplay = identifier.substring(0, 4);
       this.server.to(data.roomId).emit('broadcast', {
         message: data.message,
         userName: client.data.name,
@@ -151,17 +158,18 @@ export class RoomGateway
       }
 
       const roomId = client.handshake.query.roomId as string;
-      if (!client.data.identifier) {
-        client.data.identifier = this.roomService.generateIdentifier(
-          client.handshake.address,
-        );
-      }
-      await this.roomService.updateVote(
-        roomId,
-        data.trackNumber,
-        client.data.identifier,
+      const identifier = this.roomService.generateIdentifier(
+        (client.handshake.headers['x-forwarded-for'] as string) || client.id,
       );
-      await this.emitVoteUpdateToRoom(roomId, data.trackNumber);
+      console.log('vote : ' + identifier);
+
+      await this.roomService.updateVote(roomId, data.trackNumber, identifier);
+      const voteResult = await this.roomService.emitVoteUpdateToRoom(roomId);
+      client.emit('voteShow', {
+        votes: voteResult,
+        trackNumber: data.trackNumber,
+      });
+      this.server.to(roomId).emit('voteUpdated', { votes: voteResult });
 
       return {
         success: true,
@@ -180,28 +188,5 @@ export class RoomGateway
       roomId,
       userCount: currentUserCount,
     });
-  }
-
-  async emitVoteUpdateToRoom(roomId: string, trackNumber: string) {
-    const voteResult: { [key: string]: string } =
-      await this.roomService.getVoteResult(roomId);
-
-    const totalVote = this.getTotalVote(voteResult);
-
-    Object.entries(voteResult).map(([key, value]) => {
-      console.log(value);
-      voteResult[key] = this.roomService.calcPercentage(value, totalVote);
-    });
-
-    this.server
-      .to(roomId)
-      .emit('voteUpdated', { votes: voteResult, trackNumber });
-  }
-
-  private getTotalVote(voteResult: { [key: string]: string }): number {
-    return Object.values(voteResult).reduce(
-      (acc, value) => acc + Number(value),
-      0,
-    );
   }
 }

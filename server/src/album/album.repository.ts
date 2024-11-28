@@ -37,6 +37,11 @@ export class AlbumRepository {
       .execute();
   }
 
+  async getReleaseDate(albumId: string): Promise<Date> {
+    const album = await this.repository.findOne({ where: { id: albumId } });
+    return album.releaseDate;
+  }
+
   async save(album: Album) {
     return await this.repository.save(album);
   }

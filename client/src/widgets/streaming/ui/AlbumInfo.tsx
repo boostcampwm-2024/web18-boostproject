@@ -25,7 +25,9 @@ export function AlbumInfo({
   if (!roomId) return;
   const { audioRef, isLoaded, playStream } = useStreamingPlayer(
     roomId,
+    songIndex,
     setSongIndex,
+    roomInfo.songResponseList.length,
   );
 
   if (!roomInfo.success) {

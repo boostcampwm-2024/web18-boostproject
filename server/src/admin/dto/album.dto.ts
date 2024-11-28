@@ -9,7 +9,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { SongDto } from './song.dto';
-import { Type } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 
 export class AlbumDto {
   @IsNotEmpty()
@@ -37,6 +37,7 @@ export class AlbumDto {
   songs: SongDto[];
 
   @IsString()
+  @Expose({ name: 'albumTag' })
   tags: string;
 
   @IsNumber()

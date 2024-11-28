@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { MusicRepository } from '@/music/music.repository';
 import { Room } from '@/room/room.entity';
 import { RoomRepository } from '@/room/room.repository';
-import { AlreadyVoteThisRoomException } from '@/common/exceptions/domain/vote/already-vote-this-room.exception';
 import crypto from 'crypto';
 
 @Injectable()
@@ -67,5 +66,25 @@ export class RoomService {
     return value === '0' || total === 0
       ? '0%'
       : `${((Number(value) / total) * 100).toFixed(0)}%`;
+  }
+
+  getTotalVote(voteResult: { [key: string]: string }): number {
+    return Object.values(voteResult).reduce(
+      (acc, value) => acc + Number(value),
+      0,
+    );
+  }
+
+  async emitVoteUpdateToRoom(roomId: string) {
+    const voteResult: { [key: string]: string } =
+      await this.getVoteResult(roomId);
+
+    const totalVote = this.getTotalVote(voteResult);
+
+    Object.entries(voteResult).map(([key, value]) => {
+      voteResult[key] = this.calcPercentage(value, totalVote);
+    });
+
+    return voteResult;
   }
 }

@@ -2,6 +2,7 @@ import { MessageData } from '@/entities/message/types';
 import { Message } from './Message';
 import './Chatting.css';
 import React, { useEffect } from 'react';
+
 interface MessageListProps {
   messages: MessageData[];
 }
@@ -16,7 +17,12 @@ function MessageList({ messages }: MessageListProps) {
   return (
     <div className="chatting overflow-y-auto mb-3 mt-24">
       {messages.map((msg, index) => (
-        <Message key={index} userName={msg.userName} message={msg.message} />
+        <Message
+          key={index}
+          userName={msg.userName}
+          userId={msg.userId}
+          message={msg.message}
+        />
       ))}
       <div ref={messageEndRef}></div>
     </div>

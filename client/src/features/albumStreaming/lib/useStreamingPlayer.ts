@@ -1,17 +1,30 @@
 import { useCallback, useRef, useState, useEffect } from 'react';
 import Hls from 'hls.js';
 import { DEFAULT_STREAMING_CONFIG } from './constants';
+import { useNavigate } from 'react-router-dom';
 
 export const useStreamingPlayer = (
   roomId: string,
+  songIndex: number,
   setSongIndex: (value: React.SetStateAction<number>) => void,
+  totalSongs: number,
 ) => {
   const audioRef = useRef<HTMLMediaElement>(null);
+  const hlsRef = useRef<Hls | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
+  const navigate = useNavigate();
+  const destroyHls = useCallback(() => {
+    if (hlsRef.current) {
+      hlsRef.current.destroy();
+      hlsRef.current = null;
+    }
+  }, []);
   const createStreamUrl = (roomId: string) =>
     `${import.meta.env.VITE_API_URL}/api/music/${roomId}/playlist.m3u8`;
   const initializeHls = (audio: HTMLMediaElement, streamUrl: string) => {
+    destroyHls();
     const hls = new Hls(DEFAULT_STREAMING_CONFIG);
+    hlsRef.current = hls;
     hls.loadSource(streamUrl);
     hls.attachMedia(audio);
 
@@ -42,6 +55,11 @@ export const useStreamingPlayer = (
 
     const handleEnded = () => {
       setIsLoaded(false);
+      if (totalSongs <= songIndex + 1) {
+        setSongIndex(0);
+        navigate(`/`);
+        return;
+      }
       setSongIndex((prev) => prev + 1);
       playStream();
     };
