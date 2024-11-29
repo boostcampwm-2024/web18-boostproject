@@ -20,7 +20,7 @@ export function AlbumInfo({
   setSongIndex,
 }: AlbumInfoProps) {
   const { roomId } = useParams<{ roomId: string }>();
-  const [volume, setVolume] = useState<number>(0.5);
+  const [volume, setVolume] = useState<number>(0.1);
   const [isVolumeOpen, setIsVolumeOpen] = useState<boolean>(false);
   if (!roomId) return;
   const { audioRef, isLoaded, playStream } = useStreamingPlayer(
