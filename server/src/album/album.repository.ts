@@ -105,6 +105,7 @@ export class AlbumRepository {
       .andWhere('release_date <= DATE_ADD(:currentTime, INTERVAL 3 DAY)', {
         currentTime,
       })
+      .orderBy('release_date', 'ASC')
       .getRawMany();
 
     return plainToInstance(GetAlbumBannerInfosTuple, albumBannerInfos);
@@ -125,12 +126,13 @@ export class AlbumRepository {
           currentTime,
         },
       )
+      .orderBy('release_date', 'ASC') 
       .getRawMany();
 
     return plainToInstance(SideBarDto, recentSideBarInfos);
   }
 
-  // 스트리밍 끝나는 시간 < currentTime <= 현재시간으로 부터 6시간 뒤
+  // 스트리밍 끝나는 시간 < currentTime <= 현재시간으로 부터 30분 뒤
   async getUpComingSideBarInfos(currentTime: Date): Promise<SideBarDto[]> {
     const upComingAlbumInfos = await this.dataSource
       .createQueryBuilder()
@@ -139,9 +141,10 @@ export class AlbumRepository {
       .where('release_date > :currentTime', {
         currentTime,
       })
-      .andWhere('release_date <= DATE_ADD(:currentTime, INTERVAL 6 HOUR)', {
+      .andWhere('release_date <= DATE_ADD(:currentTime, INTERVAL 30 MINUTE)', {
         currentTime,
       })
+      .orderBy('release_date', 'ASC') 
       .getRawMany();
 
     return plainToInstance(SideBarDto, upComingAlbumInfos);
