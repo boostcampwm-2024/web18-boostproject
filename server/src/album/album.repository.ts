@@ -105,6 +105,7 @@ export class AlbumRepository {
       .andWhere('release_date <= DATE_ADD(:currentTime, INTERVAL 3 DAY)', {
         currentTime,
       })
+      .orderBy('release_date', 'ASC')
       .getRawMany();
 
     return plainToInstance(GetAlbumBannerInfosTuple, albumBannerInfos);
@@ -125,6 +126,7 @@ export class AlbumRepository {
           currentTime,
         },
       )
+      .orderBy('release_date', 'ASC') 
       .getRawMany();
 
     return plainToInstance(SideBarDto, recentSideBarInfos);
@@ -142,6 +144,7 @@ export class AlbumRepository {
       .andWhere('release_date <= DATE_ADD(:currentTime, INTERVAL 30 MINUTE)', {
         currentTime,
       })
+      .orderBy('release_date', 'ASC') 
       .getRawMany();
 
     return plainToInstance(SideBarDto, upComingAlbumInfos);
