@@ -23,7 +23,7 @@ export function AlbumInfo({
                           }: AlbumInfoProps) {
     const {roomId} = useParams<{ roomId: string }>();
     const [volume, setVolume] = useState<number>(0.5);
-    const [muted, setMuted] = useState<boolean>(false);
+    const [backupVolume, setBackupVolume] = useState<number>(0.5);
     const [isClicked, setIsClicked] = useState<boolean>(false);
     const [isVolumeOpen, setIsVolumeOpen] = useState<boolean>(false);
     if (!roomId) return;
@@ -49,11 +49,15 @@ export function AlbumInfo({
 
     const handleVolumeMuted = () => {
         setIsClicked(true);
-        setMuted(!muted);
 
         if (audioRef.current) {
-            audioRef.current.volume = 0;
-            audioRef.current.muted;
+            if (volume <= 0) {
+                setVolume(backupVolume);
+            }
+            if (volume > 0) {
+                setBackupVolume(volume);
+                setVolume(0);
+            }
         }
 
         setTimeout(() => {
@@ -97,7 +101,7 @@ export function AlbumInfo({
                     className={`volume-range ${isVolumeOpen ? 'w-36 ml-2 mr-2' : 'w-0'}`}
                 />
                 <div className='cursor-pointer' onClick={handleVolumeMuted}>
-                    {muted ? <VolumeMuted/> : <Volume/>}
+                    {volume <= 0 ? <VolumeMuted/> : <Volume/>}
                 </div>
             </div>
             <div className="text-center mb-20 w-full">
