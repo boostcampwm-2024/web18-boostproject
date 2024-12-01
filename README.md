@@ -118,5 +118,5 @@ iNear는 기존의 소통의 창구가 적었던 장르의 아티스트를 팔�
 - 채팅방에서 본인이 직접 이미지 기반의 커스텀 이모지를 등록하고 사용할 수 있습니다
 - 앨범 스트리밍을 하면서 가장 좋은 노래에 유저들이 실시간으로 투표를 진행할 수 있습니다
 
-![Streaming Page (리스너)](https://github.com/user-attachments/assets/b579a739-9877-4221-8239-774d796c421e)
+![스트리밍 페이지](https://github.com/user-attachments/assets/ab132c48-26b4-4d69-8be0-3e045d2a2688)
 
