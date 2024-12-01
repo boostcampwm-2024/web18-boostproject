@@ -24,7 +24,6 @@ export function AlbumInfo({
     const {roomId} = useParams<{ roomId: string }>();
     const [volume, setVolume] = useState<number>(0.5);
     const [backupVolume, setBackupVolume] = useState<number>(0.5);
-    const [isClicked, setIsClicked] = useState<boolean>(false);
     const [isVolumeOpen, setIsVolumeOpen] = useState<boolean>(false);
     if (!roomId) return;
     const {audioRef, isLoaded, playStream} = useStreamingPlayer(
@@ -48,25 +47,21 @@ export function AlbumInfo({
     };
 
     const handleVolumeMuted = () => {
-        setIsClicked(true);
-
         if (audioRef.current) {
-            if (volume <= 0) {
-                setVolume(backupVolume);
-            }
-            if (volume > 0) {
-                setBackupVolume(volume);
-                setVolume(0);
-            }
+            return;
         }
 
-        setTimeout(() => {
-            setIsClicked(false);
-        }, 100);
+        if (volume <= 0) {
+            setVolume(backupVolume);
+        }
+        if (volume > 0) {
+            setBackupVolume(volume);
+            setVolume(0);
+        }
     };
 
-    const handleMouseEnter = () => {
-        if (!isClicked) {
+    const handleMouseEnter = (e) => {
+        if (e.currentTarget === e.target) {
             setIsVolumeOpen(!isVolumeOpen)
         }
     }
