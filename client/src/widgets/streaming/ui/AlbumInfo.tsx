@@ -96,7 +96,7 @@ export function AlbumInfo({
                     onChange={handleVolumeChange}
                     className={`volume-range ${isVolumeOpen ? 'w-36 ml-2 mr-2' : 'w-0'}`}
                 />
-                <div onClick={handleVolumeMuted}>
+                <div className='cursor-pointer' onClick={handleVolumeMuted}>
                     {muted ? <VolumeMuted/> : <Volume/>}
                 </div>
             </div>
