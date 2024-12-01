@@ -84,7 +84,7 @@ export function AlbumInfo({
                 controlsList="nodownload"
             />
             <div
-                className={`fixed top-6 right-[364px] bg-grayscale-500 p-2 rounded-full flex flex-row items-center`}
+                className={`fixed top-6 right-[364px] bg-grayscale-900 p-2 rounded-full flex flex-row items-center`}
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={() => setIsVolumeOpen(!isVolumeOpen)}
             >
