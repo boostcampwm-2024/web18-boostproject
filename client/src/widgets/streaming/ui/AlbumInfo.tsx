@@ -22,7 +22,7 @@ export function AlbumInfo({
   setSongIndex,
 }: AlbumInfoProps) {
   const { roomId } = useParams<{ roomId: string }>();
-  const [volume, setVolume] = useState<number>(0.5);
+  const [volume, setVolume] = useState<number>(0.1);
   const [backupVolume, setBackupVolume] = useState<number>(0.5);
   const [isVolumeOpen, setIsVolumeOpen] = useState<boolean>(false);
   if (!roomId) return;
@@ -133,12 +133,12 @@ export function AlbumInfo({
         <div className="absolute bottom-0 w-full">
           <AudioController
             audioRef={audioRef}
-            songDuration={roomInfo.songResponseList[songIndex - 1].duration}
+            songDuration={roomInfo.songResponseList[songIndex - 1]?.duration}
           />
         </div>
       </div>
       <p className="mt-4 text-2xl font-bold">
-        {roomInfo.songResponseList[songIndex - 1].title}
+        {roomInfo.songResponseList[songIndex - 1]?.title}
       </p>
     </div>
   );
