@@ -120,3 +120,22 @@ iNear는 기존의 소통의 창구가 적었던 장르의 아티스트를 팔�
 
 ![스트리밍 페이지](https://github.com/user-attachments/assets/ab132c48-26b4-4d69-8be0-3e045d2a2688)
 
+## 문제 해결과정
+
+### FE
+
+[🚀 비트는 tsconfig.json이 세 개?](https://github.com/boostcampwm-2024/web18-inear/wiki/%F0%9F%9A%80-%EB%B9%84%ED%8A%B8%EB%8A%94-tsconfig.json%EC%9D%B4-%EC%84%B8-%EA%B0%9C%3F)  
+[🚀 vite + react + typescript 환경에서 path alias 설정](https://github.com/boostcampwm-2024/web18-inear/wiki/%F0%9F%9A%80-vite---react---typescript-%ED%99%98%EA%B2%BD%EC%97%90%EC%84%9C-path-alias-%EC%84%A4%EC%A0%95)  
+[🚀 React Scan이 뭐죠?](https://github.com/boostcampwm-2024/web18-inear/wiki/%F0%9F%9A%80-React-Scan%EC%9D%B4-%EB%AD%90%EC%A3%A0%3F)  
+[🚀 새로고침 시 HLS ERROR](https://github.com/boostcampwm-2024/web18-inear/wiki/%F0%9F%9A%80-%EC%83%88%EB%A1%9C%EA%B3%A0%EC%B9%A8-%EC%8B%9C-HLS-ERROR)  
+[🚀 input 태그에 한글 입력 후, Enter를 누르면 함수가 두번 호출되는 오류](https://github.com/boostcampwm-2024/web18-inear/wiki/%F0%9F%9A%80-input-%ED%83%9C%EA%B7%B8%EC%97%90-%ED%95%9C%EA%B8%80-%EC%9E%85%EB%A0%A5-%ED%9B%84,-Enter%EB%A5%BC-%EB%88%84%EB%A5%B4%EB%A9%B4-%ED%95%A8%EC%88%98%EA%B0%80-%EB%91%90%EB%B2%88-%ED%98%B8%EC%B6%9C%EB%90%98%EB%8A%94-%EC%98%A4%EB%A5%98)  
+[🚀 앨범 전체를 스트리밍한다고? (with HLS)](https://github.com/boostcampwm-2024/web18-inear/wiki/%F0%9F%9A%80-%EC%95%A8%EB%B2%94-%EC%A0%84%EC%B2%B4%EB%A5%BC-%EC%8A%A4%ED%8A%B8%EB%A6%AC%EB%B0%8D%ED%95%9C%EB%8B%A4%EA%B3%A0%3F-(with-HLS))
+
+### BE
+
+[🚀 NestJS 기본 개념 - Modules](https://github.com/boostcampwm-2024/web18-inear/wiki/%F0%9F%9A%80-NestJS-%EA%B8%B0%EB%B3%B8-%EA%B0%9C%EB%85%90-%E2%80%90-Modules)  
+[🚀 ffmpeg는 stderr로 디버깅을 하는 이유](https://github.com/boostcampwm-2024/web18-inear/wiki/%F0%9F%9A%80-ffmpeg%EB%8A%94-stderr%EB%A1%9C-%EB%94%94%EB%B2%84%EA%B9%85%EC%9D%84-%ED%95%98%EB%8A%94-%EC%9D%B4%EC%9C%A0)   
+[🚀 도커와 nginx의 사용기](https://github.com/boostcampwm-2024/web18-inear/wiki/%F0%9F%9A%80-%EB%8F%84%EC%BB%A4%EC%99%80-nginx%EC%9D%98-%EC%82%AC%EC%9A%A9%EA%B8%B0)  
+[🚀 HLS로 음악 주고받기](https://github.com/boostcampwm-2024/web18-inear/wiki/%F0%9F%9A%80-HLS%EB%A1%9C-%EC%9D%8C%EC%95%85-%EC%A3%BC%EA%B3%A0%EB%B0%9B%EA%B8%B0)  
+[🚀 CICD 구조 수정](https://github.com/boostcampwm-2024/web18-inear/wiki/%F0%9F%9A%80-CICD-%EA%B5%AC%EC%A1%B0-%EC%88%98%EC%A0%95)  
+[🚀 로컬 환경 개발 모드 배포](https://github.com/boostcampwm-2024/web18-inear/wiki/%F0%9F%9A%80-%EB%A1%9C%EC%BB%AC-%ED%99%98%EA%B2%BD-%EA%B0%9C%EB%B0%9C-%EB%AA%A8%EB%93%9C-%EB%B0%B0%ED%8F%AC)  
