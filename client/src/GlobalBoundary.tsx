@@ -1,6 +1,7 @@
 import { ErrorBoundary, FallbackProps } from 'react-error-boundary';
 import { Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Button } from './shared/ui';
 
 export const GlobalErrorFallback = ({
   error,
@@ -13,10 +14,10 @@ export const GlobalErrorFallback = ({
   };
   console.log('글로벌');
   return (
-    <div>
+    <div className="text-grayscale-100 w-full h-screen flex flex-col justify-center items-center">
       <h1>에러가 발생했습니다.</h1>
       <pre>{error.message}</pre>
-      <button onClick={navigateToMain}>메인으로 이동</button>
+      <Button message="메인으로 이동" onClick={navigateToMain}></Button>
     </div>
   );
 };

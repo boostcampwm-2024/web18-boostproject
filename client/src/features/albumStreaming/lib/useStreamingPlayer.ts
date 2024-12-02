@@ -55,9 +55,11 @@ export const useStreamingPlayer = (
 
     const handleEnded = () => {
       setIsLoaded(false);
-      if (totalSongs < songIndex + 1) {
-        setSongIndex(0);
+
+      if (songIndex + 1 > totalSongs) {
+        setSongIndex(1);
         navigate(`/`);
+        alert('모든 곡이 종료되었습니다.');
         return;
       }
       setSongIndex((prev) => prev + 1);
@@ -67,7 +69,7 @@ export const useStreamingPlayer = (
     return () => {
       audio.removeEventListener('ended', handleEnded);
     };
-  }, []);
+  }, [songIndex, totalSongs]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -77,7 +79,7 @@ export const useStreamingPlayer = (
       if (error.name === 'NotAllowedError') {
         setIsLoaded(false);
       } else {
-        console.error('Failed to play audio', error);
+        throw error;
       }
     });
   }, [isLoaded]);

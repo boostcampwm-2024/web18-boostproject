@@ -2,7 +2,7 @@ import GithubLogo from '@/assets/github-logo.png';
 
 export function Credit() {
   return (
-    <div className="absolute bottom-8 flex flex-col items-center">
+    <div className="flex flex-col items-center mb-8">
       <a href="https://github.com/boostcampwm-2024/web18-inear/wiki">
         <img src={GithubLogo} className="w-8 h-8 mb-1" />
       </a>
