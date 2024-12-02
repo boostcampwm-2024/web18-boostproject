@@ -8,6 +8,8 @@ import { StreamingErrorPage } from '@/pages/StreamingErrorPage';
 import { Volume } from '@/shared/icon/Volume';
 import { useState, useEffect } from 'react';
 import './Volume.css';
+import { VolumeMuted } from '@/shared/icon/VolumeMuted.tsx';
+
 interface AlbumInfoProps {
   roomInfo: RoomResponse;
   songIndex: number;
@@ -21,6 +23,7 @@ export function AlbumInfo({
 }: AlbumInfoProps) {
   const { roomId } = useParams<{ roomId: string }>();
   const [volume, setVolume] = useState<number>(0.1);
+  const [backupVolume, setBackupVolume] = useState<number>(0.5);
   const [isVolumeOpen, setIsVolumeOpen] = useState<boolean>(false);
   if (!roomId) return;
   const { audioRef, isLoaded, playStream } = useStreamingPlayer(
@@ -43,6 +46,26 @@ export function AlbumInfo({
     }
   };
 
+  const handleVolumeMuted = () => {
+    if (audioRef.current) {
+      return;
+    }
+
+    if (volume <= 0) {
+      setVolume(backupVolume);
+    }
+    if (volume > 0) {
+      setBackupVolume(volume);
+      setVolume(0);
+    }
+  };
+
+  const handleMouseEnter = (e) => {
+    if (e.currentTarget === e.target) {
+      setIsVolumeOpen(!isVolumeOpen);
+    }
+  };
+
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.volume = volume;
@@ -60,7 +83,9 @@ export function AlbumInfo({
         controlsList="nodownload"
       />
       <div
-        className={`fixed top-6 right-[364px] bg-grayscale-500 p-2 rounded-full flex flex-row items-center`}
+        className={`fixed top-6 right-[364px] bg-grayscale-900 p-2 rounded-full flex flex-row items-center`}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={() => setIsVolumeOpen(!isVolumeOpen)}
       >
         <input
           type="range"
@@ -70,8 +95,8 @@ export function AlbumInfo({
           onChange={handleVolumeChange}
           className={`volume-range ${isVolumeOpen ? 'w-36 ml-2 mr-2' : 'w-0'}`}
         />
-        <div onClick={() => setIsVolumeOpen(!isVolumeOpen)}>
-          <Volume />
+        <div className="cursor-pointer" onClick={handleVolumeMuted}>
+          {volume <= 0 ? <VolumeMuted /> : <Volume />}
         </div>
       </div>
       <div className="text-center mb-20 w-full">
