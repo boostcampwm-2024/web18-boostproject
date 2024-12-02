@@ -21,7 +21,7 @@ export function MainPage() {
     getAlbumBanner();
   }, []);
   return (
-    <div className="p-8 pt-20">
+    <div className="p-8 pt-20 h-full">
       <Banner bannerList={bannerList} />
       <AlbumList />
     </div>
