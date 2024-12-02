@@ -6,10 +6,10 @@ export interface PlaylistComponentProps {
 
 export function Playlist({ playlist }: PlaylistComponentProps) {
   return (
-    <article className={'w-full'}>
+    <article className={'w-full overflow-y-scroll h-[340px]'}>
       {playlist.map(
         (item: { songName: string; songDuration: string }, index) => (
-          <TrackItem trackData={item} key={index} />
+          <TrackItem trackData={item} index={index} key={index} />
         ),
       )}
     </article>
