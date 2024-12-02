@@ -3,6 +3,17 @@ import { publicAPI } from '@/shared/api/publicAPI';
 import { useEffect, useState } from 'react';
 import { bannerData } from '@/entities/room/types';
 import { Banner } from '@/widgets/banner';
+import DefaultBanner from '@/assets/default-banner.png';
+
+const defaultBanner: bannerData = {
+  albumId: '',
+  albumName: '',
+  albumTags: '',
+  artist: '',
+  bannerImageUrl: DefaultBanner,
+  currentUserCount: 0,
+  releaseDate: '',
+};
 
 export function MainPage() {
   const [bannerList, setBannerList] = useState<bannerData[]>([]);
@@ -12,10 +23,13 @@ export function MainPage() {
         .getAlbumBanner()
         .then((res) => res)
         .catch((err) => console.log(err));
+      const filteredBannerList = res.result.bannerLists.filter(
+        (banner: bannerData) => banner.bannerImageUrl,
+      );
       setBannerList(
-        res.result.bannerLists.filter(
-          (banner: bannerData) => banner.bannerImageUrl,
-        ),
+        filteredBannerList.length > 0
+          ? [defaultBanner, ...filteredBannerList]
+          : [defaultBanner],
       );
     };
     getAlbumBanner();
