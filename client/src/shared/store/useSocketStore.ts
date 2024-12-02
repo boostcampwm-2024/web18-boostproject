@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { Socket } from 'socket.io-client';
 import { createSocket } from '../api/socket';
+import { useVoteStore } from './useVoteStore';
 
 interface SocketState {
   socket: Socket | null;
@@ -31,6 +32,7 @@ export const useSocketStore = create<SocketState>((set, get) => ({
     }
 
     const newSocket = createSocket(newRoomId);
+    const voteStore = useVoteStore.getState();
 
     newSocket.on('connect', () =>
       set({
@@ -47,6 +49,10 @@ export const useSocketStore = create<SocketState>((set, get) => ({
         roomId: null,
       }),
     );
+
+    newSocket.on('voteShow', (data) => {
+      voteStore.showVote(data);
+    });
 
     newSocket.on(
       'roomUsersUpdated',
