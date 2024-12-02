@@ -18,7 +18,6 @@ export function AdminPage() {
       setIsSuccess(true);
       albumFormRef.current.reset();
 
-      // 3초 후에 성공 표시 제거
       setTimeout(() => {
         setIsSuccess(false);
       }, 10000);
