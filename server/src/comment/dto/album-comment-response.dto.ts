@@ -5,6 +5,7 @@ export class AlbumCommentResponseDto {
   result: {
     albumComments: AlbumCommentDto[];
   };
+
   constructor(albumComments: AlbumCommentDto[]) {
     this.result = {
       albumComments,
@@ -17,4 +18,6 @@ export class AlbumCommentDto {
   albumId: string;
   @ApiProperty()
   content: string;
+  @ApiProperty()
+  createdAt: Date;
 }
