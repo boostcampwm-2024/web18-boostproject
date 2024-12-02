@@ -1,4 +1,4 @@
-import { ChatInput } from '@/features/chatting';
+import { ChatInput } from '@/features/chattingInput';
 import { useChatMessage } from '../useChatMessage';
 import MessageList from './MessageList';
 
