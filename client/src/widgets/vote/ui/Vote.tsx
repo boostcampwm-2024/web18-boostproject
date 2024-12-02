@@ -1,6 +1,6 @@
 import { ChevronDown } from '@/shared/icon/ChevronDown';
 import { useState } from 'react';
-import { useSocketStore } from '@/shared/store/useSocketStore.ts';
+import { useSocketStore } from '@/shared/store/useSocketStore';
 import { SongData } from '@/entities/album/types.ts';
 import { useVote } from '@/widgets/vote/useVote.ts';
 import './ScrollBar.css';
