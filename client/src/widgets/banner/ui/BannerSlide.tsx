@@ -24,7 +24,7 @@ export function BannerSlide({ banner }: BannerSlideProps) {
         className={`w-full h-full object-cover ${banner.albumId ? 'cursor-pointer' : ''}`}
       />
       {banner.albumId && (
-        <div className="absolute top-0 left-0 text-grayscale-100 z-10 w-1/4 min-h-full p-4 flex flex-col justify-between">
+        <div className="absolute top-0 left-0 text-grayscale-100 z-10 w-1/4 min-h-full p-4 flex flex-col justify-between select-none cursor-pointer">
           <div>
             <div className="flex flex-row gap-2 text-sm mb-1">
               <p className="font-bold bg-red-500 px-1">LIVE</p>
