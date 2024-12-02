@@ -1,15 +1,27 @@
 import { Button } from '@/shared/ui';
 import { AlbumForm, SongForm } from '@/features/albumRegister';
 import { useAlbumForm } from '@/features/albumRegister/model/useAlbumForm';
+import { useState } from 'react';
 
 export function AdminPage() {
   const { handleSubmit, handleAddSong, songs, songFormRef, albumFormRef } =
     useAlbumForm();
-
+  const [isSuccess, setIsSuccess] = useState(false);
   const handlePost = async () => {
     if (!albumFormRef.current || songs.length === 0) return;
-    await handleSubmit();
-    albumFormRef.current.reset();
+    try {
+      await handleSubmit();
+      setIsSuccess(true);
+      albumFormRef.current.reset();
+
+      // 3초 후에 성공 표시 제거
+      setTimeout(() => {
+        setIsSuccess(false);
+      }, 10000);
+    } catch (error) {
+      console.error('방 생성 실패:', error);
+      setIsSuccess(false);
+    }
   };
 
   return (
@@ -29,6 +41,11 @@ export function AdminPage() {
           <div className="flex flex-row gap-4">
             <Button message="노래 추가" onClick={handleAddSong} />
             <Button message="방 만들기" onClick={handlePost} />
+            {isSuccess && (
+              <span className="text-sm text-green-500 ml-2">
+                ✔ 방 생성 완료
+              </span>
+            )}
           </div>
         </div>
       </div>
