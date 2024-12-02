@@ -8,7 +8,7 @@ export function Sidebar() {
       <Link to="/" className="block m-8 w-fit">
         <InearLogo />
       </Link>
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col items-center justify-between h-full">
         <RoomList />
         <Credit />
       </div>
