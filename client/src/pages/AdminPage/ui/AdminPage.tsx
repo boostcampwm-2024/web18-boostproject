@@ -7,8 +7,10 @@ export function AdminPage() {
   const { handleSubmit, handleAddSong, songs, songFormRef, albumFormRef } =
     useAlbumForm();
   const [isSuccess, setIsSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const handlePost = async () => {
     if (!albumFormRef.current || songs.length === 0) return;
+    setIsLoading(true);
     try {
       await handleSubmit();
       setIsSuccess(true);
@@ -21,6 +23,8 @@ export function AdminPage() {
     } catch (error) {
       console.error('방 생성 실패:', error);
       setIsSuccess(false);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -40,7 +44,12 @@ export function AdminPage() {
           </ul>
           <div className="flex flex-row gap-4">
             <Button message="노래 추가" onClick={handleAddSong} />
-            <Button message="방 만들기" onClick={handlePost} />
+            <Button
+              message={isLoading ? '생성 중...' : '방 만들기'}
+              onClick={handlePost}
+              disabled={isLoading}
+              style={{ opacity: isLoading ? 0.5 : 1 }}
+            />
             {isSuccess && (
               <span className="text-sm text-green-500 ml-2">
                 ✔ 방 생성 완료
