@@ -14,7 +14,7 @@ export class RoomService {
   async getTrackOrder(roomId: string): Promise<string> {
     return await this.musicRepository
       .findSongByJoinTimestamp(roomId, Date.now())
-      .then((data) => data.id);
+      .then((data) => data?.id || null);
   }
 
   async initializeRoom(albumId: string) {

@@ -9,18 +9,28 @@ import { publicAPI } from '@/shared/api/publicAPI';
 import { Person } from '@/shared/icon/Person';
 import { NetworkBoundary } from '@/NetworkBoundary';
 import { useQuery } from '@tanstack/react-query';
+import { Standby } from './Standby';
+import { compareDate, sumSeconds } from '@/shared/util/timeUtils';
+
+function validateRoom(roomInfo: any) {
+  return (
+    compareDate(
+      sumSeconds(
+        roomInfo.albumResponse.releaseDate,
+        Number(roomInfo.totalDuration),
+      ),
+      new Date(),
+    ) > 0
+  );
+}
 
 function StreamingContainer() {
   const { roomId } = useParams<{ roomId: string }>();
-  const [songIndex, setSongIndex] = useState<number>(0);
-
-  const {
-    data: roomInfo,
-    error,
-    isError,
-  } = useQuery({
+  const [songIndex, setSongIndex] = useState<number>(1);
+  const { data: roomInfo } = useQuery({
     queryKey: ['room', roomId],
     queryFn: () => publicAPI.getRoomInfo(roomId!),
+    throwOnError: true,
   });
 
   useEffect(() => {
@@ -28,13 +38,21 @@ function StreamingContainer() {
       setSongIndex(Number(roomInfo.trackOrder));
     }
   }, [roomInfo]);
+  console.log(roomInfo);
 
-  if (isError) {
-    throw error;
-  }
-
+  // 방 정보가 없을 때
   if (!roomInfo) {
     return null;
+  }
+
+  // 종료된 방일 때
+  if (!validateRoom(roomInfo)) {
+    throw new Error('방이 종료되었습니다.');
+  }
+  // 아직 세션이 시작되지 않음
+
+  if (roomInfo.trackOrder === null) {
+    return <Standby album={roomInfo.albumResponse} />;
   }
 
   return (

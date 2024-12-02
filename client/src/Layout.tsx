@@ -3,7 +3,7 @@ import { Sidebar } from './widgets/sidebar/ui/Sidebar';
 
 export function Layout() {
   return (
-    <div className="flex flex-row">
+    <div className="flex flex-row h-full">
       <Sidebar />
       <div className="flex-1">
         <Outlet />

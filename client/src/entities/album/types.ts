@@ -17,6 +17,7 @@ export interface AlbumData {
   tags: string;
   bannerUrl: string | null;
   jacketUrl: string | null;
+  releaseDate: string;
 }
 
 export interface SongData {

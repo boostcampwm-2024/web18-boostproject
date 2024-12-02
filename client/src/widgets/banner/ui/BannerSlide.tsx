@@ -2,22 +2,10 @@ import { bannerData } from '@/entities/room/types';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import { useNavigate } from 'react-router-dom';
-import { TIMEZONE_OFFSET } from '../types';
+import { convertToKTC, splitDate } from '@/shared/util/timeUtils';
 
 interface BannerSlideProps {
   banner: bannerData;
-}
-
-function convertToKTC(dateString: string) {
-  const date = new Date(dateString);
-  date.setHours(date.getHours() + TIMEZONE_OFFSET.KST);
-  return date.toISOString();
-}
-
-function splitDate(date: string) {
-  const [dateString, timeString] = date.split('T');
-  const [_, month, day] = dateString.split('-');
-  return `${month}월 ${day}일 ${timeString.slice(0, 5)}`;
 }
 
 export function BannerSlide({ banner }: BannerSlideProps) {
