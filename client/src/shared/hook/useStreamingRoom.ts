@@ -38,6 +38,8 @@ export function useStreamingRoom() {
     setSocket(newSocket);
 
     return () => {
+      console.log('DISCONNECTED');
+      newSocket.removeAllListeners();
       newSocket.disconnect();
     };
   }, []);
