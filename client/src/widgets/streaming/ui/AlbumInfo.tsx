@@ -47,12 +47,15 @@ export function AlbumInfo({
   };
 
   const handleVolumeMuted = () => {
+    if (!audioRef.current) return;
     if (volume <= 0) {
       setVolume(backupVolume);
+      audioRef.current.volume = backupVolume;
     }
     if (volume > 0) {
       setBackupVolume(volume);
       setVolume(0);
+      audioRef.current.volume = 0;
     }
   };
 
