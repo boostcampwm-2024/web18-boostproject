@@ -21,7 +21,7 @@ export function BannerSlide({ banner }: BannerSlideProps) {
       <img
         src={banner.bannerImageUrl}
         alt={`스트리밍 진행 중인 ${banner.albumName} 이미지`}
-        className="w-full h-full object-cover"
+        className={`w-full h-full object-cover ${banner.albumId ? 'cursor-pointer' : ''}`}
       />
       {banner.albumId && (
         <div className="absolute top-0 left-0 text-grayscale-100 z-10 w-1/4 min-h-full p-4 flex flex-col justify-between">
