@@ -1,6 +1,6 @@
 import { ChevronDown } from '@/shared/icon/ChevronDown';
 import { useState } from 'react';
-import { useSocketStore } from '@/shared/store/useSocketStore.ts';
+import { useSocketStore } from '@/shared/store/useSocketStore';
 import { SongData } from '@/entities/album/types.ts';
 import { useVote } from '@/widgets/vote/useVote.ts';
 import './ScrollBar.css';
@@ -36,6 +36,7 @@ export function Vote({ songs }: { songs: SongData[] }) {
       >
         {Object.values(voteData.votes).map((item, index) => (
           <div
+            key={index}
             className={`vote select-none relative h-full my-3 flex w-full justify-between overflow-x-hidden rounded-lg  ${voteData.trackNumber === String(index + 1) ? 'hover bg-brand text-grayscale-900' : 'hover:bg-grayscale-600 cursor-pointer'}`}
             onClick={() => handleVoteClick(String(index + 1))}
           >

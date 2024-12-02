@@ -14,8 +14,8 @@ export function VolumeMuted() {
       <path
         d="M20.0713 19.5713L7.00024 5.00024"
         stroke="#F3F3F3"
-        stroke-width="2"
-        stroke-linecap="round"
+        strokeWidth="2"
+        strokeLinecap="round"
       />
     </svg>
   );

@@ -7,7 +7,7 @@ import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class SchedulerService {
-  private readonly MINUTES = 30;
+  private readonly MINUTES = 5;
   private readonly ROOM_ID: string;
   constructor(
     @Inject(REDIS_CLIENT) private readonly redisClient: RedisClientType,
@@ -17,7 +17,7 @@ export class SchedulerService {
     this.ROOM_ID = this.configService.get<string>('TEST_ROOM_ID');
   }
 
-  @Cron('25,55 * * * *')
+  @Cron('*/5 * * * *')
   async updateReleaseTimestamp() {
     const currentTime = new Date();
     console.log(

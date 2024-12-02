@@ -1,11 +1,5 @@
 import { create } from 'zustand';
-import { MessageData } from '@/entities/message/types';
-
-interface ChatMessageState {
-  messages: MessageData[];
-  addMessage: (message: MessageData) => void;
-  clearMessages: () => void;
-}
+import { ChatMessageState } from './state/chatState';
 
 export const useChatMessageStore = create<ChatMessageState>((set) => ({
   messages: [],
