@@ -26,8 +26,12 @@ class CustomError extends Error {
 
 export const publicAPI = {
   getAlbumSidebar: async () => {
-    const { data } = await publicInstance.get(`/album/sidebar`);
-    return data;
+    return await publicInstance
+      .get(`/album/sidebar`)
+      .then((response) => response)
+      .catch((error: AxiosError) => {
+        throw error;
+      });
   },
   getAlbumBanner: async () => {
     try {

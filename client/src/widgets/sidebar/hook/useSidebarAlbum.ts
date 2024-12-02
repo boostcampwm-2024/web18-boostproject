@@ -5,7 +5,7 @@ export const useSidebarAlbum = () => {
     queryKey: ['albumSidebar'],
     queryFn: async () => {
       const response = await publicAPI.getAlbumSidebar();
-      return response.result;
+      return response.data.result;
     },
     refetchOnWindowFocus: true,
   });

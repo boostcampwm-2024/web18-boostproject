@@ -9,18 +9,16 @@ import { publicAPI } from '@/shared/api/publicAPI';
 import { Person } from '@/shared/icon/Person';
 import { NetworkBoundary } from '@/NetworkBoundary';
 import { useQuery } from '@tanstack/react-query';
+import { Standby } from './Standby';
 
 function StreamingContainer() {
   const { roomId } = useParams<{ roomId: string }>();
-  const [songIndex, setSongIndex] = useState<number>(0);
+  const [songIndex, setSongIndex] = useState<number>(1);
 
-  const {
-    data: roomInfo,
-    error,
-    isError,
-  } = useQuery({
+  const { data: roomInfo } = useQuery({
     queryKey: ['room', roomId],
     queryFn: () => publicAPI.getRoomInfo(roomId!),
+    throwOnError: true,
   });
 
   useEffect(() => {
@@ -29,12 +27,12 @@ function StreamingContainer() {
     }
   }, [roomInfo]);
 
-  if (isError) {
-    throw error;
-  }
-
   if (!roomInfo) {
     return null;
+  }
+
+  if (roomInfo.trackOrder === null) {
+    return <Standby album={roomInfo.albumResponse} />;
   }
 
   return (

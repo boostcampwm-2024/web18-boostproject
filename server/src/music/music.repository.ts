@@ -68,6 +68,7 @@ export class MusicRepository {
       }
       currentTime = songEndTime;
     }
-    throw new AlbumNotFoundByTimestampException(albumId, joinTimestamp);
+    return undefined;
+    // throw new AlbumNotFoundByTimestampException(albumId, joinTimestamp);
   }
 }

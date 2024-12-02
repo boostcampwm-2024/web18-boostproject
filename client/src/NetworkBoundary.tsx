@@ -28,15 +28,7 @@ export const NetworkBoundary = ({
   return (
     <QueryErrorResetBoundary>
       {({ reset }) => (
-        <ErrorBoundary
-          onReset={reset}
-          FallbackComponent={NetworkFallback}
-          onError={(error) => {
-            if (error?.name === 'QueryError') {
-              console.error('Query Error:', error);
-            }
-          }}
-        >
+        <ErrorBoundary onReset={reset} FallbackComponent={NetworkFallback}>
           <Suspense
             fallback={<div className="text-grayscale-100">로딩중...</div>}
           >
