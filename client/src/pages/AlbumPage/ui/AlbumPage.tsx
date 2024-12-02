@@ -3,6 +3,7 @@ import { publicAPI } from '@/shared/api/publicAPI.ts';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import LogoAlbum from '@/assets/logo-album-cover.png';
+import { AlbumDetailBackground } from '@/widgets/albums';
 
 export function AlbumPage() {
   const { albumId } = useParams<{ albumId: string }>();
@@ -27,19 +28,17 @@ export function AlbumPage() {
         .catch((err) => console.log(err));
 
       setSongDetails(albumResponse.result.songDetails);
-      console.log(commentResponse);
       setAlbumJacketUrl(albumResponse.result.albumDetails.jacketUrl);
       setCommentList(commentResponse.result.albumComments);
     })();
   }, []);
 
-  console.log(commentList);
-
   return (
     <div className={'pr-[128px] pt-[64px]'}>
-      <div className={'flex h-680 w-full gap-[80px] mb-[120px]'}>
-        <article className={'w-[340px] h-[340px] flex-shrink-0'}>
+      <div className={'flex h-680 w-full gap-[80px] mb-[120px] relative z-[1]'}>
+        <article className={'w-[340px] h-[340px] flex-shrink-0 ml-[40px]'}>
           <img
+            id={'album-jacket'}
             src={albumJacketUrl || LogoAlbum}
             className={'w-[340px] h-[340px]'}
           ></img>
@@ -47,6 +46,7 @@ export function AlbumPage() {
         <Playlist playlist={songDetails} />
       </div>
       <CommentList commentList={commentList} />
+      <AlbumDetailBackground albumJacketUrl={albumJacketUrl || LogoAlbum} />
     </div>
   );
 }
