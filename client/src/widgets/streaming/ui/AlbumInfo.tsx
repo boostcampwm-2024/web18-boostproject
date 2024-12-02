@@ -47,10 +47,6 @@ export function AlbumInfo({
   };
 
   const handleVolumeMuted = () => {
-    if (audioRef.current) {
-      return;
-    }
-
     if (volume <= 0) {
       setVolume(backupVolume);
     }
@@ -60,8 +56,14 @@ export function AlbumInfo({
     }
   };
 
-  const handleMouseEnter = (e) => {
-    if (e.currentTarget === e.target) {
+  const handleMouseEnter = () => {
+    if (!isVolumeOpen) {
+      setIsVolumeOpen(!isVolumeOpen);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (isVolumeOpen) {
       setIsVolumeOpen(!isVolumeOpen);
     }
   };
@@ -85,7 +87,7 @@ export function AlbumInfo({
       <div
         className={`fixed top-6 right-[364px] bg-grayscale-900 p-2 rounded-full flex flex-row items-center`}
         onMouseEnter={handleMouseEnter}
-        onMouseLeave={() => setIsVolumeOpen(!isVolumeOpen)}
+        onMouseLeave={handleMouseLeave}
       >
         <input
           type="range"
