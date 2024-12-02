@@ -7,4 +7,5 @@ export interface VoteState {
 export interface VoteActions {
   showVote: (voteData: VoteType) => void;
   updateVote: (voteData: VoteType) => void;
+  reset: () => void;
 }

@@ -1,6 +1,11 @@
 import { create } from 'zustand';
 import { VoteActions, VoteState, VoteType } from './state/voteState';
 
+const INITIAL_STATE: VoteType = {
+  votes: {},
+  trackNumber: '',
+};
+
 export const useVoteStore = create<VoteState & VoteActions>((set) => ({
   voteData: {
     votes: {},
@@ -22,4 +27,6 @@ export const useVoteStore = create<VoteState & VoteActions>((set) => ({
         votes: voteData.votes,
       },
     })),
+
+  reset: () => set({ voteData: INITIAL_STATE }),
 }));

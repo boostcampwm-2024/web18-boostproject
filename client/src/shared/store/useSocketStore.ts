@@ -16,11 +16,15 @@ export const useSocketStore = create<SocketState & SocketActions>(
 
     setUserCount: (count: number) => set({ userCount: count }),
 
+    resetAllStores: () => {
+      useVoteStore.getState().reset();
+      useChatMessageStore.getState().reset();
+    },
+
     connect: (newRoomId: string) => {
       const { socket, roomId } = get();
       if (roomId === newRoomId && socket?.connected) return;
-
-      if (socket) socket.disconnect();
+      console.log('NEW ROOM CONNECTED');
 
       const newSocket = createSocket(newRoomId);
       setupSocketListeners(newSocket, {
@@ -34,16 +38,24 @@ export const useSocketStore = create<SocketState & SocketActions>(
     },
 
     disconnect: () => {
+      console.log('DISCONNECTED');
       const { socket } = get();
       if (socket) {
+        socket.removeAllListeners();
         socket.disconnect();
+        get().resetAllStores();
         set({ isConnected: false, socket: null, roomId: null });
       }
     },
 
     reset: () => {
+      console.log('RECONNECTED');
       const { socket } = get();
-      if (socket) socket.disconnect();
+      if (socket) {
+        socket.removeAllListeners();
+        socket.disconnect();
+        get().resetAllStores();
+      }
       set({ socket: null, isConnected: false, roomId: null });
     },
   }),

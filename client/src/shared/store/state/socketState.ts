@@ -13,4 +13,5 @@ export interface SocketActions {
   reset: () => void;
   setUserCount: (count: number) => void;
   setConnectionStatus: (status: boolean) => void;
+  resetAllStores: () => void;
 }
