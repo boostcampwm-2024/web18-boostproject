@@ -49,4 +49,12 @@ export const publicAPI = {
       throw error;
     }
   },
+  getComment: async (albumId: string) => {
+    const { data } = await publicInstance.get(`/comment/album/${albumId}`);
+    return data;
+  },
+  getAlbumInfo: async (albumId: string) => {
+    const { data } = await publicInstance.get(`/album/${albumId}`);
+    return data;
+  },
 };

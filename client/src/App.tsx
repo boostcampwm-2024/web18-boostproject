@@ -1,11 +1,10 @@
-import { Routes, Route } from 'react-router-dom';
+import { Outlet, Route, Routes } from 'react-router-dom';
 import { MainPage } from '@/pages/MainPage';
 import { StreamingPage } from '@/pages/StreamingPage';
 import { AdminPage } from '@/pages/AdminPage';
 import { AlbumPage } from '@/pages/AlbumPage';
 import { AdminLoginPage } from '@/pages/AdminLoginPage';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
-import { Outlet } from 'react-router-dom';
 import { Sidebar } from './widgets/sidebar/ui/Sidebar';
 import { GlobalBoundary } from './GlobalBoundary';
 
