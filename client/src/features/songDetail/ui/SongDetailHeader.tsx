@@ -15,18 +15,24 @@ export function SongDetailHeader({
   setIsOpen,
   setCategory,
 }: SongDetailHeaderProps) {
+  const handleCategoryClick = (selectedCategory: string) => {
+    if (!isOpen) {
+      setIsOpen(true);
+    }
+    setCategory(selectedCategory);
+  };
   return (
     <div className="flex flex-row justify-between px-6 py-4 items-center bg-grayscale-900 rounded-t-lg">
       <div className="flex flex-row space-x-4">
         <CategoryButton
           isActive={category === CATEGORIES.LYRICS}
-          onClick={() => isOpen && setCategory(CATEGORIES.LYRICS)}
+          onClick={() => handleCategoryClick(CATEGORIES.LYRICS)}
         >
           가사
         </CategoryButton>
         <CategoryButton
           isActive={category === CATEGORIES.PLAYLIST}
-          onClick={() => isOpen && setCategory(CATEGORIES.PLAYLIST)}
+          onClick={() => handleCategoryClick(CATEGORIES.PLAYLIST)}
         >
           플레이리스트
         </CategoryButton>
