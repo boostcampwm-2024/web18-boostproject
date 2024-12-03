@@ -107,9 +107,6 @@ export class AdminService {
     return result.Location;
   }
 
-  // forEach는 비동기 작업을 기다리지 않고 단순 반복만 수행
-  // repository.save()가 배열을 받으면 내부적으로 단일 트랜잭션으로 처리
-  // 두 번째 방식은 실제로 하나의 쿼리로 처리되어 성능상 이점도 있음
   async saveSongs(songs: Song[], albumId: string) {
     const songsToSave = songs.map(
       (song) => new Song(new SongSaveDto({ ...song, albumId: albumId })),
