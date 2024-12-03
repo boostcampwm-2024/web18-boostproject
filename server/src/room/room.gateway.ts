@@ -130,6 +130,9 @@ export class RoomGateway
       console.log('message : ' + identifier);
 
       const clientIdForDisplay = identifier.substring(0, 4);
+      if (!client.data.name) {
+        client.data.name = RandomNameUtil.generate();
+      }
       this.server.to(data.roomId).emit('broadcast', {
         message: data.message,
         userName: client.data.name,
