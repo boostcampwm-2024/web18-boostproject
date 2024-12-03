@@ -5,7 +5,7 @@ interface TrackItemProps {
 
 export function TrackItem({ trackData, index }: TrackItemProps) {
   const hour = Math.floor(Number(trackData.songDuration) / 3600);
-  const minute = Math.floor((Number(trackData.songDuration) % 3600) / 3600);
+  const minute = Math.floor((Number(trackData.songDuration) % 3600) / 60);
   const second = Math.floor(Number(trackData.songDuration) % 60);
 
   return (
