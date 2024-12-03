@@ -4,43 +4,46 @@ import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { FastAverageColor } from 'fast-average-color';
 import { darken } from 'polished';
-
-interface AlbumDetails {
-  albumId: string;
-  albumName: string;
-  artist: string;
-  jacketUrl: string;
-}
+import LogoAlbum from '@/assets/logo-album-cover.png';
+import { AlbumDetailData, SongDetailData } from '@/entities/comment/types';
 
 export function AlbumPage() {
   const { albumId } = useParams<{ albumId: string }>();
   if (!albumId) return;
 
-  const [songDetails, setSongDetails] = useState<
-    { name: string; duration: string }[]
-  >([]);
-  const [albumJacketUrl, setAlbumJacketUrl] = useState<string>('LogoAlbum');
-  const [albumDetails, setAlbumDetails] = useState<AlbumDetails>({});
+  const [songDetails, setSongDetails] = useState<SongDetailData[]>([]);
+  const [albumJacketUrl, setAlbumJacketUrl] = useState(LogoAlbum);
+  const [albumDetails, setAlbumDetails] = useState<AlbumDetailData | null>(
+    null,
+  );
+  const [backgroundColor, setBackgroundColor] = useState<string>('#222');
+
+  const totalDuration = songDetails.reduce(
+    (total, acc) => total + Number(acc.songDuration),
+    0,
+  );
 
   useEffect(() => {
     (async () => {
       const albumResponse = await publicAPI
         .getAlbumInfo(albumId)
         .catch((err) => console.log(err));
-
       setAlbumDetails(albumResponse.result.albumDetails);
-      setSongDetails(albumResponse.result.songDetails);
-      setAlbumJacketUrl(albumResponse.result.albumDetails.jacketUrl);
+      setSongDetails([...albumResponse.result.songDetails]);
+      setAlbumJacketUrl(
+        albumResponse.result.albumDetails.jacketUrl ?? LogoAlbum,
+      );
     })();
   }, [albumJacketUrl, albumId]);
-
-  const [backgroundColor, setBackgroundColor] = useState<string>('#222');
 
   useEffect(() => {
     const fac = new FastAverageColor();
     const img = new Image();
     img.crossOrigin = 'anonymous';
-    img.src = albumJacketUrl;
+    img.src = albumJacketUrl.replace(
+      'https://inear-music.kr.object.ncloudstorage.com',
+      '/images',
+    );
 
     img.onload = () => {
       try {
@@ -65,11 +68,6 @@ export function AlbumPage() {
     };
   }, [albumJacketUrl]); // albumJacketUrl이 변경될 때마다 실행
 
-  const totalDuration = songDetails.reduce(
-    (total, acc) => total + Number(acc.songDuration),
-    0,
-  );
-
   return (
     <div
       className={'px-80 pt-16 flex flex-col w-full'}
@@ -78,25 +76,27 @@ export function AlbumPage() {
       }}
     >
       <div className={'flex h-680 gap-20 mb-24 relative z-10'}>
-        <article className={'w-[21.25rem] h-85 flex-shrink-0'}>
-          <img
-            id={'album-jacket'}
-            src={albumJacketUrl}
-            className={'w-[21.25rem] h-[21.25rem] select-none'}
-            alt={`${albumDetails.albumName} 앨범 커버`}
-          ></img>
-          <p
-            className={`${albumDetails.albumName?.length >= 12 ? 'text-2xl' : albumDetails.albumName?.length >= 10 ? 'text-3xl' : 'text-4xl'} text-grayscale-50 mt-8 truncate`}
-            style={{ fontWeight: 900 }}
-          >
-            {albumDetails.albumName}
-          </p>
-          <AlbumArtist
-            artist={albumDetails.artist}
-            songLength={songDetails.length}
-            totalDuration={totalDuration}
-          />
-        </article>
+        {albumDetails && (
+          <article className={'w-[21.25rem] h-85 flex-shrink-0'}>
+            <img
+              id={'album-jacket'}
+              src={albumJacketUrl}
+              className={'w-[21.25rem] h-[21.25rem] select-none'}
+              alt={`${albumDetails.albumName} 앨범 커버`}
+            ></img>
+            <p
+              className={`${albumDetails.albumName?.length >= 12 ? 'text-2xl' : albumDetails.albumName?.length >= 10 ? 'text-3xl' : 'text-4xl'} text-grayscale-50 mt-8 truncate`}
+              style={{ fontWeight: 900 }}
+            >
+              {albumDetails.albumName}
+            </p>
+            <AlbumArtist
+              artist={albumDetails.artist}
+              songLength={songDetails.length}
+              totalDuration={totalDuration}
+            />
+          </article>
+        )}
         <Playlist playlist={songDetails} />
       </div>
       <CommentList albumId={albumId} />

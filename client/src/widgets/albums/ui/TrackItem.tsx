@@ -1,13 +1,11 @@
+import { SongDetailData } from '@/entities/comment/types';
+import { splitTime } from '@/shared/util/timeUtils';
 interface TrackItemProps {
-  trackData: { songName: string; songDuration: string };
+  trackData: SongDetailData;
   index: number;
 }
 
 export function TrackItem({ trackData, index }: TrackItemProps) {
-  const hour = Math.floor(Number(trackData.songDuration) / 3600);
-  const minute = Math.floor((Number(trackData.songDuration) % 3600) / 60);
-  const second = Math.floor(Number(trackData.songDuration) % 60);
-
   return (
     <section
       className={
@@ -20,10 +18,7 @@ export function TrackItem({ trackData, index }: TrackItemProps) {
       </section>
 
       <section className={'text-grayscale-200 text-sm'}>
-        {(hour > 0 ? String(hour).padStart(2, '0') + ':' : '') +
-          String(minute).padStart(2, '0') +
-          ':' +
-          String(second).padStart(2, '0')}
+        {splitTime(trackData.songDuration)}
       </section>
     </section>
   );

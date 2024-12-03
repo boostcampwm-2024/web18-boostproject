@@ -1,5 +1,6 @@
+import { CommentData } from '@/entities/comment/types';
 interface CommentProps {
-  comment: { content: string; createdAt: Date };
+  comment: CommentData;
   index: number;
 }
 

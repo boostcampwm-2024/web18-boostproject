@@ -1,18 +1,16 @@
 import { TrackItem } from './TrackItem';
 import './Scrollbar.css';
-
+import { SongDetailData } from '@/entities/comment/types';
 export interface PlaylistComponentProps {
-  playlist: { songName: string; songDuration: string }[];
+  playlist: SongDetailData[];
 }
 
 export function Playlist({ playlist }: PlaylistComponentProps) {
   return (
-    <article className={'w-full overflow-y-scroll h-96 pr-4'}>
-      {playlist.map(
-        (item: { songName: string; songDuration: string }, index) => (
-          <TrackItem trackData={item} index={index} key={index} />
-        ),
-      )}
+    <article className={'w-full overflow-y-scroll h-96 pr-4 playlist'}>
+      {playlist.map((item, index) => (
+        <TrackItem trackData={item} index={index} key={index} />
+      ))}
     </article>
   );
 }

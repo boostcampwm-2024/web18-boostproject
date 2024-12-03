@@ -26,6 +26,23 @@ export function splitDate(dateString: string) {
   const [_, month, day] = date.split('-');
   return `${month}월 ${day}일 ${time.slice(0, 5)}`;
 }
+/**
+ * 시/분/초 문자열 반환
+ * @param time
+ * @returns
+ */
+export function splitTime(time: string) {
+  const hour = Math.floor(Number(time) / 3600);
+  const minute = Math.floor((Number(time) % 3600) / 60);
+  const second = Math.floor(Number(time) % 60);
+
+  return (
+    (hour > 0 ? String(hour).padStart(2, '0') + ':' : '') +
+    String(minute).padStart(2, '0') +
+    ':' +
+    String(second).padStart(2, '0')
+  );
+}
 
 /**
  * 초를 더한 시간 반환
