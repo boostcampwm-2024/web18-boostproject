@@ -3,7 +3,7 @@ import { publicAPI } from '@/shared/api/publicAPI';
 import { useEffect, useState } from 'react';
 import { bannerData } from '@/entities/room/types';
 import { Banner } from '@/widgets/banner';
-import DefaultBanner from '@/assets/default-banner.png';
+import DefaultBanner from '@/assets/default-banner.webp';
 
 const defaultBanner: bannerData = {
   albumId: '',
