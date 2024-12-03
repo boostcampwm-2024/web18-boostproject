@@ -18,7 +18,9 @@ iNear와 함께 같은 취향을 가진 팬들과 좋아하는 아티스트 앨�
 - 앨범 발매 시간에 맞추어 세션 안에서 라이브로 신곡을 들을 수 있습니다
 
 
-https://github.com/user-attachments/assets/ae6e491a-bde3-4895-a8fd-3108f28ef97f
+
+https://github.com/user-attachments/assets/25ba6871-809e-4a0e-86ac-ee321d661645
+
 
 <br>
 
