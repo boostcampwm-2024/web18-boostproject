@@ -24,6 +24,10 @@ scenarios:
           query: 'roomId={{ roomId }}'
           headers:
             x-forwarded-for: '{{ $randomNumber(1000000, 9999999) }}'
+
+      - think: 2
+
+      - namespace: '/rooms'
         emit:
           channel: 'message'
           data:
