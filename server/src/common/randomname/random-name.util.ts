@@ -24,7 +24,7 @@ export class RandomNameUtil {
     '청결한',
     '상냥한',
     '예의바른',
-    '높은 ',
+    '높은',
     '먼',
     '정직한',
     '성실한',
@@ -49,7 +49,7 @@ export class RandomNameUtil {
     '고릴라',
     '자리',
     '코뿔소',
-    '북극곰 ',
+    '북극곰',
     '회색곰',
     '침팬지',
     '돌고래',
@@ -59,7 +59,7 @@ export class RandomNameUtil {
     '토끼',
   ];
 
-  public static generate() {
+  public static generate(): string {
     const adjectvieLength = RandomNameUtil.adjective.length;
     const animalLength = RandomNameUtil.animal.length;
 
