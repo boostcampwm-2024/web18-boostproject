@@ -27,12 +27,10 @@ export function AlbumPage() {
     (async () => {
       const commentResponse = await publicAPI
         .getComment(albumId)
-        .then((res) => res)
         .catch((err) => console.log(err));
 
       const albumResponse = await publicAPI
         .getAlbumInfo(albumId)
-        .then((res) => res)
         .catch((err) => console.log(err));
 
       setAlbumDetails(albumResponse.result.albumDetails);
