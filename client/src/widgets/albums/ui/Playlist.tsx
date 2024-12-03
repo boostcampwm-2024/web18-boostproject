@@ -1,4 +1,5 @@
 import { TrackItem } from '@/widgets/albums';
+import './Scrollbar.css';
 
 export interface PlaylistComponentProps {
   playlist: { songName: string; songDuration: string }[];
