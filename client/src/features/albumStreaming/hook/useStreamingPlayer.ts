@@ -65,8 +65,8 @@ export const useStreamingPlayer = (
         if (songIndex + 1 > totalSongs) {
           Promise.resolve().then(() => {
             setSongIndex(1);
-            navigate('/');
             alert('모든 곡이 종료되었습니다.');
+            navigate('/');
           });
           return;
         }
