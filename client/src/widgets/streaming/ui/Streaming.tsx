@@ -1,7 +1,7 @@
 import { AlbumBackground } from './AlbumBackground';
 import { AlbumInfo } from './AlbumInfo';
 import { RoomResponse } from '@/entities/album/types';
-import DefaultCover from '@/assets/logo-album-cover.png';
+import DefaultCover from '@/assets/logo-album-cover.webp';
 import { SongDetail } from '@/features/songDetail';
 
 interface StreamingProps {

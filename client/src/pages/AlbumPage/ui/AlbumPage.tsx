@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { FastAverageColor } from 'fast-average-color';
 import { darken } from 'polished';
-import LogoAlbum from '@/assets/logo-album-cover.png';
+import LogoAlbum from '@/assets/logo-album-cover.webp';
 import { AlbumDetailData, SongDetailData } from '@/entities/comment/types';
 
 export function AlbumPage() {

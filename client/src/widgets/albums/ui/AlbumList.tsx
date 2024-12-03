@@ -1,4 +1,4 @@
-import LogoAlbum from '@/assets/logo-album-cover.png';
+import LogoAlbum from '@/assets/logo-album-cover.webp';
 import { AlbumCard } from './AlbumCard';
 import { useEffect, useState } from 'react';
 import { EndedAlbumListResponse } from '@/entities/room/types';
