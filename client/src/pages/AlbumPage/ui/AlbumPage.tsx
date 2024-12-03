@@ -87,7 +87,7 @@ export function AlbumPage() {
         background: `linear-gradient(180deg, ${backgroundColor} 0%, rgba(0, 0, 0, 0) 100%)`,
       }}
     >
-      <div className={'flex h-680 gap-[80px] mb-[120px] relative z-[1]'}>
+      <div className={'flex h-680 gap-[80px] mb-[150px] relative z-[1]'}>
         <article className={'w-[340px] h-[340px] flex-shrink-0'}>
           <img
             id={'album-jacket'}
@@ -95,7 +95,7 @@ export function AlbumPage() {
             className={'w-[340px] h-[340px]'}
           ></img>
           <p
-            className={`${albumDetails.albumName?.length >= 12 ? 'text-2xl' : albumDetails.albumName?.length >= 10 ? 'text-3xl' : 'text-4xl'} text-grayscale-50 mt-4 truncate`}
+            className={`${albumDetails.albumName?.length >= 12 ? 'text-2xl' : albumDetails.albumName?.length >= 10 ? 'text-3xl' : 'text-4xl'} text-grayscale-50 mt-8 truncate`}
             style={{ fontWeight: 900 }}
           >
             {albumDetails.albumName}
