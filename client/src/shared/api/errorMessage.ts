@@ -12,4 +12,7 @@ export const ERROR_MESSAGE = {
   DEFAULT: {
     UNKNOWN_ERROR: '알 수 없는 에러가 발생했습니다.',
   },
+  COMMENT: {
+    COMMENT_MESSAGE_TO_LONG: '댓글은 200자 이내로 작성해주세요.',
+  },
 };

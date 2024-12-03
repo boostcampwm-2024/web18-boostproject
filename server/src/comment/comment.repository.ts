@@ -24,9 +24,10 @@ export class CommentRepository {
     const commentInfos = await this.dataSource
       .createQueryBuilder()
       .from(Comment, 'comment')
-      .select(['album_id as albumId', 'content'])
+      .select(['album_id as albumId', 'content', 'created_at as createdAt'])
       .where('album_id = :albumId', { albumId })
-      .orderBy('created_at')
+      .orderBy('created_at', 'DESC')
+      .limit(10)
       .getRawMany();
 
     return plainToInstance(AlbumCommentDto, commentInfos);
