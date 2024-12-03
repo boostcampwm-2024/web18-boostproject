@@ -5,6 +5,13 @@ import { useEffect, useState } from 'react';
 import { FastAverageColor } from 'fast-average-color';
 import { darken } from 'polished';
 
+interface AlbumDetails {
+  albumId: string;
+  albumName: string;
+  artist: string;
+  jacketUrl: string;
+}
+
 export function AlbumPage() {
   const { albumId } = useParams<{ albumId: string }>();
   if (!albumId) return;
@@ -13,7 +20,8 @@ export function AlbumPage() {
     { name: string; duration: string }[]
   >([]);
   const [albumJacketUrl, setAlbumJacketUrl] = useState<string>('LogoAlbum');
-  const [commentList, setCommentList] = useState<{ content: string }[]>([]);
+  const [commentList, setCommentList] = useState<{ albumName: string }[]>([]);
+  const [albumDetails, setAlbumDetails] = useState<AlbumDetails>({});
 
   useEffect(() => {
     (async () => {
@@ -27,9 +35,10 @@ export function AlbumPage() {
         .then((res) => res)
         .catch((err) => console.log(err));
 
+      console.log(albumResponse.result.albumDetails);
+      setAlbumDetails(albumResponse.result.albumDetails);
       setSongDetails(albumResponse.result.songDetails);
       setAlbumJacketUrl(albumResponse.result.albumDetails.jacketUrl);
-
       setCommentList(commentResponse.result.albumComments);
     })();
   }, [albumJacketUrl]);
@@ -81,6 +90,29 @@ export function AlbumPage() {
             src={albumJacketUrl}
             className={'w-[340px] h-[340px]'}
           ></img>
+          <p
+            className={`${albumDetails.albumName?.length >= 12 ? 'text-2xl' : albumDetails.albumName?.length >= 10 ? 'text-3xl' : 'text-4xl'} text-grayscale-50 mt-4 truncate`}
+            style={{ fontWeight: 900 }}
+          >
+            {albumDetails.albumName}
+          </p>
+          <p className={'text-lg text-grayscale-400 mt-4 flex justify-start'}>
+            <span className={'truncate'}>{albumDetails.artist}</span>
+            <p className={'flex-shrink-0 flex-grow-0 whitespace-nowrap'}>
+              <span className={'mx-2'}>•</span>
+              <span>{songDetails.length}곡</span>
+            </p>
+            <p className={'flex-shrink-0 flex-grow-0 whitespace-nowrap'}>
+              <span className={'mx-2'}>•</span>
+              <span>
+                {songDetails.reduce(
+                  (total, acc) => total + Number(acc.songDuration),
+                  0,
+                )}
+                초
+              </span>
+            </p>
+          </p>
         </article>
         <Playlist playlist={songDetails} />
       </div>
