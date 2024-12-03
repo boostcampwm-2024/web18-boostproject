@@ -70,7 +70,7 @@ export function AlbumPage() {
 
   return (
     <div
-      className={'px-80 pt-16 flex flex-col w-full'}
+      className="px-80 pt-16 flex flex-col w-full h-screen"
       style={{
         background: `linear-gradient(180deg, ${backgroundColor} 0%, rgba(0, 0, 0, 0) 20%)`,
       }}

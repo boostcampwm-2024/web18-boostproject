@@ -35,7 +35,7 @@ export function MainPage() {
     getAlbumBanner();
   }, []);
   return (
-    <div className="px-20 py-14">
+    <div className="px-20 py-14 h-screen">
       <Banner bannerList={bannerList} />
       <AlbumList />
     </div>
