@@ -2,8 +2,8 @@ import { CommentList, Playlist } from '@/widgets/albums';
 import { publicAPI } from '@/shared/api/publicAPI.ts';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import LogoAlbum from '@/assets/logo-album-cover.png';
-import { AlbumDetailBackground } from '@/widgets/albums';
+import { FastAverageColor } from 'fast-average-color';
+import { darken } from 'polished';
 
 export function AlbumPage() {
   const { albumId } = useParams<{ albumId: string }>();
@@ -34,10 +34,46 @@ export function AlbumPage() {
     })();
   }, [albumJacketUrl]);
 
+  const [backgroundColor, setBackgroundColor] = useState<string>('#222');
+
+  useEffect(() => {
+    const fac = new FastAverageColor();
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.src = albumJacketUrl;
+
+    img.onload = () => {
+      try {
+        if (img.width === 0 || img.height === 0) {
+          console.error('Image has no dimensions');
+          return;
+        }
+
+        const color = fac.getColor(img, {
+          algorithm: 'dominant', // 주요 색상 추출
+          mode: 'precision', // 더 정확한 색상 계산
+        });
+
+        setBackgroundColor(darken(0.4, color.hex));
+      } catch (e) {
+        console.error('Color extraction failed:', e);
+      }
+    };
+
+    return () => {
+      img.onload = null; // 클린업
+    };
+  }, [albumJacketUrl]); // albumJacketUrl이 변경될 때마다 실행
+
   return (
-    <div className={'pr-[128px] pt-[64px]'}>
+    <div
+      className={'pr-[128px] pt-[64px] pl-[40px]'}
+      style={{
+        background: `linear-gradient(180deg, ${backgroundColor} 0%, rgba(0, 0, 0, 0) 100%)`,
+      }}
+    >
       <div className={'flex h-680 w-full gap-[80px] mb-[120px] relative z-[1]'}>
-        <article className={'w-[340px] h-[340px] flex-shrink-0 ml-[40px]'}>
+        <article className={'w-[340px] h-[340px] flex-shrink-0'}>
           <img
             id={'album-jacket'}
             src={albumJacketUrl}
@@ -47,7 +83,6 @@ export function AlbumPage() {
         <Playlist playlist={songDetails} />
       </div>
       <CommentList commentList={commentList} />
-      <AlbumDetailBackground albumJacketUrl={albumJacketUrl} />
     </div>
   );
 }
