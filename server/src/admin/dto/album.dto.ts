@@ -9,7 +9,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { SongDto } from './song.dto';
-import { Expose, Type } from 'class-transformer';
+import { Expose, Transform, Type } from 'class-transformer';
 
 export class AlbumDto {
   @IsNotEmpty()
