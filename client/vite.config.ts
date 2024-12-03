@@ -8,6 +8,13 @@ export default defineConfig({
   plugins: [react(), tsconfigPaths()],
   server: {
     open: true,
+    proxy: {
+      '/images': {
+        target: 'https://inear-music.kr.object.ncloudstorage.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/images/, ''),
+      },
+    },
   },
   resolve: {
     alias: [{ find: '@', replacement: path.resolve(__dirname, 'src') }],
