@@ -24,7 +24,7 @@ export function AlbumList() {
   return (
     <div className="text-grayscale-50">
       <p className="mt-[70px] mb-7 text-3xl font-bold">최근 등록된 앨범</p>
-      <ul className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-7 gap-9 h-[304px]">
+      <ul className="w-full grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 overflow-hidden gap-4">
         {endedAlbumList.endedAlbums.slice(0, 7).map((album) => (
           <a key={album.albumId} href={`/album/${album.albumId}`}>
             <AlbumCard
