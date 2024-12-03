@@ -29,7 +29,7 @@ export function CommentList({ commentList, albumId }: CommentListProps) {
         </span>
       </p>
       <form className={'flex justify-between items-baseline mb-12 '}>
-        <p className={'w-[120px]'}>익명 댓글</p>
+        <p className={'w-[120px]'}>댓글 작성</p>
         <input
           name={'content'}
           className={

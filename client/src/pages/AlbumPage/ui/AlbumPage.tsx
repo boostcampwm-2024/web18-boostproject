@@ -35,7 +35,6 @@ export function AlbumPage() {
         .then((res) => res)
         .catch((err) => console.log(err));
 
-      console.log(albumResponse.result.albumDetails);
       setAlbumDetails(albumResponse.result.albumDetails);
       setSongDetails(albumResponse.result.songDetails);
       setAlbumJacketUrl(albumResponse.result.albumDetails.jacketUrl);
