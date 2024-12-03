@@ -54,22 +54,29 @@ export const useStreamingPlayer = (
     if (!audio) return;
 
     const handleEnded = () => {
-      setIsLoaded(false);
+      setTimeout(() => {
+        setIsLoaded(false);
 
-      if (songIndex + 1 > totalSongs) {
-        setSongIndex(1);
-        navigate(`/`);
-        alert('모든 곡이 종료되었습니다.');
-        return;
-      }
-      setSongIndex((prev) => prev + 1);
-      playStream();
+        if (songIndex + 1 > totalSongs) {
+          Promise.resolve().then(() => {
+            setSongIndex(1);
+            navigate('/');
+            alert('모든 곡이 종료되었습니다.');
+          });
+          return;
+        }
+
+        setSongIndex((prev) => prev + 1);
+        playStream();
+      }, 0);
     };
+
     audio.addEventListener('ended', handleEnded);
+
     return () => {
       audio.removeEventListener('ended', handleEnded);
     };
-  }, [songIndex, totalSongs]);
+  }, [songIndex, totalSongs, navigate, playStream]);
 
   useEffect(() => {
     const audio = audioRef.current;
