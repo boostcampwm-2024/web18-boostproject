@@ -1,0 +1,42 @@
+config:
+  # 일단 로컬 환경 URL
+  target: 'http://localhost:3000'
+  phases:
+    # 10초 동안
+    - duration: 10
+      # 1초에 20명
+      arrivalRate: 20
+  engines:
+    socketio-v3:
+      transports: ['websocket']
+      timeout: 10000
+  variables:
+    # 원하는 roomId 설정
+    roomId: '7b82b46b-d705-48a5-9bc5-918ee1a124a0'
+scenarios:
+  - name: 'Chat room flow'
+    engine: socketio-v3
+    flow:
+      - think: 1
+
+      - namespace: '/rooms'
+        connect:
+          query: 'roomId={{ roomId }}'
+          headers:
+            x-forwarded-for: '{{ $randomNumber(1000000, 9999999) }}'
+        emit:
+          channel: 'message'
+          data:
+            message: 'Test message'
+            roomId: '{{ roomId }}'
+
+      - think: 1
+
+      - namespace: '/rooms'
+        emit:
+          channel: 'vote'
+          data:
+            # 일단 노래 두 개가 있다고 가정하고, 랜덤 값 지정
+            trackNumber: "{{ $randomNumber(1,2) }}"
+
+      - think: 30
