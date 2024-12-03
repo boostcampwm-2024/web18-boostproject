@@ -9,18 +9,13 @@ interface AlbumBackgroundProps {
 export function AlbumDetailBackground({
   albumJacketUrl,
 }: AlbumBackgroundProps) {
-  console.log(albumJacketUrl);
   const [backgroundColor, setBackgroundColor] = useState<string>('#222');
 
   useEffect(() => {
     const fac = new FastAverageColor();
     const img = new Image();
     img.crossOrigin = 'anonymous';
-    const proxyUrl = albumJacketUrl.replace(
-      'https://inear-music.kr.object.ncloudstorage.com',
-      '/api-image',
-    );
-    img.src = proxyUrl;
+    img.src = albumJacketUrl;
 
     img.onload = () => {
       try {
