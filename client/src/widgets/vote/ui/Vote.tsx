@@ -40,16 +40,16 @@ export function Vote({ songs }: { songs: SongData[] }) {
             className={`vote select-none relative h-full my-3 flex w-full justify-between overflow-x-hidden rounded-lg  ${voteData.trackNumber === String(index + 1) ? 'hover bg-brand text-grayscale-900' : 'hover:bg-grayscale-600 cursor-pointer'}`}
             onClick={() => handleVoteClick(String(index + 1))}
           >
-            <div>
+            <div className="flex-1 min-w-0">
               <div
                 className={`votebg absolute ${voteData.trackNumber === String(index + 1) ? '' : 'bg-grayscale-800'} text-grayscale-300 text-shadow h-full rounded-md z-0`}
                 style={{ width: `${item}` }}
               ></div>
-              <p className={`relative mb-1 px-3 py-3 rounded-md z-10`}>
+              <p className={`relative mb-1 px-3 py-3 rounded-md z-10 truncate`}>
                 {songs[index].title}
               </p>
             </div>
-            <div className={'w-10 w-20'}>
+            <div className="flex-shrink-0 w-20">
               <p className={`mb-1 px-3 py-3 rounded-md z-10`}>{item}</p>
             </div>
           </div>
