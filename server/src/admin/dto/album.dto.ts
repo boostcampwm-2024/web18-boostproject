@@ -38,6 +38,7 @@ export class AlbumDto {
 
   @IsString()
   @Expose({ name: 'albumTag' })
+  @Transform(({ value, obj }) => value || obj.tags || '')
   tags: string;
 
   @IsNumber()
