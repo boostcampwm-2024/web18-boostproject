@@ -2,9 +2,8 @@ import { useParams } from 'react-router-dom';
 import { AudioController } from '@/widgets/streaming/ui/AudioController';
 import { PlayIcon } from '@/shared/icon/PlayIcon';
 import { RoomResponse } from '@/entities/album/types';
-import SampleAlbumCover from '@/assets/sample-album-cover-1.png';
+import DefaultCover from '@/assets/logo-album-cover.png';
 import { useStreamingPlayer } from '@/features/albumStreaming/hook/useStreamingPlayer';
-import { StreamingErrorPage } from '@/pages/StreamingErrorPage';
 import { Volume } from '@/shared/icon/Volume';
 import { useState, useEffect } from 'react';
 import './Volume.css';
@@ -122,7 +121,7 @@ export function AlbumInfo({
         {/* <p className="text-sm mb-3">{album.currentTime}</p> */}
         <div className="relative flex justify-center items-center">
           <img
-            src={roomInfo.albumResponse.jacketUrl ?? SampleAlbumCover}
+            src={roomInfo.albumResponse.jacketUrl ?? DefaultCover}
             alt="Album Cover"
             className="w-52 h-52 object-cover rounded-t-lg"
           />

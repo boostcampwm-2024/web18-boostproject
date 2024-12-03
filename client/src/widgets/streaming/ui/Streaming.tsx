@@ -1,7 +1,7 @@
 import { AlbumBackground } from './AlbumBackground';
 import { AlbumInfo } from './AlbumInfo';
 import { RoomResponse } from '@/entities/album/types';
-import SampleAlbumCover from '@/assets/sample-album-cover-1.png';
+import DefaultCover from '@/assets/logo-album-cover.png';
 import { SongDetail } from '@/features/songDetail';
 
 interface StreamingProps {
@@ -18,7 +18,7 @@ export function Streaming({
   return (
     <div className="overflow-hidden relative w-full h-full">
       <AlbumBackground
-        coverImage={roomInfo?.albumResponse?.jacketUrl ?? SampleAlbumCover}
+        coverImage={roomInfo?.albumResponse?.jacketUrl ?? DefaultCover}
       />
       <div className="flex justify-center">
         <div className="w-7/12 h-screen relative flex items-center justify-center">
