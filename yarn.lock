@@ -8603,6 +8603,7 @@ __metadata:
     "@vitejs/plugin-react": "npm:^4.3.3"
     autoprefixer: "npm:^10.4.20"
     axios: "npm:^1.7.7"
+    fast-average-color: "npm:^9.4.0"
     hls.js: "npm:^1.5.17"
     lottie-react: "npm:^2.4.0"
     msw: "npm:^2.6.1"
@@ -10973,6 +10974,13 @@ __metadata:
     iconv-lite: "npm:^0.4.24"
     tmp: "npm:^0.0.33"
   checksum: 10c0/c98f1ba3efdfa3c561db4447ff366a6adb5c1e2581462522c56a18bf90dfe4da382f9cd1feee3e330108c3595a854b218272539f311ba1b3298f841eb0fbf339
+  languageName: node
+  linkType: hard
+
+"fast-average-color@npm:^9.4.0":
+  version: 9.4.0
+  resolution: "fast-average-color@npm:9.4.0"
+  checksum: 10c0/9031181113356abe240c52f78e908607e3b47dc0121cec3077b3735823951e40f8d6e14eca50d9941e30bcea60e0ed52e36410a8ded0972a89253c3dbefc966d
   languageName: node
   linkType: hard
 

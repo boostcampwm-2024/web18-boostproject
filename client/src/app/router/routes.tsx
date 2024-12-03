@@ -2,9 +2,9 @@ import { MainPage } from '@/pages/MainPage';
 import { StreamingPage } from '@/pages/StreamingPage';
 import { Layout } from '@/Layout';
 import { AdminPage } from '@/pages/AdminPage';
-import { AlbumPage } from '@/pages/AlbumPage';
 import { AdminLoginPage } from '@/pages/AdminLoginPage';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
+import { AlbumPage } from '@/pages/AlbumPage';
 
 export const routes = [
   {

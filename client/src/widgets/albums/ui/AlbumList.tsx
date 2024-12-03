@@ -26,16 +26,18 @@ export function AlbumList() {
       <p className="mt-[70px] mb-7 text-3xl font-bold">최근 등록된 앨범</p>
       <ul className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-7 gap-9">
         {endedAlbumList.endedAlbums.slice(0, 7).map((album) => (
-          <AlbumCard
-            key={album.albumId}
-            album={{
-              albumId: album.albumId,
-              albumName: album.albumName,
-              artist: album.artist,
-              albumTags: album.albumTags || '',
-              jacketUrl: album.jacketUrl || LogoAlbum,
-            }}
-          />
+          <a href={`/album/${album.albumId}`}>
+            <AlbumCard
+              key={album.albumId}
+              album={{
+                albumId: album.albumId,
+                albumName: album.albumName,
+                artist: album.artist,
+                albumTags: album.albumTags || '',
+                jacketUrl: album.jacketUrl || LogoAlbum,
+              }}
+            />
+          </a>
         ))}
       </ul>
     </div>

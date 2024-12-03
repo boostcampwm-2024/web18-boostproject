@@ -53,4 +53,22 @@ export const publicAPI = {
       throw error;
     }
   },
+  getComment: async (albumId: string) => {
+    const { data } = await publicInstance.get(`/comment/album/${albumId}`);
+    return data;
+  },
+  getAlbumInfo: async (albumId: string) => {
+    const { data } = await publicInstance.get(`/album/${albumId}`);
+    return data;
+  },
+  createComment: async (albumId: string, content: string) => {
+    if (content.length === 0 || content.length > 200) {
+      alert(ERROR_MESSAGE.COMMENT.COMMENT_MESSAGE_TO_LONG);
+      throw new CustomError(ERROR_MESSAGE.COMMENT.COMMENT_MESSAGE_TO_LONG);
+    }
+    const { data } = await publicInstance.post(`/comment/album/${albumId}`, {
+      content,
+    });
+    return data;
+  },
 };
