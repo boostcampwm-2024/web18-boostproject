@@ -108,13 +108,11 @@ export class AdminService {
   }
 
   async saveSongs(songs: Song[], albumId: string) {
-    console.log('Songs to save:', songs);
-    await Promise.all(
-      songs.map(async (song) => {
-        const songDto = new SongSaveDto({ ...song, albumId: albumId });
-        return await this.songRepository.save(new Song(songDto));
-      }),
+    const songsToSave = songs.map(
+      (song) => new Song(new SongSaveDto({ ...song, albumId: albumId })),
     );
+
+    await this.songRepository.saveSongList(songsToSave);
   }
 
   async saveAlbumCoverAndBanner(files: UploadedFiles, albumId: string) {

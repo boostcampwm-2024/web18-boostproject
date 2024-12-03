@@ -21,4 +21,8 @@ export class SongRepository {
   async save(song: Song) {
     return this.repository.save(song);
   }
+
+  async saveSongList(song: Song[]) {
+    return this.repository.save(song);
+  }
 }
