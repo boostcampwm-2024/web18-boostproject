@@ -82,7 +82,7 @@ export function AlbumPage() {
         </article>
         <Playlist playlist={songDetails} />
       </div>
-      <CommentList commentList={commentList} />
+      <CommentList commentList={commentList} albumId={albumId} />
     </div>
   );
 }

@@ -57,4 +57,10 @@ export const publicAPI = {
     const { data } = await publicInstance.get(`/album/${albumId}`);
     return data;
   },
+  createComment: async (albumId: string, content: string) => {
+    const { data } = await publicInstance.post(`/comment/album/${albumId}`, {
+      content,
+    });
+    return data;
+  },
 };
