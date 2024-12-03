@@ -1,6 +1,7 @@
 import { AlbumData } from '@/entities/album/types';
 import { convertToKTC, splitDate } from '@/shared/util/timeUtils';
 import { Timer } from '@/shared/ui';
+import { Notice } from '@/pages/StreamingPage/ui/Notice';
 
 export function Standby({ album }: { album: AlbumData }) {
   const handleCountdownComplete = () => {
@@ -18,6 +19,7 @@ export function Standby({ album }: { album: AlbumData }) {
       <p className="text-grayscale-300">
         {splitDate(convertToKTC(album.releaseDate))} 시작 예정
       </p>
+      <Notice message={'자유롭게 의견을 나눠보세요'} title={album.title} />
     </div>
   );
 }

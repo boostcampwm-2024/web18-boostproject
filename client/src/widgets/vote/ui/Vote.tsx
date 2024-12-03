@@ -49,7 +49,7 @@ export function Vote({ songs }: { songs: SongData[] }) {
                 {songs[index].title}
               </p>
             </div>
-            <div className={'w-10 w-20'}>
+            <div className={'w-20'}>
               <p className={`mb-1 px-3 py-3 rounded-md z-10`}>{item}</p>
             </div>
           </div>

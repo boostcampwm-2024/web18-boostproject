@@ -38,7 +38,6 @@ function StreamingContainer() {
       setSongIndex(Number(roomInfo.trackOrder));
     }
   }, [roomInfo]);
-  console.log(roomInfo);
 
   // 방 정보가 없을 때
   if (!roomInfo) {
@@ -49,8 +48,8 @@ function StreamingContainer() {
   if (!validateRoom(roomInfo)) {
     throw new Error('방이 종료되었습니다.');
   }
-  // 아직 세션이 시작되지 않음
 
+  // 아직 세션이 시작되지 않음
   if (roomInfo.trackOrder === null) {
     return <Standby album={roomInfo.albumResponse} />;
   }
