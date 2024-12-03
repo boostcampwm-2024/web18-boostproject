@@ -91,6 +91,7 @@ export function AlbumPage() {
             id={'album-jacket'}
             src={albumJacketUrl}
             className={'w-[340px] h-[340px]'}
+            alt={`${albumDetails.albumName} 앨범 커버`}
           ></img>
           <p
             className={`${albumDetails.albumName?.length >= 12 ? 'text-2xl' : albumDetails.albumName?.length >= 10 ? 'text-3xl' : 'text-4xl'} text-grayscale-50 mt-8 truncate`}
