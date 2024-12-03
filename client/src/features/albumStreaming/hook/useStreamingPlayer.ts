@@ -12,6 +12,7 @@ export const useStreamingPlayer = (
   const audioRef = useRef<HTMLMediaElement>(null);
   const hlsRef = useRef<Hls | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
   const navigate = useNavigate();
   const destroyHls = useCallback(() => {
     if (hlsRef.current) {
@@ -21,17 +22,20 @@ export const useStreamingPlayer = (
   }, []);
   const createStreamUrl = (roomId: string) =>
     `${import.meta.env.VITE_API_URL}/api/music/${roomId}/playlist.m3u8`;
+
   const initializeHls = (audio: HTMLMediaElement, streamUrl: string) => {
     destroyHls();
     const hls = new Hls(DEFAULT_STREAMING_CONFIG);
     hlsRef.current = hls;
+
     hls.loadSource(streamUrl);
     hls.attachMedia(audio);
 
     hls.on(Hls.Events.MANIFEST_PARSED, () => setIsLoaded(true));
-    hls.on(Hls.Events.ERROR, (error) =>
-      console.error('Streaming error:', error),
-    );
+
+    hls.on(Hls.Events.ERROR, (event, data) => {
+      setError(new Error('종료된 방이거나 시스템 오류입니다.'));
+    });
   };
 
   const playStream = useCallback(() => {
@@ -41,7 +45,8 @@ export const useStreamingPlayer = (
     if (Hls.isSupported()) {
       initializeHls(audio, createStreamUrl(roomId));
     } else {
-      console.error('HLS is not supported');
+      const hlsNotSupportedError = new Error('HLS is not supported');
+      setError(hlsNotSupportedError);
     }
   }, [roomId]);
 
@@ -91,5 +96,5 @@ export const useStreamingPlayer = (
     });
   }, [isLoaded]);
 
-  return { audioRef, isLoaded, playStream };
+  return { audioRef, isLoaded, playStream, error };
 };
