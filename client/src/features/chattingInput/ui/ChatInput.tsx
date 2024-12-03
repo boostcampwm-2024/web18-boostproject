@@ -5,8 +5,8 @@ import { useParams } from 'react-router-dom';
 import { useSocketStore } from '@/shared/store/useSocketStore';
 
 const CHAT_CONFIG = {
-  TEXT_LIMIT: 200,
-  TEXT_LIMIT_MESSAGE: '채팅은 200자 이하만 가능합니다',
+  TEXT_LIMIT: 150,
+  TEXT_LIMIT_MESSAGE: '채팅은 150자 이하만 가능합니다',
 } as const;
 
 export const ChatInput = memo(() => {
