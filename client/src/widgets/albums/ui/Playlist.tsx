@@ -1,4 +1,4 @@
-import { TrackItem } from '@/widgets/albums';
+import { TrackItem } from './TrackItem';
 import './Scrollbar.css';
 
 export interface PlaylistComponentProps {
