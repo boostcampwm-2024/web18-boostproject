@@ -21,10 +21,10 @@ export interface Song {
   title: string;
   trackNumber: string;
   lyrics?: string;
-  composer?: string;
-  writer?: string;
-  instrument?: string;
-  producer?: string;
+  composer: string;
+  writer: string;
+  instrument: string;
+  producer: string;
   source?: string;
 }
 
