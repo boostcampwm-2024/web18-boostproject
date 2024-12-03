@@ -38,7 +38,7 @@ export function AlbumPage() {
       setAlbumJacketUrl(albumResponse.result.albumDetails.jacketUrl);
       setCommentList(commentResponse.result.albumComments);
     })();
-  }, [albumJacketUrl]);
+  }, [albumJacketUrl, albumId]);
 
   const [backgroundColor, setBackgroundColor] = useState<string>('#222');
 
