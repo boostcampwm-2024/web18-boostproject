@@ -15,7 +15,7 @@ export function TrackItem({ trackData, index }: TrackItemProps) {
       }
     >
       <section className={'flex'}>
-        <section className={'mr-8'}>{index + 1}</section>
+        <section className={'mr-8'}>{index + 1}.</section>
         <section>{trackData.songName}</section>
       </section>
 

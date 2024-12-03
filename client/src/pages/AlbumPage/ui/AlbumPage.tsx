@@ -67,12 +67,14 @@ export function AlbumPage() {
 
   return (
     <div
-      className={'pr-[128px] pt-[64px] pl-[40px]'}
+      className={
+        'pr-[64px] pt-[64px] pl-[40px] flex flex-col w-full min-w-[calc(100%-340px)]'
+      }
       style={{
         background: `linear-gradient(180deg, ${backgroundColor} 0%, rgba(0, 0, 0, 0) 100%)`,
       }}
     >
-      <div className={'flex h-680 w-full gap-[80px] mb-[120px] relative z-[1]'}>
+      <div className={'flex h-680 gap-[80px] mb-[120px] relative z-[1]'}>
         <article className={'w-[340px] h-[340px] flex-shrink-0'}>
           <img
             id={'album-jacket'}
