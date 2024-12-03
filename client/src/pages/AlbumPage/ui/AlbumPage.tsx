@@ -1,4 +1,4 @@
-import { CommentList, Playlist } from '@/widgets/albums';
+import { AlbumArtist, CommentList, Playlist } from '@/widgets/albums';
 import { publicAPI } from '@/shared/api/publicAPI.ts';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
@@ -74,6 +74,11 @@ export function AlbumPage() {
     };
   }, [albumJacketUrl]); // albumJacketUrl이 변경될 때마다 실행
 
+  const totalDuration = songDetails.reduce(
+    (total, acc) => total + Number(acc.songDuration),
+    0,
+  );
+
   return (
     <div
       className={
@@ -96,23 +101,11 @@ export function AlbumPage() {
           >
             {albumDetails.albumName}
           </p>
-          <p className={'text-lg text-grayscale-400 mt-4 flex justify-start'}>
-            <span className={'truncate'}>{albumDetails.artist}</span>
-            <p className={'flex-shrink-0 flex-grow-0 whitespace-nowrap'}>
-              <span className={'mx-2'}>•</span>
-              <span>{songDetails.length}곡</span>
-            </p>
-            <p className={'flex-shrink-0 flex-grow-0 whitespace-nowrap'}>
-              <span className={'mx-2'}>•</span>
-              <span>
-                {songDetails.reduce(
-                  (total, acc) => total + Number(acc.songDuration),
-                  0,
-                )}
-                초
-              </span>
-            </p>
-          </p>
+          <AlbumArtist
+            artist={albumDetails.artist}
+            songLength={songDetails.length}
+            totalDuration={totalDuration}
+          />
         </article>
         <Playlist playlist={songDetails} />
       </div>
