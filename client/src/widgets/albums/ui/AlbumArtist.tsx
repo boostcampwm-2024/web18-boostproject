@@ -14,7 +14,7 @@ export function AlbumArtist({
   const second = Math.floor(Number(totalDuration) % 60);
 
   return (
-    <p
+    <section
       className={
         'text-lg text-grayscale-400 mt-4 flex justify-start overflow-visible whitespace-nowrap absolute max-w-[calc(100vw-340px)]'
       }
@@ -34,6 +34,6 @@ export function AlbumArtist({
             '초'}
         </span>
       </p>
-    </p>
+    </section>
   );
 }

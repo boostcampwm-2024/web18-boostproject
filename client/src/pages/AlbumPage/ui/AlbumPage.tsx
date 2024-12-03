@@ -20,15 +20,10 @@ export function AlbumPage() {
     { name: string; duration: string }[]
   >([]);
   const [albumJacketUrl, setAlbumJacketUrl] = useState<string>('LogoAlbum');
-  const [commentList, setCommentList] = useState<{ albumName: string }[]>([]);
   const [albumDetails, setAlbumDetails] = useState<AlbumDetails>({});
 
   useEffect(() => {
     (async () => {
-      const commentResponse = await publicAPI
-        .getComment(albumId)
-        .catch((err) => console.log(err));
-
       const albumResponse = await publicAPI
         .getAlbumInfo(albumId)
         .catch((err) => console.log(err));
@@ -36,7 +31,6 @@ export function AlbumPage() {
       setAlbumDetails(albumResponse.result.albumDetails);
       setSongDetails(albumResponse.result.songDetails);
       setAlbumJacketUrl(albumResponse.result.albumDetails.jacketUrl);
-      setCommentList(commentResponse.result.albumComments);
     })();
   }, [albumJacketUrl, albumId]);
 
@@ -78,19 +72,17 @@ export function AlbumPage() {
 
   return (
     <div
-      className={
-        'pr-[64px] pt-[64px] pl-[40px] flex flex-col w-full min-w-[calc(100%-340px)]'
-      }
+      className={'px-80 pt-16 flex flex-col w-full'}
       style={{
-        background: `linear-gradient(180deg, ${backgroundColor} 0%, rgba(0, 0, 0, 0) 100%)`,
+        background: `linear-gradient(180deg, ${backgroundColor} 0%, rgba(0, 0, 0, 0) 20%)`,
       }}
     >
-      <div className={'flex h-680 gap-[80px] mb-[150px] relative z-[1]'}>
-        <article className={'w-[340px] h-[340px] flex-shrink-0'}>
+      <div className={'flex h-680 gap-20 mb-24 relative z-10'}>
+        <article className={'w-[21.25rem] h-85 flex-shrink-0'}>
           <img
             id={'album-jacket'}
             src={albumJacketUrl}
-            className={'w-[340px] h-[340px]'}
+            className={'w-[21.25rem] h-[21.25rem] select-none'}
             alt={`${albumDetails.albumName} 앨범 커버`}
           ></img>
           <p
@@ -107,7 +99,7 @@ export function AlbumPage() {
         </article>
         <Playlist playlist={songDetails} />
       </div>
-      <CommentList commentList={commentList} albumId={albumId} />
+      <CommentList albumId={albumId} />
     </div>
   );
 }
