@@ -27,6 +27,7 @@ export class CommentRepository {
       .select(['album_id as albumId', 'content', 'created_at as createdAt'])
       .where('album_id = :albumId', { albumId })
       .orderBy('created_at', 'DESC')
+      .limit(10)
       .getRawMany();
 
     return plainToInstance(AlbumCommentDto, commentInfos);
