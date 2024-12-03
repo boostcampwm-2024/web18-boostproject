@@ -3,7 +3,7 @@ import { AudioController } from '@/widgets/streaming/ui/AudioController';
 import { PlayIcon } from '@/shared/icon/PlayIcon';
 import { RoomResponse } from '@/entities/album/types';
 import SampleAlbumCover from '@/assets/sample-album-cover-1.png';
-import { useStreamingPlayer } from '@/features/albumStreaming/lib/useStreamingPlayer';
+import { useStreamingPlayer } from '@/features/albumStreaming/hook/useStreamingPlayer';
 import { StreamingErrorPage } from '@/pages/StreamingErrorPage';
 import { Volume } from '@/shared/icon/Volume';
 import { useState, useEffect } from 'react';
@@ -26,15 +26,18 @@ export function AlbumInfo({
   const [backupVolume, setBackupVolume] = useState<number>(0.5);
   const [isVolumeOpen, setIsVolumeOpen] = useState<boolean>(false);
   if (!roomId) return;
-  const { audioRef, isLoaded, playStream } = useStreamingPlayer(
+  const { audioRef, isLoaded, playStream, error } = useStreamingPlayer(
     roomId,
     songIndex,
     setSongIndex,
     roomInfo.songResponseList.length,
   );
 
+  if (error) {
+    throw error;
+  }
   if (!roomInfo.success) {
-    return <StreamingErrorPage />;
+    throw new Error('방 정보를 불러오는 중 오류가 발생했습니다.');
   }
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -1,18 +1,17 @@
 import { useCallback, useState, useRef } from 'react';
-import { CreateAlbumRequest, Song } from './types';
+import { CreateAlbumRequest, Song } from '@/entities/albumRegister/types';
 import { albumAPI } from '@/shared/api/adminAPI';
 
 const REQUIRED_SONG_FIELDS = [
   'title',
+  'trackNumber',
   'composer',
   'writer',
   'producer',
   'instrument',
-  'trackNumber',
-  'source',
 ] as const;
 
-const SONG_FIELDS = [...REQUIRED_SONG_FIELDS, 'lyrics'] as const;
+const SONG_FIELDS = [...REQUIRED_SONG_FIELDS, 'lyrics', 'source'] as const;
 
 const ALBUM_FIELDS = ['title', 'artist', 'albumTag', 'releaseDate'] as const;
 

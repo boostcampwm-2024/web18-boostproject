@@ -1,5 +1,5 @@
-import { ChatInput } from '@/features/chatting';
-import { useChatMessage } from '../useChatMessage';
+import { ChatInput } from '@/features/chattingInput';
+import { useChatMessage } from '../hook/useChatMessage';
 import MessageList from './MessageList';
 
 export function ChattingContainer() {
