@@ -33,10 +33,10 @@ function StreamingContainer() {
   });
 
   useEffect(() => {
-    if (roomInfo && songIndex !== Number(roomInfo.trackOrder)) {
+    if (roomInfo) {
       setSongIndex(Number(roomInfo.trackOrder));
     }
-  }, [roomInfo, songIndex]);
+  }, [roomInfo]);
 
   // 방 정보가 없을 때
   if (!roomInfo) {

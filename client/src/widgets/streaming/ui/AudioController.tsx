@@ -15,8 +15,7 @@ export const AudioController = ({
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
-    audio.controls = false;
-
+    setProgress(0);
     const updateProgress = () => {
       const progressPercent =
         ((songDuration - audio.duration + audio.currentTime) / songDuration) *

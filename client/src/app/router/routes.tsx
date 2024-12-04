@@ -3,7 +3,7 @@ import { StreamingPage } from '@/pages/StreamingPage';
 import { Layout } from '@/Layout';
 import { AdminPage } from '@/pages/AdminPage';
 import { AdminLoginPage } from '@/pages/AdminLoginPage';
-import { ProtectedRoute } from '@/components/ProtectedRoute';
+import { ProtectedRoute } from '@/app/router/ProtectedRoute';
 import { AlbumPage } from '@/pages/AlbumPage';
 
 export const routes = [
