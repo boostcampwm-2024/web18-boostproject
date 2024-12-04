@@ -85,7 +85,6 @@ export function AlbumInfo({
     <div className="flex flex-col items-center relative text-grayscale-100">
       <audio
         ref={audioRef}
-        controls
         autoPlay
         playsInline
         controlsList="nodownload"
