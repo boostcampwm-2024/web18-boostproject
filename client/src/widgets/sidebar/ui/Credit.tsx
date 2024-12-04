@@ -3,7 +3,10 @@ import GithubLogo from '@/assets/github-logo.png';
 export function Credit() {
   return (
     <div className="flex flex-col items-center mb-8">
-      <a href="https://github.com/boostcampwm-2024/web18-inear/wiki">
+      <a
+        href="https://github.com/boostcampwm-2024/web18-inear/wiki"
+        aria-label="버그사냥단 깃허브로 이동"
+      >
         <img
           src={GithubLogo}
           className="w-8 h-8 mb-1"
