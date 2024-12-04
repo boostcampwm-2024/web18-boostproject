@@ -26,7 +26,7 @@ export function AlbumList() {
       <p className="mt-[70px] mb-7 text-3xl font-bold">최근 등록된 앨범</p>
       <ul className="w-full grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 overflow-hidden gap-4">
         {endedAlbumList.endedAlbums.slice(0, 7).map((album) => (
-          <a key={album.albumId} href={`/album/${album.albumId}`}>
+          <li key={album.albumId}>
             <AlbumCard
               album={{
                 albumId: album.albumId,
@@ -36,7 +36,7 @@ export function AlbumList() {
                 jacketUrl: album.jacketUrl || LogoAlbum,
               }}
             />
-          </a>
+          </li>
         ))}
       </ul>
     </div>

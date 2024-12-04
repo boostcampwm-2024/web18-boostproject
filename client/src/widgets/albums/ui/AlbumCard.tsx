@@ -11,7 +11,10 @@ export function AlbumCard({ album }: { album: AlbumCard }) {
     ? `#${album.albumTags.split(', ').join(' #')}`
     : '태그 없음';
   return (
-    <li className="sm:w-12 md:w-20 lg:w-28 l:w-32 2xl:w-44">
+    <a
+      className="sm:w-12 md:w-20 lg:w-28 l:w-32 2xl:w-44"
+      href={`/album/${album.albumId}`}
+    >
       <img
         src={album.jacketUrl}
         alt={`${album.albumName} 앨범 커버`}
@@ -20,6 +23,6 @@ export function AlbumCard({ album }: { album: AlbumCard }) {
       <p className="text-xl font-semibold mb-1 truncate">{album.albumName}</p>
       <p className="mb-2">{album.artist}</p>
       <p className="text-grayscale-400 mb-1">{tagString}</p>
-    </li>
+    </a>
   );
 }
