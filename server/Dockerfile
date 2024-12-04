@@ -25,7 +25,6 @@ COPY --from=builder /app/yarn.lock ./yarn.lock
 COPY --from=builder /app/.yarnrc.yml ./.yarnrc.yml
 COPY --from=builder /app/.yarn ./.yarn
 COPY --from=builder /app/server/dist ./dist
-COPY server/.env ./.env
 
 RUN yarn workspaces focus --production --all
 
