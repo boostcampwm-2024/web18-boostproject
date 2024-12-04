@@ -4,10 +4,10 @@ import { PlayIcon } from '@/shared/icon/PlayIcon';
 import { RoomResponse } from '@/entities/album/types';
 import DefaultCover from '@/assets/logo-album-cover.webp';
 import { useStreamingPlayer } from '@/features/albumStreaming/hook/useStreamingPlayer';
-import { Volume } from '@/shared/icon/Volume';
+import Volume from '@/shared/icon/Volume';
 import { useState, useEffect } from 'react';
 import './Volume.css';
-import { VolumeMuted } from '@/shared/icon/VolumeMuted.tsx';
+import VolumeMuted from '@/shared/icon/VolumeMuted';
 
 interface AlbumInfoProps {
   roomInfo: RoomResponse;

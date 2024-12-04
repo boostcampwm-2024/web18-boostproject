@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 interface TimerProps {
   releaseDate: string;
@@ -6,7 +6,7 @@ interface TimerProps {
   timerClassName?: string;
 }
 
-export function Timer({
+export const Timer = React.memo(function Timer({
   releaseDate,
   onCountdownComplete,
   timerClassName = 'text-5xl font-bold mb-4',
@@ -34,18 +34,20 @@ export function Timer({
   }, [releaseDate, onCountdownComplete]);
 
   useEffect(() => {
-    const updateTimer = () => {
-      const newTime = calculateTimeRemaining();
-      if (newTime) setTimeRemaining(newTime);
-    };
+    let timer: NodeJS.Timeout;
 
-    updateTimer();
-    const timer = setInterval(updateTimer, 1000);
+    if (releaseDate) {
+      const updateTimer = () => {
+        const newTime = calculateTimeRemaining();
+        if (newTime) setTimeRemaining(newTime);
+      };
 
-    return () => clearInterval(timer);
-  }, [calculateTimeRemaining]);
+      updateTimer();
+      timer = setInterval(updateTimer, 1000);
+    }
 
-  const memoizedTimeRemaining = useMemo(() => timeRemaining, [timeRemaining]);
+    return () => timer && clearInterval(timer);
+  }, [calculateTimeRemaining, releaseDate]);
 
-  return <p className={timerClassName}>{memoizedTimeRemaining}</p>;
-}
+  return <p className={timerClassName}>{timeRemaining}</p>;
+});

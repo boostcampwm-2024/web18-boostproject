@@ -1,4 +1,3 @@
-import { ChattingContainer } from '@/widgets/chatting';
 import { Vote } from '@/widgets/vote';
 import { Streaming } from '@/widgets/streaming';
 import { useSocketStore } from '@/shared/store/useSocketStore';
@@ -6,12 +5,12 @@ import { useChatMessageStore } from '@/shared/store/useChatMessageStore';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { publicAPI } from '@/shared/api/publicAPI';
-import { Person } from '@/shared/icon/Person';
 import { NetworkBoundary } from '@/NetworkBoundary';
 import { useQuery } from '@tanstack/react-query';
 import { Standby } from './Standby';
 import { compareDate, sumSeconds } from '@/shared/util/timeUtils';
-
+import { Chatting } from '@/widgets/chatting';
+import { useShallow } from 'zustand/react/shallow';
 function validateRoom(roomInfo: any) {
   return (
     compareDate(
@@ -34,10 +33,10 @@ function StreamingContainer() {
   });
 
   useEffect(() => {
-    if (roomInfo) {
+    if (roomInfo && songIndex !== Number(roomInfo.trackOrder)) {
       setSongIndex(Number(roomInfo.trackOrder));
     }
-  }, [roomInfo]);
+  }, [roomInfo, songIndex]);
 
   // 방 정보가 없을 때
   if (!roomInfo) {
@@ -67,8 +66,10 @@ function StreamingContainer() {
 }
 
 export function StreamingPage() {
-  const { isConnected, connect, reset, userCount } = useSocketStore();
-  const { clearMessages } = useChatMessageStore();
+  const { connect, reset } = useSocketStore(
+    useShallow((state) => ({ connect: state.connect, reset: state.reset })),
+  );
+  const clearMessages = useChatMessageStore((state) => state.clearMessages);
   const { roomId } = useParams<{ roomId: string }>();
 
   useEffect(() => {
@@ -93,16 +94,7 @@ export function StreamingPage() {
           <StreamingContainer />
         </NetworkBoundary>
       </div>
-      <div className="h-screen bg-grayscale-900 flex-shrink-0 w-[340px] text-grayscale-100 px-8 pt-10 pb-10 flex flex-col">
-        <div className="flex justify-between items-center mb-4">
-          <div className="text-2xl font-bold">채팅</div>
-          <div className="flex items-center gap-2">
-            <Person />
-            <span className="text-lg">{userCount}명</span>
-          </div>
-        </div>
-        <ChattingContainer />
-      </div>
+      <Chatting />
     </div>
   );
 }

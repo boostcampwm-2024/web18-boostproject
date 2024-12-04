@@ -1,4 +1,5 @@
-export function VolumeMuted() {
+import React from 'react';
+function VolumeMuted() {
   return (
     <svg
       width="24"
@@ -20,3 +21,5 @@ export function VolumeMuted() {
     </svg>
   );
 }
+
+export default React.memo(VolumeMuted);

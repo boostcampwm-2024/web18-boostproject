@@ -1,4 +1,5 @@
-export function Person() {
+import React from 'react';
+function Person() {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -14,3 +15,5 @@ export function Person() {
     </svg>
   );
 }
+
+export default React.memo(Person);
