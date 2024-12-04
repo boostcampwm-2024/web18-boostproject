@@ -26,7 +26,6 @@ export function App() {
           <Route path="/streaming/:roomId" element={<StreamingPage />} />
           <Route path="/album/:albumId" element={<AlbumPage />} />
         </Route>
-
         <Route path="/admin/login" element={<AdminLoginPage />} />
         <Route
           path="/admin"

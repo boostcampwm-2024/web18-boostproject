@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { FastAverageColor } from 'fast-average-color';
 import { darken } from 'polished';
-import LogoAlbum from '@/assets/logo-album-cover.png';
+import LogoAlbum from '@/assets/logo-album-cover.webp';
 import { AlbumDetailData, SongDetailData } from '@/entities/comment/types';
 
 export function AlbumPage() {
@@ -70,7 +70,7 @@ export function AlbumPage() {
 
   return (
     <div
-      className={'px-80 pt-16 flex flex-col w-full'}
+      className="px-80 pt-16 flex flex-col w-full h-screen"
       style={{
         background: `linear-gradient(180deg, ${backgroundColor} 0%, rgba(0, 0, 0, 0) 20%)`,
       }}

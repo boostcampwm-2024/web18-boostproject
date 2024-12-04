@@ -1,4 +1,4 @@
-import LogoAlbum from '@/assets/logo-album-cover.png';
+import LogoAlbum from '@/assets/logo-album-cover.webp';
 import { AlbumCard } from './AlbumCard';
 import { useEffect, useState } from 'react';
 import { EndedAlbumListResponse } from '@/entities/room/types';
@@ -24,11 +24,10 @@ export function AlbumList() {
   return (
     <div className="text-grayscale-50">
       <p className="mt-[70px] mb-7 text-3xl font-bold">최근 등록된 앨범</p>
-      <ul className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-7 gap-9">
+      <ul className="w-full grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 overflow-hidden gap-4">
         {endedAlbumList.endedAlbums.slice(0, 7).map((album) => (
-          <a href={`/album/${album.albumId}`}>
+          <li key={album.albumId}>
             <AlbumCard
-              key={album.albumId}
               album={{
                 albumId: album.albumId,
                 albumName: album.albumName,
@@ -37,7 +36,7 @@ export function AlbumList() {
                 jacketUrl: album.jacketUrl || LogoAlbum,
               }}
             />
-          </a>
+          </li>
         ))}
       </ul>
     </div>

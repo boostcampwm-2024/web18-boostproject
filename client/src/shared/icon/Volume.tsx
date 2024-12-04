@@ -1,4 +1,6 @@
-export function Volume() {
+import React from 'react';
+
+function Volume() {
   return (
     <svg
       width="24"
@@ -14,3 +16,5 @@ export function Volume() {
     </svg>
   );
 }
+
+export default React.memo(Volume);

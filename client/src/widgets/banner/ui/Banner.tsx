@@ -12,7 +12,7 @@ interface BannerProps {
 
 export function Banner({ bannerList }: BannerProps) {
   return (
-    <div>
+    <div className="rounded-lg border-2 border-solid border-grayscale-800">
       <Swiper
         slidesPerView={'auto'}
         spaceBetween={50}

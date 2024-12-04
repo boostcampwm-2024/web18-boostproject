@@ -17,7 +17,7 @@ export function BannerSlide({ banner }: BannerSlideProps) {
   };
 
   return (
-    <div className="relative" onClick={handleClick}>
+    <div className="relative rounded-lg" onClick={handleClick}>
       <img
         src={banner.bannerImageUrl}
         alt={`스트리밍 진행 중인 ${banner.albumName} 이미지`}
