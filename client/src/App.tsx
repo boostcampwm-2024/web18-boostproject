@@ -4,7 +4,7 @@ import { StreamingPage } from '@/pages/StreamingPage';
 import { AdminPage } from '@/pages/AdminPage';
 import { AlbumPage } from '@/pages/AlbumPage';
 import { AdminLoginPage } from '@/pages/AdminLoginPage';
-import { ProtectedRoute } from '@/components/ProtectedRoute';
+import { ProtectedRoute } from '@/app/router/ProtectedRoute';
 import { Sidebar } from './widgets/sidebar/ui/Sidebar';
 import { GlobalBoundary } from './GlobalBoundary';
 
