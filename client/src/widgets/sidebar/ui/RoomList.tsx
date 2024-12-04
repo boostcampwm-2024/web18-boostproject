@@ -20,7 +20,7 @@ function RoomListContainer({
           ))}
         </ul>
       ) : (
-        <p className="text-grayscale-500 text-xs">방이 없습니다</p>
+        <p className="text-grayscale-400 text-xs">방이 없습니다</p>
       )}
     </div>
   );
