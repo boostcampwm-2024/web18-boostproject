@@ -14,6 +14,24 @@ export const useStreamingPlayer = (
   const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const navigate = useNavigate();
+  const initializeMediaSession = useCallback(() => {
+    if ('mediaSession' in navigator) {
+      const actions: MediaSessionAction[] = [
+        'play',
+        'pause',
+        'seekbackward',
+        'seekforward',
+        'previoustrack',
+        'nexttrack',
+        'stop',
+        'seekto',
+      ];
+      actions.forEach((action: MediaSessionAction) => {
+        navigator.mediaSession.setActionHandler(action, () => {});
+      });
+    }
+  }, []);
+
   const destroyHls = useCallback(() => {
     if (hlsRef.current) {
       hlsRef.current.destroy();
@@ -51,6 +69,8 @@ export const useStreamingPlayer = (
   }, [roomId]);
 
   useEffect(() => {
+    console.log('처음한번만 실행하지렁이');
+    initializeMediaSession();
     playStream();
   }, []);
 

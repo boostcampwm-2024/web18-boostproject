@@ -82,12 +82,7 @@ export function AlbumInfo({
 
   return (
     <div className="flex flex-col items-center relative text-grayscale-100">
-      <audio
-        ref={audioRef}
-        autoPlay
-        playsInline
-        controlsList="nodownload"
-      />
+      <audio ref={audioRef} autoPlay playsInline controlsList="nodownload" />
       <div
         className={`fixed top-6 right-[364px] bg-grayscale-900 p-2 rounded-full flex flex-row items-center`}
         onMouseEnter={handleMouseEnter}
