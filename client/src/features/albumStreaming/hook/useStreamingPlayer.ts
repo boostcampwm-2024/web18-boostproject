@@ -69,7 +69,6 @@ export const useStreamingPlayer = (
   }, [roomId]);
 
   useEffect(() => {
-    console.log('처음한번만 실행하지렁이');
     initializeMediaSession();
     playStream();
   }, []);
