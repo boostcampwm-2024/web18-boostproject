@@ -8,7 +8,7 @@ import './ScrollBar.css';
 export function Vote({ songs }: { songs: SongData[] }) {
   const [isOpen, setIsOpen] = useState(false);
   const { voteData } = useVote();
-  const { socket } = useSocketStore();
+  const socket = useSocketStore((state) => state.socket);
 
   const handleVoteClick = (trackNumber: string) => {
     if (!socket) return;
