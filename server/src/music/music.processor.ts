@@ -73,6 +73,7 @@ export class MusicProcessingSevice {
           '-start_number 0',
           `-hls_time ${HLS_SEGMENT_TIME}`,
           '-hls_list_size 0',
+          '-vn',
           '-f hls',
           '-acodec aac',
           '-strict experimental',
