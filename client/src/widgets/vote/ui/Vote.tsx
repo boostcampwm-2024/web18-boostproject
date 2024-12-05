@@ -12,7 +12,6 @@ export function Vote({ songs }: { songs: SongData[] }) {
 
   const handleVoteClick = (trackNumber: string) => {
     if (!socket) return;
-    console.log(voteData);
     socket.emit('vote', { trackNumber });
   };
   return (

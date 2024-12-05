@@ -24,7 +24,6 @@ export const useSocketStore = create<SocketState & SocketActions>(
     connect: (newRoomId: string) => {
       const { socket, roomId } = get();
       if (roomId === newRoomId && socket?.connected) return;
-      console.log('NEW ROOM CONNECTED');
 
       const newSocket = createSocket(newRoomId);
       setupSocketListeners(newSocket, {
@@ -38,7 +37,6 @@ export const useSocketStore = create<SocketState & SocketActions>(
     },
 
     disconnect: () => {
-      console.log('DISCONNECTED');
       const { socket } = get();
       if (socket) {
         socket.removeAllListeners();
@@ -49,7 +47,6 @@ export const useSocketStore = create<SocketState & SocketActions>(
     },
 
     reset: () => {
-      console.log('RECONNECTED');
       const { socket } = get();
       if (socket) {
         socket.removeAllListeners();

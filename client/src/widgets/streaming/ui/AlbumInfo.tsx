@@ -77,7 +77,6 @@ export function AlbumInfo({
     if (audioRef.current) {
       audioRef.current.volume = volume;
     }
-    console.log('volume', volume);
   }, [audioRef.current, isLoaded]);
 
   return (

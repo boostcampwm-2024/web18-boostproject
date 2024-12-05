@@ -7,7 +7,6 @@ export const NetworkFallback = ({
   error,
   resetErrorBoundary,
 }: FallbackProps) => {
-  console.log('네트워크');
   const handleClickReset = () => {
     resetErrorBoundary();
   };

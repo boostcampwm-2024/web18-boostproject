@@ -8,11 +8,5 @@ export const sendMessage = (message: string, roomId: string) => {
     return;
   }
 
-  socket.emit(
-    'message',
-    { message: message, roomId: roomId },
-    (response: any) => {
-      console.log(response);
-    },
-  );
+  socket.emit('message', { message: message, roomId: roomId });
 };

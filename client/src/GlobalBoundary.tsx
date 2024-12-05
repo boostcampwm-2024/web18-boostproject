@@ -12,7 +12,6 @@ export const GlobalErrorFallback = ({
     navigate('/');
     resetErrorBoundary();
   };
-  console.log('글로벌');
   return (
     <div className="text-grayscale-100 w-full h-screen flex flex-col justify-center items-center">
       <h1>에러가 발생했습니다.</h1>

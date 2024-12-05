@@ -70,36 +70,38 @@ export function AlbumPage() {
 
   return (
     <div
-      className="px-80 pt-16 flex flex-col w-full h-screen"
+      className="pt-16 flex flex-col min-h-full items-center"
       style={{
         background: `linear-gradient(180deg, ${backgroundColor} 0%, rgba(0, 0, 0, 0) 20%)`,
       }}
     >
-      <div className={'flex h-680 gap-20 mb-24 relative z-10'}>
-        {albumDetails && (
-          <article className={'w-[21.25rem] h-85 flex-shrink-0'}>
-            <img
-              id={'album-jacket'}
-              src={albumJacketUrl}
-              className={'w-[21.25rem] h-[21.25rem] select-none'}
-              alt={`${albumDetails.albumName} 앨범 커버`}
-            ></img>
-            <p
-              className={`${albumDetails.albumName?.length >= 12 ? 'text-2xl' : albumDetails.albumName?.length >= 10 ? 'text-3xl' : 'text-4xl'} text-grayscale-50 mt-8 truncate`}
-              style={{ fontWeight: 900 }}
-            >
-              {albumDetails.albumName}
-            </p>
-            <AlbumArtist
-              artist={albumDetails.artist}
-              songLength={songDetails.length}
-              totalDuration={totalDuration}
-            />
-          </article>
-        )}
-        <Playlist playlist={songDetails} />
+      <div className="w-3/4">
+        <div className={'flex h-680 gap-20 mb-24 relative z-10'}>
+          {albumDetails && (
+            <article className={'w-[21.25rem] h-85 flex-shrink-0'}>
+              <img
+                id={'album-jacket'}
+                src={albumJacketUrl}
+                className={'w-[21.25rem] h-[21.25rem] select-none'}
+                alt={`${albumDetails.albumName} 앨범 커버`}
+              ></img>
+              <p
+                className={`${albumDetails.albumName?.length >= 12 ? 'text-2xl' : albumDetails.albumName?.length >= 10 ? 'text-3xl' : 'text-4xl'} text-grayscale-50 mt-8 truncate`}
+                style={{ fontWeight: 900 }}
+              >
+                {albumDetails.albumName}
+              </p>
+              <AlbumArtist
+                artist={albumDetails.artist}
+                songLength={songDetails.length}
+                totalDuration={totalDuration}
+              />
+            </article>
+          )}
+          <Playlist playlist={songDetails} />
+        </div>
+        <CommentList albumId={albumId} />
       </div>
-      <CommentList albumId={albumId} />
     </div>
   );
 }

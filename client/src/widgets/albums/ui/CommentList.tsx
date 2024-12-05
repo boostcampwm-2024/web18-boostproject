@@ -25,7 +25,6 @@ export function CommentList({ albumId }: CommentListProps) {
     })();
   }, []);
 
-  console.log(commentList);
   return (
     <div className="w-full text-grayscale-50 border-t border-grayscale-700 border-solid">
       <p className="text-4xl font-bold mb-8 mt-14">
