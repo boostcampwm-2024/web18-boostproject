@@ -13,7 +13,7 @@ export const ChatInput = memo(() => {
   const [message, setMessage] = useState('');
   const [isTextOver, setIsTextOver] = useState(false);
   const { roomId } = useParams<{ roomId: string }>();
-  const { socket } = useSocketStore();
+  const socket = useSocketStore((state) => state.socket);
 
   const handleMessageChange = useCallback((e: FormEvent<HTMLInputElement>) => {
     const inputValue = e.currentTarget.value;
