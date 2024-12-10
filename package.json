@@ -5,6 +5,9 @@
     "client",
     "server"
   ],
+  "resolutions": {
+    "path-to-regexp": "^0.1.12"
+  },
   "scripts": {
     "client": "yarn workspace client",
     "server": "yarn workspace server",
