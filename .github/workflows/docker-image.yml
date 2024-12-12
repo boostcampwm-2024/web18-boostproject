@@ -51,7 +51,7 @@ jobs:
       # 서버 이미지 빌드 및 태그 지정
       - name: Build and tag Docker image
         run: |
-          if [ ${{ env.SERVER_FILE_CHANGED }} == 'true' ]; then
+          if [ "${{ env.SERVER_FILE_CHANGED }}" == 'true' ]; then
             docker build -f server/Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/inear-server:${{ github.sha }} ./
             docker tag ${{ secrets.DOCKER_USERNAME }}/inear-server:${{ github.sha }} ${{ secrets.DOCKER_USERNAME }}/inear-server:latest
           fi
@@ -59,7 +59,7 @@ jobs:
           # 서버 이미지 푸시 (Docker Hub 또는 다른 레지스트리)
       - name: Push server image to Docker Hub
         run: |
-          if [ ${{ env.SERVER_FILE_CHANGED }} == 'true' ]; then
+          if [ "${{ env.SERVER_FILE_CHANGED }}" == 'true' ]; then
             docker push ${{ secrets.DOCKER_USERNAME }}/inear-server:${{ github.sha }}
             docker push ${{ secrets.DOCKER_USERNAME }}/inear-server:latest
           fi
@@ -67,7 +67,7 @@ jobs:
       # 클라이언트 및 nginx 이미지 빌드 및 태그 지정
       - name: Build and tag client image
         run: |
-          if [ ${{ env.CLIENT_FILE_CHANGED }} == 'true' ]; then
+          if [ "${{ env.CLIENT_FILE_CHANGED }}" == 'true' ]; then
             yarn --cwd ./client install
             echo ${{ secrets.CLIENT_ENV_PRODUCTION }} > ./client/.env.production
             echo ${{ secrets.CLIENT_ENV_DEVELOPMENT }} > ./client/.env.development
@@ -84,11 +84,11 @@ jobs:
             mkdir -p /${{ secrets.SSH_USER }}/web18-inear-test && \
             cd /${{ secrets.SSH_USER }}/web18-inear-test && \
             docker system prune -af && \
-            if [ $SERVER_FILE_CHANGED == true ]; then
+            if [ \"\$SERVER_FILE_CHANGED\" == true ]; then
               docker pull ${{ secrets.DOCKER_USERNAME }}/inear-server:latest && \
               ./backend-deploy.sh
             fi
-            if [ $CLIENT_FILE_CHANGED == true ]; then
+            if [ \"\$CLIENT_FILE_CHANGED\" == true ]; then
               ./frontend-deploy.sh
             fi
           "
