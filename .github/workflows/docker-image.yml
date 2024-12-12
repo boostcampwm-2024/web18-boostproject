@@ -40,12 +40,16 @@ jobs:
 
       - name: Check file changes
         run: |
-          echo "CLIENT_FILE_CHANGED=$(git diff --quiet ${{ github.event.before }} HEAD client || echo 'true')" > $GITHUB_ENV
-          echo "SERVER_FILE_CHANGED=$(git diff --quiet ${{ github.event.before }} HEAD server || echo 'true')" >> $GITHUB_ENV
           
-          if [ ! -f "$GITHUB_ENV" ] || [ ! -s "$GITHUB_ENV" ]; then
+          CLIENT_FILE_CHANGED=$(git diff --quiet ${{ github.event.before }} HEAD client && echo 'false' || echo 'true')
+          SERVER_FILE_CHANGED=$(git diff --quiet ${{ github.event.before }} HEAD server && echo 'false' || echo 'true')
+          
+          if [ "$CLIENT_FILE_CHANGED" == 'false' ] && [ "$SERVER_FILE_CHANGED" == 'false' ]; then
             echo "CLIENT_FILE_CHANGED=true" > $GITHUB_ENV
             echo "SERVER_FILE_CHANGED=true" >> $GITHUB_ENV
+          else
+            echo "CLIENT_FILE_CHANGED=$CLIENT_FILE_CHANGED" > $GITHUB_ENV
+            echo "SERVER_FILE_CHANGED=$SERVER_FILE_CHANGED" >> $GITHUB_ENV
           fi
 
       # 서버 이미지 빌드 및 태그 지정
