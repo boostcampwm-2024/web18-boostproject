@@ -15,12 +15,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      # Docker Compose로 전체 애플리케이션 빌드 및 실행 (테스트용)
-      - name: Run Docker Compose for testing
-        run: |
-          docker compose up --build -d
-        continue-on-error: false
-
       # Docker Hub 로그인
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
@@ -78,6 +72,12 @@ jobs:
             yarn --cwd ./client build
             scp -r ./client/dist/ ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:/${{ secrets.SSH_USER }}/web18-inear-test/nginx/html/
           fi
+
+      # Docker Compose로 전체 애플리케이션 빌드 및 실행 (테스트용)
+      - name: Run Docker Compose for testing
+        run: |
+          docker compose up --build -d
+        continue-on-error: false
 
       # 서버에서 파일을 최신화 하고, 배포 스크립트를 통해 실제 배포 진행
       - name: Deploy with Docker Compose on server
